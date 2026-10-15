@@ -1,0 +1,969 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Аналитика игрока | Mafia Stats</title>
+    <style>
+        :root {
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --text-primary: #0f172a;
+            --text-secondary: #64748b;
+            --accent: #3b82f6;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            
+            /* Цвета ролей */
+            --red-team-bg: #fee2e2;
+            --red-team-text: #991b1b;
+            --sheriff-bg: #fef9c3;
+            --sheriff-text: #854d0e;
+            --black-team-bg: #f3f4f6;
+            --black-team-text: #374151;
+            --don-bg: #f3e8ff;
+            --don-text: #6b21a8;
+        }
+
+        /* 🔥 Тёмная тема */
+        body.dark-mode {
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+        }
+        body.dark-mode th { background-color: #334155 !important; color: #f1f5f9 !important; }
+        body.dark-mode .filter-select, body.dark-mode input[type="date"] { background: #334155; color: #f1f5f9; border-color: #475569; }
+        body.dark-mode .modal-content { background: #1e293b; }
+        body.dark-mode .modal-header { background: #0f172a; border-color: #334155; }
+        body.dark-mode .composition-player { background: #334155; border-color: #475569; color: #f1f5f9; }
+        body.dark-mode .composition-player.is-you { background: #451a03 !important; color: #fbbf24 !important; }
+        body.dark-mode .composition-player.first-leave { background: #14532d !important; color: #86efac !important; }
+        body.dark-mode .top-item { background: #334155; }
+        body.dark-mode .winrate-bar { background: #475569; }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            line-height: 1.5;
+            padding: 2rem;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .container { max-width: 1400px; margin: 0 auto; }
+
+        header {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding: 2rem;
+            background: var(--card-bg);
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            position: relative;
+        }
+
+        /* 🔥 Кнопка темы */
+        .theme-btn {
+            position: absolute; top: 1rem; right: 1rem;
+            padding: 0.5rem 1rem; border-radius: 0.5rem;
+            border: 1px solid var(--text-secondary);
+            background: var(--card-bg); color: var(--text-primary);
+            cursor: pointer; font-weight: 600; transition: all 0.2s;
+        }
+        .theme-btn:hover { background: var(--bg-color); }
+
+        .file-upload {
+            position: relative;
+            display: inline-block;
+            margin-top: 1rem;
+        }
+        .file-upload input[type="file"] {
+            position: absolute; left: 0; top: 0; opacity: 0; width: 100%; height: 100%; cursor: pointer;
+        }
+        .upload-btn {
+            display: inline-flex; align-items: center; gap: 0.5rem;
+            background-color: var(--accent); color: white;
+            padding: 0.75rem 1.5rem; border-radius: 0.5rem;
+            font-weight: 600; transition: background 0.2s;
+        }
+        .upload-btn:hover { background-color: #2563eb; }
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        .summary-card {
+            background: var(--card-bg);
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            text-align: center;
+        }
+        .summary-value { font-size: 2.5rem; font-weight: 800; color: var(--accent); }
+        .summary-label { color: var(--text-secondary); font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.05em; margin-top: 0.5rem; }
+
+        .section {
+            background: var(--card-bg);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--bg-color);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .top-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1rem;
+        }
+        .top-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            background: var(--bg-color);
+            border-radius: 0.5rem;
+            border-left: 4px solid var(--accent);
+        }
+        .top-item.bad { border-left-color: var(--danger); }
+        .top-name { font-weight: 600; font-size: 1rem; }
+        .top-stat { font-weight: 700; font-size: 1.1rem; }
+        .top-sub { font-size: 0.8rem; color: var(--text-secondary); }
+
+        .table-container {
+            overflow-x: auto;
+            border-radius: 0.5rem;
+            border: 1px solid #e2e8f0;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+        }
+        th, td {
+            padding: 0.75rem 0.5rem;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        th:first-child, td:first-child {
+            text-align: left;
+            padding-left: 1rem;
+            position: sticky;
+            left: 0;
+            background: inherit;
+            z-index: 1;
+        }
+        th {
+            background-color: #f1f5f9;
+            font-weight: 600;
+            color: var(--text-secondary);
+            cursor: pointer;
+            user-select: none;
+            white-space: nowrap;
+            text-align: center;
+        }
+        th:hover { background-color: #e2e8f0; }
+        th.sort-asc::after { content: " ▲"; font-size: 0.8em; }
+        th.sort-desc::after { content: " ▼"; font-size: 0.8em; }
+        
+        tr:hover { background-color: var(--bg-color); }
+        
+        .winrate-bar {
+            height: 6px;
+            background: #e2e8f0;
+            border-radius: 3px;
+            margin-top: 4px;
+            overflow: hidden;
+            width: 100%;
+        }
+        .winrate-fill {
+            height: 100%;
+            border-radius: 3px;
+            transition: width 0.3s ease;
+        }
+        .winrate-good { background-color: var(--success); }
+        .winrate-bad { background-color: var(--danger); }
+        .winrate-mid { background-color: var(--warning); }
+
+        .text-success { color: var(--success); font-weight: 600; }
+        .text-danger { color: var(--danger); font-weight: 600; }
+        .text-neutral { color: var(--text-secondary); font-weight: 600; }
+        
+        .hidden { display: none !important; }
+        
+        .header-red { background-color: var(--red-team-bg) !important; color: var(--red-team-text) !important; }
+        .header-black { background-color: var(--black-team-bg) !important; color: var(--black-team-text) !important; }
+
+        .player-name-clickable {
+            color: var(--accent);
+            cursor: pointer;
+            text-decoration: underline;
+            text-decoration-style: dotted;
+            text-underline-offset: 3px;
+            transition: color 0.2s;
+        }
+        .player-name-clickable:hover {
+            color: #2563eb;
+            text-decoration-style: solid;
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(4px);
+            z-index: 1000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 1rem;
+        }
+        .modal-content {
+            background: var(--card-bg);
+            width: 100%;
+            max-width: 800px;
+            max-height: 85vh;
+            border-radius: 1rem;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        .modal-header {
+            padding: 1.25rem 1.5rem;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #f8fafc;
+        }
+        .modal-header h2 { font-size: 1.25rem; color: var(--text-primary); }
+        .close-btn {
+            background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--text-secondary);
+            width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;
+            border-radius: 50%; transition: background 0.2s;
+        }
+        .close-btn:hover { background: #e2e8f0; color: var(--text-primary); }
+        
+        .modal-games-list {
+            padding: 1.5rem;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+        .modal-game-card {
+            background: var(--bg-color);
+            border: 1px solid #e2e8f0;
+            border-radius: 0.5rem;
+            padding: 1rem;
+        }
+        .modal-game-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+        }
+        .modal-tournament-link {
+            font-weight: 700;
+            color: var(--accent);
+            text-decoration: none;
+        }
+        .modal-tournament-link:hover { text-decoration: underline; }
+        
+        .composition-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: repeat(5, 1fr);
+            grid-auto-flow: column;
+            gap: 0.5rem;
+        }
+        .composition-player {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.5rem;
+            padding: 0.4rem 0.6rem;
+            border-radius: 0.4rem;
+            font-size: 0.85rem;
+            border: 1px solid #e2e8f0;
+            transition: all 0.15s;
+        }
+        .composition-player .player-info {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            flex: 1;
+            min-width: 0;
+        }
+        .composition-player .player-num {
+            font-weight: 700;
+            opacity: 0.6;
+            min-width: 1.2rem;
+        }
+        .composition-player .player-name-text {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .composition-player .player-points {
+            font-weight: 700;
+            font-size: 0.75rem;
+            padding: 0.15rem 0.4rem;
+            border-radius: 0.25rem;
+            white-space: nowrap;
+        }
+        .points-positive { color: #059669; background: rgba(16, 185, 129, 0.15); }
+        .points-negative { color: #dc2626; background: rgba(239, 68, 68, 0.15); }
+        .points-zero { color: var(--text-secondary); background: rgba(0,0,0,0.03); }
+
+        .composition-player.role-red { background-color: var(--red-team-bg); color: var(--red-team-text); border-color: #fca5a5; }
+        .composition-player.role-sheriff { background-color: var(--sheriff-bg); color: var(--sheriff-text); border-color: #fde047; }
+        .composition-player.role-mafia { background-color: var(--black-team-bg); color: var(--black-team-text); border-color: #d1d5db; }
+        .composition-player.role-don { background-color: var(--don-bg); color: var(--don-text); border-color: #d8b4fe; }
+        
+        .composition-player.is-you {
+            border: 2px solid #f59e0b !important;
+            font-weight: 700;
+            box-shadow: 0 2px 8px rgba(245, 158, 11, 0.2);
+        }
+
+        .composition-player.first-leave {
+            background-color: #dcfce7 !important;
+            color: #14532d !important;
+            border-color: #86efac !important;
+            font-weight: 600;
+        }
+        .composition-player.first-leave.is-you {
+            border: 2px solid #f59e0b !important;
+            box-shadow: 0 2px 8px rgba(245, 158, 11, 0.2);
+        }
+
+        .filter-select, input[type="date"] {
+            padding: 0.5rem 0.8rem;
+            border-radius: 0.4rem;
+            border: 1px solid #cbd5e1;
+            font-size: 0.9rem;
+            cursor: pointer;
+            background: white;
+            color: var(--text-primary);
+            font-weight: 500;
+            transition: border-color 0.2s;
+        }
+        .filter-select:hover, input[type="date"]:hover { border-color: var(--accent); }
+        .filter-select:focus, input[type="date"]:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2); }
+
+        /* 🔥 Кнопка экспорта */
+        .export-btn {
+            padding: 0.5rem 1rem; border-radius: 0.5rem;
+            border: 1px solid var(--success); background: var(--success);
+            color: white; cursor: pointer; font-weight: 600; margin-left: auto;
+            display: inline-flex; align-items: center; gap: 0.5rem;
+            transition: background 0.2s;
+        }
+        .export-btn:hover { background: #059669; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>📊 Аналитика взаимодействий</h1>
+        <p style="color: var(--text-secondary);">Загрузите JSON-файл, полученный из парсера, для построения детальной статистики</p>
+        <button id="themeToggle" class="theme-btn">🌙 Тёмная тема</button>
+        <div class="file-upload">
+            <button class="upload-btn">📁 Загрузить JSON файл</button>
+            <input type="file" id="jsonInput" accept=".json">
+        </div>
+    </header>
+
+    <div id="dashboard" class="hidden">
+        <div class="summary-grid">
+            <div class="summary-card">
+                <div class="summary-value" id="playerName">-</div>
+                <div class="summary-label">Анализируемый игрок</div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-value" id="totalGames">0</div>
+                <div class="summary-label">Всего игр в выборке</div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-value" id="overallWinrate">0%</div>
+                <div class="summary-label">Общий винрейт</div>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">🤝 Лучшие союзники (мин. 3 игры вместе, любой цвет)</div>
+            <div class="top-list" id="bestTeammates"></div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">⚔️ Самые неудобные оппоненты (мин. 3 игры против, любой цвет)</div>
+            <div class="top-list" id="worstOpponents"></div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">
+                📋 Детальная статистика по игрокам <span style="font-size: 0.8rem; font-weight: 400; color: var(--text-secondary);">(нажмите на имя для просмотра игр)</span>
+                <!-- 🔥 Кнопка экспорта -->
+                <button class="export-btn" onclick="exportToCSV()">📥 Скачать CSV</button>
+            </div>
+            <div class="table-container">
+                <table id="statsTable">
+                    <thead>
+                        <tr>
+                            <th rowspan="2" onclick="sortTable(0)" data-col="0">Игрок</th>
+                            <th rowspan="2" onclick="sortTable(1)" data-col="1">Всего</th>
+                            <th rowspan="2" onclick="sortTable(2)" data-col="2" title="Средние баллы за игру с этим игроком">Ср. баллы</th>
+                            <th colspan="2" class="header-red">🟥 Вместе (Красные)</th>
+                            <th colspan="2" class="header-black">⬛ Вместе (Черные)</th>
+                            <th colspan="2" class="header-red">🟥 Вы vs ⬛ Они</th>
+                            <th colspan="2" class="header-black">⬛ Вы vs 🟥 Они</th>
+                        </tr>
+                        <tr>
+                            <th onclick="sortTable(3)" data-col="3">Игры</th>
+                            <th onclick="sortTable(4)" data-col="4">WR</th>
+                            <th onclick="sortTable(5)" data-col="5">Игры</th>
+                            <th onclick="sortTable(6)" data-col="6">WR</th>
+                            <th onclick="sortTable(7)" data-col="7">Игры</th>
+                            <th onclick="sortTable(8)" data-col="8">WR</th>
+                            <th onclick="sortTable(9)" data-col="9">Игры</th>
+                            <th onclick="sortTable(10)" data-col="10">WR</th>
+                        </tr>
+                    </thead>
+                    <tbody id="statsTableBody"></tbody>
+                </table>
+            </div>
+            <p style="margin-top: 1rem; font-size: 0.85rem; color: var(--text-secondary);">
+                * 🟥 Красные = Мирный + Шериф. ⬛ Черные = Мафия + Дон.<br>
+                * Сортировка работает по клику на любой заголовок столбца. При равном винрейте приоритет у большего количества игр.
+            </p>
+        </div>
+    </div>
+</div>
+
+<div id="gameModal" class="modal-overlay hidden" onclick="if(event.target === this) closeModal()">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 id="modalPlayerName">Игры с игроком</h2>
+            <button class="close-btn" onclick="closeModal()">&times;</button>
+        </div>
+        <div id="modalGamesList" class="modal-games-list"></div>
+    </div>
+</div>
+
+<script>
+    let globalPlayerData = [];
+    let sortDirection = {};
+    let currentModalPlayerGames = [];
+
+    // 🔥 Логика тёмной темы
+    const themeToggle = document.getElementById('themeToggle');
+    if (localStorage.getItem('theme') === 'dark') {
+        document.body.classList.add('dark-mode');
+        themeToggle.textContent = '☀️ Светлая тема';
+    }
+    themeToggle.addEventListener('click', () => {
+        document.body.classList.toggle('dark-mode');
+        const isDark = document.body.classList.contains('dark-mode');
+        themeToggle.textContent = isDark ? '☀️ Светлая тема' : '🌙 Тёмная тема';
+        localStorage.setItem('theme', isDark ? 'dark' : 'light');
+    });
+
+    document.getElementById('jsonInput').addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = function(event) {
+            try {
+                const data = JSON.parse(event.target.result);
+                processData(data);
+            } catch (err) {
+                alert('Ошибка чтения JSON: файл поврежден или имеет неверный формат.');
+                console.error(err);
+            }
+        };
+        reader.readAsText(file);
+    });
+
+    function processData(data) {
+        let targetPlayerName = "Неизвестно";
+        let targetTotalGames = 0;
+        let targetTotalWins = 0;
+        const playerStats = {};
+
+        data.forEach(tournament => {
+            tournament.games.forEach(game => {
+                const targetRecord = game.composition.find(p => p.isYou);
+                if (!targetRecord) return;
+
+                targetPlayerName = targetRecord.name;
+                targetTotalGames++;
+                if (game.isWin) targetTotalWins++;
+
+                const targetIsRed = (targetRecord.role === 'Мирный' || targetRecord.role === 'Шериф');
+                const targetIsBlack = !targetIsRed;
+
+                game.composition.forEach(p => {
+                    if (p.name === targetRecord.name) return;
+
+                    if (!playerStats[p.name]) {
+                        playerStats[p.name] = { 
+                            name: p.name, total: 0, totalPoints: 0,
+                            togetherRed: 0, winsTogetherRed: 0,
+                            togetherBlack: 0, winsTogetherBlack: 0,
+                            playerRedOtherBlack: 0, winsPlayerRedOtherBlack: 0,
+                            playerBlackOtherRed: 0, winsPlayerBlackOtherRed: 0,
+                            games: []
+                        };
+                    }
+
+                    const stats = playerStats[p.name];
+                    stats.total++;
+                    stats.totalPoints += (p.points !== undefined ? p.points : 0);
+
+                    const otherIsRed = (p.role === 'Мирный' || p.role === 'Шериф');
+                    const otherIsBlack = !otherIsRed;
+
+                    let matchType = '';
+                    if (targetIsRed && otherIsRed) matchType = 'togetherRed';
+                    else if (targetIsBlack && otherIsBlack) matchType = 'togetherBlack';
+                    else if (targetIsRed && otherIsBlack) matchType = 'oppositeTargetRed';
+                    else if (targetIsBlack && otherIsRed) matchType = 'oppositeTargetBlack';
+
+                    // Добавляем дату турнира к каждой игре для фильтрации
+                    stats.games.push({
+                        tournamentName: tournament.tournament,
+                        tournamentUrl: tournament.url,
+                        dateStart: tournament.dateStart, // Дата начала турнира
+                        dateEnd: tournament.dateEnd,     // Дата конца турнира
+                        gameNumber: game.gameNumber,
+                        tableNumber: game.tableNumber,
+                        isWin: game.isWin,
+                        composition: game.composition,
+                        matchType: matchType
+                    });
+
+                    if (targetIsRed && otherIsRed) {
+                        stats.togetherRed++;
+                        if (game.isWin) stats.winsTogetherRed++;
+                    } else if (targetIsBlack && otherIsBlack) {
+                        stats.togetherBlack++;
+                        if (game.isWin) stats.winsTogetherBlack++;
+                    } else if (targetIsRed && otherIsBlack) {
+                        stats.playerRedOtherBlack++;
+                        if (game.isWin) stats.winsPlayerRedOtherBlack++;
+                    } else if (targetIsBlack && otherIsRed) {
+                        stats.playerBlackOtherRed++;
+                        if (game.isWin) stats.winsPlayerBlackOtherRed++;
+                    }
+                });
+            });
+        });
+
+        globalPlayerData = Object.values(playerStats).map(p => {
+            return {
+                ...p,
+                avgPoints: p.total > 0 ? (p.totalPoints / p.total) : 0,
+                wrTogetherRed: p.togetherRed > 0 ? (p.winsTogetherRed / p.togetherRed) : -1,
+                wrTogetherBlack: p.togetherBlack > 0 ? (p.winsTogetherBlack / p.togetherBlack) : -1,
+                wrPlayerRedOtherBlack: p.playerRedOtherBlack > 0 ? (p.winsPlayerRedOtherBlack / p.playerRedOtherBlack) : -1,
+                wrPlayerBlackOtherRed: p.playerBlackOtherRed > 0 ? (p.winsPlayerBlackOtherRed / p.playerBlackOtherRed) : -1,
+            };
+        }).sort((a, b) => b.total - a.total);
+
+        document.getElementById('playerName').textContent = targetPlayerName;
+        document.getElementById('totalGames').textContent = targetTotalGames;
+        const overallWR = targetTotalGames > 0 ? ((targetTotalWins / targetTotalGames) * 100).toFixed(1) : 0;
+        document.getElementById('overallWinrate').textContent = overallWR + '%';
+
+        renderTopLists();
+        renderTable();
+        document.getElementById('dashboard').classList.remove('hidden');
+    }
+
+    function renderTopLists() {
+        const bestTeammatesEl = document.getElementById('bestTeammates');
+        const worstOpponentsEl = document.getElementById('worstOpponents');
+        bestTeammatesEl.innerHTML = '';
+        worstOpponentsEl.innerHTML = '';
+
+        const bestTeammates = globalPlayerData
+            .filter(p => (p.togetherRed + p.togetherBlack) >= 3)
+            .sort((a, b) => {
+                const totalA = a.togetherRed + a.togetherBlack;
+                const totalB = b.togetherRed + b.togetherBlack;
+                const wrA = ((a.winsTogetherRed + a.winsTogetherBlack) / totalA);
+                const wrB = ((b.winsTogetherRed + b.winsTogetherBlack) / totalB);
+                return wrB - wrA;
+            }).slice(0, 6);
+
+        const worstOpponents = globalPlayerData
+            .filter(p => (p.playerRedOtherBlack + p.playerBlackOtherRed) >= 3)
+            .sort((a, b) => {
+                const totalA = a.playerRedOtherBlack + a.playerBlackOtherRed;
+                const totalB = b.playerRedOtherBlack + b.playerBlackOtherRed;
+                const wrA = ((a.winsPlayerRedOtherBlack + a.winsPlayerBlackOtherRed) / totalA);
+                const wrB = ((b.winsPlayerRedOtherBlack + b.winsPlayerBlackOtherRed) / totalB);
+                return wrA - wrB; 
+            }).slice(0, 6);
+
+        bestTeammates.forEach(p => {
+            const total = p.togetherRed + p.togetherBlack;
+            const wins = p.winsTogetherRed + p.winsTogetherBlack;
+            const wr = ((wins / total) * 100).toFixed(1);
+            bestTeammatesEl.innerHTML += `
+                <div class="top-item">
+                    <div>
+                        <div class="top-name player-name-clickable" onclick="openModal('${p.name.replace(/'/g, "\\'")}')">${p.name}</div>
+                        <div class="top-sub">${total} игр вместе</div>
+                    </div>
+                    <div class="top-stat text-success">${wr}%</div>
+                </div>
+            `;
+        });
+
+        worstOpponents.forEach(p => {
+            const total = p.playerRedOtherBlack + p.playerBlackOtherRed;
+            const wins = p.winsPlayerRedOtherBlack + p.winsPlayerBlackOtherRed;
+            const wr = ((wins / total) * 100).toFixed(1);
+            worstOpponentsEl.innerHTML += `
+                <div class="top-item bad">
+                    <div>
+                        <div class="top-name player-name-clickable" onclick="openModal('${p.name.replace(/'/g, "\\'")}')">${p.name}</div>
+                        <div class="top-sub">${total} игр против</div>
+                    </div>
+                    <div class="top-stat text-danger">${wr}%</div>
+                </div>
+            `;
+        });
+    }
+
+    function getRoleClass(role) {
+        if (!role) return 'role-red';
+        const r = role.toLowerCase();
+        if (r.includes('мирный')) return 'role-red';
+        if (r.includes('шериф')) return 'role-sheriff';
+        if (r.includes('маф')) return 'role-mafia';
+        if (r.includes('дон')) return 'role-don';
+        return 'role-red';
+    }
+
+    function openModal(playerName) {
+        const player = globalPlayerData.find(p => p.name === playerName);
+        if (!player || !player.games) return;
+
+        currentModalPlayerGames = player.games;
+
+        document.getElementById('modalPlayerName').textContent = `🎮 Игры с: ${playerName} (Всего: ${player.total})`;
+        const listContainer = document.getElementById('modalGamesList');
+        
+        // 🔥 Добавлены поля выбора даты
+        const filterHtml = `
+            <div style="margin-bottom: 1rem; display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
+                <label style="font-weight: 600; font-size: 0.9rem; color: var(--text-secondary);">Фильтры:</label>
+                
+                <input type="date" id="dateFromFilter" class="filter-select" onchange="applyGameFilter()" title="Дата от">
+                <input type="date" id="dateToFilter" class="filter-select" onchange="applyGameFilter()" title="Дата до">
+
+                <select id="typeFilter" class="filter-select" onchange="applyGameFilter()">
+                    <option value="all">Все типы игр</option>
+                    <option value="togetherRed">🟥 Вместе (Красные)</option>
+                    <option value="togetherBlack">⬛ Вместе (Черные)</option>
+                    <option value="oppositeTargetRed">🟥 Вы (Красный) vs ⬛ Они</option>
+                    <option value="oppositeTargetBlack">⬛ Вы (Черный) vs 🟥 Они</option>
+                </select>
+                <select id="resultFilter" class="filter-select" onchange="applyGameFilter()">
+                    <option value="all">Все результаты</option>
+                    <option value="win">✅ Победы</option>
+                    <option value="loss">❌ Поражения</option>
+                </select>
+                <select id="firstLeaveFilter" class="filter-select" onchange="applyGameFilter()">
+                    <option value="all">Любой статус покидания</option>
+                    <option value="lg">🚪 Вы первый покинувший</option>
+                    <option value="not_lg">🚪 Вы НЕ первый покинувший</option>
+                </select>
+                <select id="playQualityFilter" class="filter-select" onchange="applyGameFilter()">
+                    <option value="all">Любое качество игры</option>
+                    <option value="y">🌟 Вы сыграли хорошо</option>
+                    <option value="r">🔻 Вы сыграли плохо</option>
+                </select>
+            </div>
+            <div id="modalGamesContainer"></div>
+        `;
+        
+        listContainer.innerHTML = filterHtml;
+        applyGameFilter();
+        
+        document.getElementById('gameModal').classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function applyGameFilter() {
+        const typeFilterValue = document.getElementById('typeFilter').value;
+        const resultFilterValue = document.getElementById('resultFilter').value;
+        const firstLeaveFilterValue = document.getElementById('firstLeaveFilter').value;
+        const playQualityFilterValue = document.getElementById('playQualityFilter').value;
+        
+        // 🔥 Получаем значения дат
+        const dateFromValue = document.getElementById('dateFromFilter').value;
+        const dateToValue = document.getElementById('dateToFilter').value;
+
+        const container = document.getElementById('modalGamesContainer');
+        container.innerHTML = '';
+
+        let filteredGames = currentModalPlayerGames;
+
+        // 🔥 Фильтрация по датам
+        if (dateFromValue || dateToValue) {
+            filteredGames = filteredGames.filter(g => {
+                // Используем dateEnd (конец турнира) как основную точку отсчета, 
+                // так как игра точно произошла к этому моменту.
+                // Если dateEnd нет, пробуем dateStart.
+                const gameDateStr = g.dateEnd || g.dateStart;
+                if (!gameDateStr) return true; // Если даты нет в данных, показываем игру
+
+                const gameDate = new Date(gameDateStr);
+                
+                if (dateFromValue) {
+                    const fromDate = new Date(dateFromValue);
+                    if (gameDate < fromDate) return false;
+                }
+                
+                if (dateToValue) {
+                    // Устанавливаем время конца дня для корректного сравнения "до" включительно
+                    const toDate = new Date(dateToValue);
+                    toDate.setHours(23, 59, 59, 999);
+                    if (gameDate > toDate) return false;
+                }
+                
+                return true;
+            });
+        }
+
+        if (typeFilterValue !== 'all') filteredGames = filteredGames.filter(g => g.matchType === typeFilterValue);
+        if (resultFilterValue !== 'all') filteredGames = filteredGames.filter(g => resultFilterValue === 'win' ? g.isWin : !g.isWin);
+
+        if (firstLeaveFilterValue !== 'all') {
+            filteredGames = filteredGames.filter(g => {
+                const mainPlayerRecord = g.composition.find(p => p.isYou);
+                if (!mainPlayerRecord) return false;
+                if (firstLeaveFilterValue === 'lg') return mainPlayerRecord.playType === 'lg';
+                else if (firstLeaveFilterValue === 'not_lg') return mainPlayerRecord.playType !== 'lg';
+                return true;
+            });
+        }
+
+        if (playQualityFilterValue !== 'all') {
+            filteredGames = filteredGames.filter(g => {
+                const mainPlayerRecord = g.composition.find(p => p.isYou);
+                if (!mainPlayerRecord) return false;
+                return mainPlayerRecord.playType === playQualityFilterValue;
+            });
+        }
+
+        if (filteredGames.length === 0) {
+            container.innerHTML = '<p style="text-align: center; color: var(--text-secondary); padding: 2rem; font-size: 0.95rem;">Игр с такими фильтрами не найдено.</p>';
+            return;
+        }
+
+        filteredGames.forEach(g => {
+            const resultClass = g.isWin ? 'text-success' : 'text-danger';
+            const resultText = g.isWin ? '✅ Победа' : '❌ Поражение';
+            
+            // Отображаем дату турнира в карточке
+            const dateDisplay = g.dateStart ? `<span style="font-size: 0.8rem; color: var(--text-secondary); margin-right: 0.5rem;">📅 ${g.dateStart}</span>` : '';
+
+            const compHtml = `<div class="composition-grid">` + g.composition.map((p, index) => {
+                const isYou = p.isYou ? ' (Вы)' : '';
+                const youClass = p.isYou ? 'is-you' : '';
+                const roleClass = getRoleClass(p.role);
+                const isFirstLeave = p.playType === 'lg' ? 'first-leave' : '';
+                
+                const points = p.points !== undefined ? p.points : 0;
+                let pointsStr = points > 0 ? `+${points}` : `${points}`;
+                let pointsClass = 'points-zero';
+                if (points > 0) pointsClass = 'points-positive';
+                else if (points < 0) pointsClass = 'points-negative';
+                
+                return `
+                    <div class="composition-player ${roleClass} ${youClass} ${isFirstLeave}">
+                        <div class="player-info">
+                            <span class="player-num">${index + 1}.</span>
+                            <span class="player-name-text" title="${p.name}${isYou}">${p.name}${isYou}</span>
+                        </div>
+                        <span class="player-points ${pointsClass}">${pointsStr}</span>
+                    </div>
+                `;
+            }).join('') + `</div>`;
+
+            const card = document.createElement('div');
+            card.className = 'modal-game-card';
+            card.innerHTML = `
+                <div class="modal-game-header">
+                    <div style="display:flex; align-items:center;">
+                        <a href="${g.tournamentUrl}" target="_blank" class="modal-tournament-link">${g.tournamentName} ↗</a>
+                        ${dateDisplay}
+                    </div>
+                    <span style="font-weight: 600;">${g.gameNumber}, ${g.tableNumber}</span>
+                    <span class="${resultClass}" style="font-weight: 700;">${resultText}</span>
+                </div>
+                ${compHtml}
+            `;
+            container.appendChild(card);
+        });
+    }
+
+    function closeModal() {
+        document.getElementById('gameModal').classList.add('hidden');
+        document.body.style.overflow = '';
+    }
+
+    function renderTable() {
+        const tbody = document.getElementById('statsTableBody');
+        tbody.innerHTML = '';
+
+        globalPlayerData.forEach(p => {
+            const tr = document.createElement('tr');
+            
+            const gamesTd = (games) => {
+                if (games === 0) return `<td style="color: #94a3b8; font-size: 0.85rem; text-align: center;">0</td>`;
+                return `<td style="text-align: center; font-size: 0.85rem;">${games}</td>`;
+            };
+
+            const wrTd = (games, wr) => {
+                if (games === 0) return `<td style="color: #94a3b8; font-size: 0.85rem; text-align: center;">-</td>`;
+                const wrPercent = (wr * 100).toFixed(1);
+                return `
+                    <td style="text-align: center;">
+                        <div style="font-size: 0.85rem; font-weight: 600; margin-bottom: 2px;">${wrPercent}%</div>
+                        <div class="winrate-bar"><div class="winrate-fill ${wrPercent >= 60 ? 'winrate-good' : (wrPercent <= 40 ? 'winrate-bad' : 'winrate-mid')}" style="width: ${wrPercent}%"></div></div>
+                    </td>
+                `;
+            };
+
+            // 🔥 Цвет для средних баллов
+            const avgPts = p.avgPoints.toFixed(2);
+            const ptsClass = p.avgPoints > 0 ? 'text-success' : (p.avgPoints < 0 ? 'text-danger' : 'text-neutral');
+
+            tr.innerHTML = `
+                <td style="font-weight: 600; text-align: left;">
+                    <span class="player-name-clickable" onclick="openModal('${p.name.replace(/'/g, "\\'")}')">${p.name}</span>
+                </td>
+                <td style="text-align: center;">${p.total}</td>
+                <td style="text-align: center; font-weight: 700;" class="${ptsClass}">${avgPts > 0 ? '+' : ''}${avgPts}</td>
+                ${gamesTd(p.togetherRed)}
+                ${wrTd(p.togetherRed, p.wrTogetherRed)}
+                ${gamesTd(p.togetherBlack)}
+                ${wrTd(p.togetherBlack, p.wrTogetherBlack)}
+                ${gamesTd(p.playerRedOtherBlack)}
+                ${wrTd(p.playerRedOtherBlack, p.wrPlayerRedOtherBlack)}
+                ${gamesTd(p.playerBlackOtherRed)}
+                ${wrTd(p.playerBlackOtherRed, p.wrPlayerBlackOtherRed)}
+            `;
+            tbody.appendChild(tr);
+        });
+    }
+
+    function sortTable(columnIndex) {
+        const sortConfig = [
+            { key: 'name', type: 'string' },
+            { key: 'total', type: 'number' },
+            { key: 'avgPoints', type: 'number' },
+            { key: 'togetherRed', type: 'number' },
+            { key: 'wrTogetherRed', type: 'number' },
+            { key: 'togetherBlack', type: 'number' },
+            { key: 'wrTogetherBlack', type: 'number' },
+            { key: 'playerRedOtherBlack', type: 'number' },
+            { key: 'wrPlayerRedOtherBlack', type: 'number' },
+            { key: 'playerBlackOtherRed', type: 'number' },
+            { key: 'wrPlayerBlackOtherRed', type: 'number' }
+        ];
+
+        const config = sortConfig[columnIndex];
+        sortDirection[columnIndex] = !sortDirection[columnIndex];
+        const isAsc = sortDirection[columnIndex];
+
+        document.querySelectorAll('th[data-col]').forEach(th => {
+            th.classList.remove('sort-asc', 'sort-desc');
+            if (parseInt(th.getAttribute('data-col')) === columnIndex) {
+                th.classList.add(isAsc ? 'sort-asc' : 'sort-desc');
+            }
+        });
+
+        globalPlayerData.sort((a, b) => {
+            let valA = a[config.key];
+            let valB = b[config.key];
+
+            if (config.type === 'string') {
+                valA = String(valA).toLowerCase();
+                valB = String(valB).toLowerCase();
+            }
+
+            if (valA < valB) return isAsc ? -1 : 1;
+            if (valA > valB) return isAsc ? 1 : -1;
+
+            let secondaryKey = 'total';
+            if (config.key === 'wrTogetherRed') secondaryKey = 'togetherRed';
+            else if (config.key === 'wrTogetherBlack') secondaryKey = 'togetherBlack';
+            else if (config.key === 'wrPlayerRedOtherBlack') secondaryKey = 'playerRedOtherBlack';
+            else if (config.key === 'wrPlayerBlackOtherRed') secondaryKey = 'playerBlackOtherRed';
+
+            let secValA = a[secondaryKey];
+            let secValB = b[secondaryKey];
+
+            if (secValA < secValB) return 1;
+            if (secValA > secValB) return -1;
+
+            return 0;
+        });
+
+        renderTable();
+    }
+
+    // 🔥 Функция экспорта в CSV
+    function exportToCSV() {
+        const headers = ["Игрок", "Всего игр", "Средние баллы", "Вместе (Кр) Игры", "Вместе (Кр) WR", "Вместе (Ч) Игры", "Вместе (Ч) WR", "Вы (Кр) vs Они Игры", "Вы (Кр) vs Они WR", "Вы (Ч) vs Они Игры", "Вы (Ч) vs Они WR"];
+        const rows = globalPlayerData.map(p => [
+            p.name, 
+            p.total, 
+            (p.avgPoints > 0 ? '+' : '') + p.avgPoints.toFixed(2),
+            p.togetherRed, (p.wrTogetherRed * 100).toFixed(1) + '%',
+            p.togetherBlack, (p.wrTogetherBlack * 100).toFixed(1) + '%',
+            p.playerRedOtherBlack, (p.wrPlayerRedOtherBlack * 100).toFixed(1) + '%',
+            p.playerBlackOtherRed, (p.wrPlayerBlackOtherRed * 100).toFixed(1) + '%'
+        ]);
+        
+        // Используем точку с запятой для корректного открытия в Excel на русском
+        let csvContent = "data:text/csv;charset=utf-8,\uFEFF" + [headers, ...rows].map(e => e.join(";")).join("\n");
+        const encodedUri = encodeURI(csvContent);
+        const link = document.createElement("a");
+        link.setAttribute("href", encodedUri);
+        link.setAttribute("download", `mafia_stats_${document.getElementById('playerName').textContent}.csv`);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+</script>
+
+</body>
+</html>

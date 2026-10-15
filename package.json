@@ -1,0 +1,12 @@
+{
+  "name": "gomafia-parser",
+  "version": "1.0.0",
+  "description": "Парсер игр gomafia.pro",
+  "main": "scraper.js",
+  "scripts": {
+    "start": "node scraper.js"
+  },
+  "dependencies": {
+    "playwright": "^1.40.0"
+  }
+}

@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Визуализация статистики Mafia</title>
+    <style>
+        :root {
+            --bg-color: #f3f4f6;
+            --card-bg: #ffffff;
+            --text-primary: #111827;
+            --text-secondary: #6b7280;
+            --accent: #3b82f6;
+            
+            --role-red-bg: #fee2e2; --role-red-text: #991b1b;
+            --role-sheriff-bg: #fef3c7; --role-sheriff-text: #92400e;
+            --role-mafia-bg: #e5e7eb; --role-mafia-text: #374151;
+            --role-don-bg: #ede9fe; --role-don-text: #5b21b6;
+            --role-lg-bg: #dcfce7; --role-lg-text: #14532d;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            line-height: 1.5;
+            padding: 2rem;
+        }
+
+        .container { max-width: 1100px; margin: 0 auto; }
+
+        header {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding: 2rem;
+            background: var(--card-bg);
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        h1 { font-size: 1.8rem; margin-bottom: 1rem; color: var(--text-primary); }
+        
+        .file-upload {
+            position: relative;
+            display: inline-block;
+        }
+        .file-upload input[type="file"] {
+            position: absolute;
+            left: 0; top: 0; opacity: 0;
+            width: 100%; height: 100%;
+            cursor: pointer;
+        }
+        .upload-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background-color: var(--accent);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            transition: background 0.2s;
+        }
+        .upload-btn:hover { background-color: #2563eb; }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        .stat-card {
+            background: var(--card-bg);
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        .stat-value { font-size: 2rem; font-weight: 700; color: var(--accent); }
+        .stat-label { color: var(--text-secondary); font-size: 0.875rem; text-transform: uppercase; letter-spacing: 0.05em; }
+
+        .filter-panel {
+            background: var(--card-bg);
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            align-items: center;
+            justify-content: center;
+        }
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        .filter-label {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+        }
+        .filter-select {
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            border: 1px solid #cbd5e1;
+            background: white;
+            color: var(--text-primary);
+            font-size: 0.9rem;
+            cursor: pointer;
+            min-width: 180px;
+        }
+        .filter-select:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+        }
+
+        .tournament-block {
+            background: var(--card-bg);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            border-left: 4px solid var(--accent);
+        }
+        .tournament-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+        .tournament-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            text-decoration: none;
+            color: var(--text-primary);
+        }
+        .tournament-title:hover { color: var(--accent); }
+
+        .games-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+            gap: 1rem;
+        }
+        .game-card {
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .game-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        .game-meta {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.75rem;
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            font-weight: 600;
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+        .badge-role-red { background: var(--role-red-bg); color: var(--role-red-text); }
+        .badge-role-sheriff { background: var(--role-sheriff-bg); color: var(--role-sheriff-text); }
+        .badge-role-mafia { background: var(--role-mafia-bg); color: var(--role-mafia-text); }
+        .badge-role-don { background: var(--role-don-bg); color: var(--role-don-text); }
+        
+        .badge-winner {
+            background: #d1fae5;
+            color: #065f46;
+            margin-left: auto;
+        }
+
+        .composition {
+            margin-top: 0.75rem;
+            padding-top: 0.75rem;
+            border-top: 1px dashed #d1d5db;
+        }
+
+        .player-list {
+            list-style: none;
+            counter-reset: player-counter;
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+            padding: 0;
+            margin: 0;
+        }
+        .player-item {
+            counter-increment: player-counter;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .player-item::before {
+            content: counter(player-counter) ".";
+            font-weight: 700;
+            color: var(--text-secondary);
+            min-width: 1.5rem;
+            font-size: 0.8rem;
+        }
+        
+        .player-tag {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.3rem 0.6rem;
+            border-radius: 0.4rem;
+            font-size: 0.82rem;
+            font-weight: 500;
+            border: 1px solid #e5e7eb;
+            transition: all 0.15s;
+            width: 100%;
+            justify-content: space-between;
+        }
+        
+        .player-name-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .player-points {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            font-weight: 600;
+            background: rgba(0,0,0,0.05);
+            padding: 2px 6px;
+            border-radius: 4px;
+            min-width: 35px;
+            text-align: right;
+        }
+        
+        .player-tag.role-red { background-color: var(--role-red-bg); color: var(--role-red-text); }
+        .player-tag.role-sheriff { background-color: var(--role-sheriff-bg); color: var(--role-sheriff-text); }
+        .player-tag.role-mafia { background-color: var(--role-mafia-bg); color: var(--role-mafia-text); }
+        .player-tag.role-don { background-color: var(--role-don-bg); color: var(--role-don-text); }
+        
+        .player-tag.play-lg { 
+            background-color: var(--role-lg-bg) !important; 
+            color: var(--role-lg-text) !important;
+            border-color: #86efac !important;
+            font-weight: 600;
+        }
+        
+        .player-tag.is-you {
+            border: 2px solid #f59e0b;
+            font-weight: 700;
+            box-shadow: 0 2px 8px rgba(245, 158, 11, 0.3);
+        }
+        .player-tag.is-you.play-lg {
+            background-color: var(--role-lg-bg) !important;
+            color: var(--role-lg-text) !important;
+            border: 2px solid #f59e0b !important;
+            font-weight: 700;
+            box-shadow: 0 2px 8px rgba(245, 158, 11, 0.3);
+        }
+
+        .play-icon {
+            font-size: 0.9rem;
+            line-height: 1;
+        }
+
+        .error-msg {
+            color: #dc2626;
+            background: #fee2e2;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            text-align: center;
+            margin-top: 1rem;
+        }
+        
+        .legend {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin: 1rem 0 2rem 0;
+            padding: 1rem;
+            background: white;
+            border-radius: 0.5rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #374151;
+        }
+        .legend-dot {
+            width: 14px;
+            height: 14px;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>🕵️ Визуализатор игр Mafia</h1>
+        <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">Загрузите JSON-файл, полученный из парсера, для красивого отображения</p>
+        
+        <div class="file-upload">
+            <button class="upload-btn">
+                <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
+                Выбрать JSON файл
+            </button>
+            <input type="file" id="jsonInput" accept=".json">
+        </div>
+        <div id="errorContainer"></div>
+    </header>
+
+    <main id="dashboard" style="display: none;">
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-value" id="statTournaments">0</div>
+                <div class="stat-label">Турниров</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="statGames">0</div>
+                <div class="stat-label">Игр найдено</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="statPlayer">-</div>
+                <div class="stat-label">Игрок</div>
+            </div>
+        </div>
+
+        <!-- ПАНЕЛЬ ФИЛЬТРОВ -->
+        <div class="filter-panel">
+            <div class="filter-group">
+                <label class="filter-label">Результат</label>
+                <select id="filterResult" class="filter-select" onchange="applyFilters()">
+                    <option value="all">Все результаты</option>
+                    <option value="win">✅ Победы</option>
+                    <option value="loss">❌ Поражения</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label class="filter-label">Команда</label>
+                <select id="filterRole" class="filter-select" onchange="applyFilters()">
+                    <option value="all">Все роли</option>
+                    <option value="red">Мирный или Шериф</option>
+                    <option value="black">Маф или Дон</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label class="filter-label">Качество игры</label>
+                <select id="filterQuality" class="filter-select" onchange="applyFilters()">
+                    <option value="all">Любое качество</option>
+                    <option value="y">🌟 Хорошо сыграл</option>
+                    <option value="r">🔻 Плохо сыграл</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label class="filter-label">Статус покидания</label>
+                <select id="filterLeave" class="filter-select" onchange="applyFilters()">
+                    <option value="all">Любой статус</option>
+                    <option value="lg">🚪 Первый покинувший</option>
+                    <option value="not_lg">Не первый покинувший</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="legend">
+            <div class="legend-item"><div class="legend-dot" style="background: #fee2e2; border: 1px solid #fca5a5;"></div>Мирный</div>
+            <div class="legend-item"><div class="legend-dot" style="background: #fef3c7; border: 1px solid #fcd34d;"></div>Шериф</div>
+            <div class="legend-item"><div class="legend-dot" style="background: #e5e7eb; border: 1px solid #9ca3af;"></div>Мафия</div>
+            <div class="legend-item"><div class="legend-dot" style="background: #ede9fe; border: 1px solid #c4b5fd;"></div>Дон</div>
+            <div class="legend-item"><div class="legend-dot" style="background: #dcfce7; border: 1px solid #86efac;"></div>Первый покинувший</div>
+            <div class="legend-item"><div class="legend-dot" style="background: white; border: 2px solid #f59e0b;"></div>Вы</div>
+            <div class="legend-item"><span class="play-icon">🌟</span> Хорошо</div>
+            <div class="legend-item"><span class="play-icon">🔻</span> Плохо</div>
+            <div class="legend-item"><span class="play-icon">🚪</span> Первый покинувший</div>
+        </div>
+
+        <div id="tournamentsContainer"></div>
+    </main>
+</div>
+
+<script>
+    let globalData = []; // Храним данные глобально для фильтрации
+
+    document.getElementById('jsonInput').addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = function(event) {
+            try {
+                const data = JSON.parse(event.target.result);
+                globalData = data; // Сохраняем данные
+                renderDashboard(data);
+            } catch (err) {
+                showError('Ошибка чтения JSON: файл поврежден или имеет неверный формат.');
+                console.error(err);
+            }
+        };
+        reader.readAsText(file);
+    });
+
+    function showError(msg) {
+        const container = document.getElementById('errorContainer');
+        container.innerHTML = `<div class="error-msg">${msg}</div>`;
+        document.getElementById('dashboard').style.display = 'none';
+    }
+
+    function extractPlayerName(data) {
+        for (const tournament of data) {
+            for (const game of tournament.games) {
+                if (Array.isArray(game.composition)) {
+                    const youPlayer = game.composition.find(p => p.isYou);
+                    if (youPlayer) return youPlayer.name;
+                } else if (typeof game.composition === 'string') {
+                    const players = game.composition.split(', ');
+                    for (const player of players) {
+                        if (player.includes('(Вы)')) {
+                            const match = player.match(/^([^,\[\]]+?)\s*\(Вы\)/);
+                            if (match) return match[1].trim();
+                        }
+                    }
+                }
+            }
+        }
+        return 'Неизвестно';
+    }
+
+    function getRoleClass(role) {
+        const r = role.toLowerCase();
+        if (r.includes('мирный')) return 'role-red';
+        if (r.includes('шериф')) return 'role-sheriff';
+        if (r.includes('маф')) return 'role-mafia';
+        if (r.includes('дон')) return 'role-don';
+        return 'role-red';
+    }
+
+    function getRoleBadgeClass(role) {
+        const r = role.toLowerCase();
+        if (r.includes('мирный')) return 'badge-role-red';
+        if (r.includes('шериф')) return 'badge-role-sheriff';
+        if (r.includes('маф')) return 'badge-role-mafia';
+        if (r.includes('дон')) return 'badge-role-don';
+        return 'badge-role-red';
+    }
+
+    function getPlayIcon(playType) {
+        switch (playType) {
+            case 'y': return '🌟';
+            case 'r': return '🔻';
+            case 'lg': return '🚪';
+            default: return '';
+        }
+    }
+
+    function formatComposition(compositionData) {
+        let html = '<ol class="player-list">';
+        
+        if (typeof compositionData === 'string') {
+            compositionData.split(', ').forEach(playerStr => {
+                const isYou = playerStr.includes('(Вы)');
+                const match = playerStr.match(/^([^,\[\]]+?)\s*(?:\(Вы\))?\s*\[([^\]]+)\]$/);
+                if (match) {
+                    const name = match[1].trim();
+                    const role = match[2].trim();
+                    const roleClass = getRoleClass(role);
+                    const youClass = isYou ? 'is-you' : '';
+                    html += `<li class="player-item"><span class="player-tag ${roleClass} ${youClass}">${name}</span></li>`;
+                } else {
+                    html += `<li class="player-item"><span class="player-tag ${isYou ? 'is-you' : ''}">${playerStr}</span></li>`;
+                }
+            });
+        } else if (Array.isArray(compositionData)) {
+            compositionData.forEach(p => {
+                const youClass = p.isYou ? 'is-you' : '';
+                const roleClass = getRoleClass(p.role);
+                const playType = p.playType || 'n';
+                const lgClass = playType === 'lg' ? 'play-lg' : '';
+                const playIcon = getPlayIcon(playType);
+                const points = p.points !== undefined ? p.points : 0;
+                
+                const pointsStr = points > 0 ? `+${points}` : `${points}`;
+                
+                html += `<li class="player-item">
+                    <span class="player-tag ${roleClass} ${youClass} ${lgClass}" title="Роль: ${p.role}">
+                        <span class="player-name-wrapper">
+                            ${p.name}
+                            ${playIcon ? `<span class="play-icon">${playIcon}</span>` : ''}
+                        </span>
+                        <span class="player-points">${pointsStr}</span>
+                    </span>
+                </li>`;
+            });
+        }
+        
+        html += '</ol>';
+        return html;
+    }
+
+    function applyFilters() {
+        if (globalData.length === 0) return;
+
+        const resultFilter = document.getElementById('filterResult').value;
+        const roleFilter = document.getElementById('filterRole').value;
+        const qualityFilter = document.getElementById('filterQuality').value;
+        const leaveFilter = document.getElementById('filterLeave').value;
+
+        renderDashboard(globalData, {
+            result: resultFilter,
+            role: roleFilter,
+            quality: qualityFilter,
+            leave: leaveFilter
+        });
+    }
+
+    function renderDashboard(data, filters = {}) {
+        document.getElementById('errorContainer').innerHTML = '';
+        document.getElementById('dashboard').style.display = 'block';
+        const container = document.getElementById('tournamentsContainer');
+        container.innerHTML = '';
+
+        let totalTournamentsWithGames = 0;
+        let totalGamesFound = 0;
+        const playerName = extractPlayerName(data);
+
+        data.forEach(tournament => {
+            // Фильтруем игры внутри турнира
+            const filteredGames = tournament.games.filter(game => {
+                // 1. Фильтр по результату
+                if (filters.result && filters.result !== 'all') {
+                    if (filters.result === 'win' && !game.isWin) return false;
+                    if (filters.result === 'loss' && game.isWin) return false;
+                }
+
+                // 2. Фильтр по команде (Мирный/Шериф или Маф/Дон)
+                if (filters.role && filters.role !== 'all') {
+                    const roleLower = game.role ? game.role.toLowerCase() : '';
+                    if (filters.role === 'red' && !roleLower.includes('мирный') && !roleLower.includes('шериф')) {
+                        return false;
+                    }
+                    if (filters.role === 'black' && !roleLower.includes('маф') && !roleLower.includes('дон')) {
+                        return false;
+                    }
+                }
+
+                // 3. Фильтр по качеству игры (ищем запись текущего игрока)
+                if (filters.quality && filters.quality !== 'all') {
+                    const youPlayer = Array.isArray(game.composition) ? game.composition.find(p => p.isYou) : null;
+                    if (!youPlayer || youPlayer.playType !== filters.quality) return false;
+                }
+
+                // 4. Фильтр по статусу покидания
+                if (filters.leave && filters.leave !== 'all') {
+                    const youPlayer = Array.isArray(game.composition) ? game.composition.find(p => p.isYou) : null;
+                    if (!youPlayer) return false;
+                    
+                    if (filters.leave === 'lg' && youPlayer.playType !== 'lg') return false;
+                    if (filters.leave === 'not_lg' && youPlayer.playType === 'lg') return false;
+                }
+
+                return true;
+            });
+
+            if (filteredGames.length > 0) {
+                totalTournamentsWithGames++;
+                totalGamesFound += filteredGames.length;
+
+                const tBlock = document.createElement('div');
+                tBlock.className = 'tournament-block';
+
+                const gamesHtml = filteredGames.map(game => {
+                    const resultBadge = game.isWin 
+                        ? `<span class="badge" style="background: #d1fae5; color: #065f46; margin-left: auto;">✅ Победа (${game.winner})</span>` 
+                        : `<span class="badge" style="background: #fee2e2; color: #991b1b; margin-left: auto;">❌ Поражение (${game.winner})</span>`;
+
+                    return `
+                        <div class="game-card">
+                            <div class="game-meta">
+                                <span>${game.gameNumber}</span>
+                                <span>${game.tableNumber}</span>
+                            </div>
+                            <div style="display: flex; gap: 0.5rem; margin-bottom: 0.5rem; flex-wrap: wrap;">
+                                <span class="badge ${getRoleBadgeClass(game.role)}">${game.role}</span>
+                                ${resultBadge}
+                            </div>
+                            <div class="composition">
+                                ${formatComposition(game.composition)}
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+
+                tBlock.innerHTML = `
+                    <div class="tournament-header">
+                        <a href="${tournament.url}" target="_blank" class="tournament-title">
+                            🏆 ${tournament.tournament} ↗
+                        </a>
+                        <span style="color: var(--text-secondary); font-size: 0.875rem;">
+                            Показано игр: ${filteredGames.length}
+                        </span>
+                    </div>
+                    <div class="games-grid">
+                        ${gamesHtml}
+                    </div>
+                `;
+                container.appendChild(tBlock);
+            }
+        });
+
+        document.getElementById('statTournaments').textContent = totalTournamentsWithGames;
+        document.getElementById('statGames').textContent = totalGamesFound;
+        document.getElementById('statPlayer').textContent = playerName;
+        
+        if (totalGamesFound === 0) {
+            container.innerHTML = '<p style="text-align: center; color: var(--text-secondary); padding: 2rem;">По выбранным фильтрам игр не найдено.</p>';
+        }
+    }
+</script>
+
+</body>
+</html>
