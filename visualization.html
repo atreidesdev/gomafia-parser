@@ -79,6 +79,84 @@
         .stat-value { font-size: 2rem; font-weight: 700; color: var(--accent); }
         .stat-label { color: var(--text-secondary); font-size: 0.875rem; text-transform: uppercase; letter-spacing: 0.05em; }
 
+        /* Новая секция статистики по ролям */
+        .role-stats-section {
+            background: var(--card-bg);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        .role-stats-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+            text-align: center;
+        }
+        .role-stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1rem;
+        }
+        .role-stat-card {
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            text-align: center;
+        }
+        .role-stat-header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+        }
+        .role-stat-icon {
+            width: 24px;
+            height: 24px;
+            border-radius: 4px;
+        }
+        .role-stat-name {
+            font-weight: 700;
+            font-size: 1rem;
+        }
+        .role-stat-details {
+            display: flex;
+            justify-content: space-around;
+            gap: 0.5rem;
+        }
+        .role-stat-item {
+            flex: 1;
+        }
+        .role-stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--accent);
+        }
+        .role-stat-label {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+        }
+        .overall-winrate {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 2px solid #e5e7eb;
+            text-align: center;
+        }
+        .overall-winrate-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #10b981;
+        }
+        .overall-winrate-label {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+        }
+
         .filter-panel {
             background: var(--card-bg);
             padding: 1.5rem;
@@ -88,13 +166,14 @@
             display: flex;
             flex-wrap: wrap;
             gap: 1rem;
-            align-items: center;
+            align-items: flex-start;
             justify-content: center;
         }
         .filter-group {
             display: flex;
             flex-direction: column;
             gap: 0.5rem;
+            min-width: 150px;
         }
         .filter-label {
             font-size: 0.8rem;
@@ -110,7 +189,7 @@
             color: var(--text-primary);
             font-size: 0.9rem;
             cursor: pointer;
-            min-width: 180px;
+            min-width: 150px;
         }
         .filter-select:focus {
             outline: none;
@@ -343,6 +422,18 @@
             </div>
         </div>
 
+        <!-- Секция статистики по ролям -->
+        <div class="role-stats-section" id="roleStatsSection">
+            <div class="role-stats-title">📊 Статистика по ролям</div>
+            <div class="role-stats-grid" id="roleStatsGrid">
+                <!-- Заполняется динамически -->
+            </div>
+            <div class="overall-winrate">
+                <div class="overall-winrate-value" id="overallWinrate">0%</div>
+                <div class="overall-winrate-label">Общий винрейт</div>
+            </div>
+        </div>
+
         <!-- ПАНЕЛЬ ФИЛЬТРОВ -->
         <div class="filter-panel">
             <div class="filter-group">
@@ -354,11 +445,35 @@
                 </select>
             </div>
             <div class="filter-group">
-                <label class="filter-label">Команда</label>
-                <select id="filterRole" class="filter-select" onchange="applyFilters()">
-                    <option value="all">Все роли</option>
-                    <option value="red">Мирный или Шериф</option>
-                    <option value="black">Маф или Дон</option>
+                <label class="filter-label">Мирный</label>
+                <select id="filterPeaceful" class="filter-select" onchange="applyFilters()">
+                    <option value="all">Любой</option>
+                    <option value="yes">Да</option>
+                    <option value="no">Нет</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label class="filter-label">Шериф</label>
+                <select id="filterSheriffRole" class="filter-select" onchange="applyFilters()">
+                    <option value="all">Любой</option>
+                    <option value="yes">Да</option>
+                    <option value="no">Нет</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label class="filter-label">Мафия</label>
+                <select id="filterMafia" class="filter-select" onchange="applyFilters()">
+                    <option value="all">Любая</option>
+                    <option value="yes">Да</option>
+                    <option value="no">Нет</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label class="filter-label">Дон</label>
+                <select id="filterDon" class="filter-select" onchange="applyFilters()">
+                    <option value="all">Любой</option>
+                    <option value="yes">Да</option>
+                    <option value="no">Нет</option>
                 </select>
             </div>
             <div class="filter-group">
@@ -373,8 +488,16 @@
                 <label class="filter-label">Статус покидания</label>
                 <select id="filterLeave" class="filter-select" onchange="applyFilters()">
                     <option value="all">Любой статус</option>
-                    <option value="lg">🚪 Первый покинувший</option>
+                    <option value="lg">Первый покинувший</option>
                     <option value="not_lg">Не первый покинувший</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label class="filter-label">Смерть шерифа</label>
+                <select id="filterSheriffDeath" class="filter-select" onchange="applyFilters()">
+                    <option value="all">Любой сценарий</option>
+                    <option value="yes">💀 Шериф убит в 1 ночь</option>
+                    <option value="no">🛡️ Шериф жив в 1 ночь</option>
                 </select>
             </div>
         </div>
@@ -388,7 +511,6 @@
             <div class="legend-item"><div class="legend-dot" style="background: white; border: 2px solid #f59e0b;"></div>Вы</div>
             <div class="legend-item"><span class="play-icon">🌟</span> Хорошо</div>
             <div class="legend-item"><span class="play-icon">🔻</span> Плохо</div>
-            <div class="legend-item"><span class="play-icon">🚪</span> Первый покинувший</div>
         </div>
 
         <div id="tournamentsContainer"></div>
@@ -464,7 +586,6 @@
         switch (playType) {
             case 'y': return '🌟';
             case 'r': return '🔻';
-            case 'lg': return '🚪';
             default: return '';
         }
     }
@@ -513,20 +634,117 @@
         return html;
     }
 
+    // Функция проверки смерти шерифа в первую ночь
+    function checkSheriffDiedFirstNight(compositionData) {
+        if (!Array.isArray(compositionData)) return null;
+        
+        // Ищем шерифа
+        const sheriff = compositionData.find(p => p.role && p.role.toLowerCase().includes('шериф'));
+        if (!sheriff) return null; // Шерифа нет в составе
+        
+        // Проверяем, был ли он первым покинувшим
+        return sheriff.playType === 'lg';
+    }
+
+    // Функция для расчета статистики по ролям
+    function calculateRoleStats(data) {
+        const stats = {
+            peaceful: { games: 0, wins: 0 },
+            sheriff: { games: 0, wins: 0 },
+            mafia: { games: 0, wins: 0 },
+            don: { games: 0, wins: 0 }
+        };
+        
+        let totalGames = 0;
+        let totalWins = 0;
+        
+        data.forEach(tournament => {
+            tournament.games.forEach(game => {
+                const roleLower = game.role ? game.role.toLowerCase() : '';
+                const isWin = game.isWin;
+                
+                totalGames++;
+                if (isWin) totalWins++;
+                
+                if (roleLower.includes('мирный')) {
+                    stats.peaceful.games++;
+                    if (isWin) stats.peaceful.wins++;
+                }
+                if (roleLower.includes('шериф')) {
+                    stats.sheriff.games++;
+                    if (isWin) stats.sheriff.wins++;
+                }
+                if (roleLower.includes('маф')) {
+                    stats.mafia.games++;
+                    if (isWin) stats.mafia.wins++;
+                }
+                if (roleLower.includes('дон')) {
+                    stats.don.games++;
+                    if (isWin) stats.don.wins++;
+                }
+            });
+        });
+        
+        return { stats, totalGames, totalWins };
+    }
+
+    // Функция для отображения статистики по ролям
+    function renderRoleStats(data) {
+        const { stats, totalGames, totalWins } = calculateRoleStats(data);
+        const grid = document.getElementById('roleStatsGrid');
+        
+        const roles = [
+            { key: 'peaceful', name: 'Мирный', color: '#fee2e2', textColor: '#991b1b' },
+            { key: 'sheriff', name: 'Шериф', color: '#fef3c7', textColor: '#92400e' },
+            { key: 'mafia', name: 'Мафия', color: '#e5e7eb', textColor: '#374151' },
+            { key: 'don', name: 'Дон', color: '#ede9fe', textColor: '#5b21b6' }
+        ];
+        
+        grid.innerHTML = roles.map(role => {
+            const roleStats = stats[role.key];
+            const winrate = roleStats.games > 0 ? Math.round((roleStats.wins / roleStats.games) * 100) : 0;
+            
+            return `
+                <div class="role-stat-card">
+                    <div class="role-stat-header">
+                        <div class="role-stat-icon" style="background: ${role.color}; border: 1px solid ${role.textColor};"></div>
+                        <div class="role-stat-name">${role.name}</div>
+                    </div>
+                    <div class="role-stat-details">
+                        <div class="role-stat-item">
+                            <div class="role-stat-value">${roleStats.games}</div>
+                            <div class="role-stat-label">Игр</div>
+                        </div>
+                        <div class="role-stat-item">
+                            <div class="role-stat-value" style="color: ${winrate >= 50 ? '#10b981' : '#ef4444'}">${winrate}%</div>
+                            <div class="role-stat-label">Побед</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }).join('');
+        
+        // Общий винрейт
+        const overallWinrate = totalGames > 0 ? Math.round((totalWins / totalGames) * 100) : 0;
+        document.getElementById('overallWinrate').textContent = overallWinrate + '%';
+    }
+
     function applyFilters() {
         if (globalData.length === 0) return;
 
-        const resultFilter = document.getElementById('filterResult').value;
-        const roleFilter = document.getElementById('filterRole').value;
-        const qualityFilter = document.getElementById('filterQuality').value;
-        const leaveFilter = document.getElementById('filterLeave').value;
+        const filters = {
+            result: document.getElementById('filterResult').value,
+            peaceful: document.getElementById('filterPeaceful').value,
+            sheriff: document.getElementById('filterSheriffRole').value,
+            mafia: document.getElementById('filterMafia').value,
+            don: document.getElementById('filterDon').value,
+            quality: document.getElementById('filterQuality').value,
+            leave: document.getElementById('filterLeave').value,
+            sheriffDeath: document.getElementById('filterSheriffDeath').value
+        };
 
-        renderDashboard(globalData, {
-            result: resultFilter,
-            role: roleFilter,
-            quality: qualityFilter,
-            leave: leaveFilter
-        });
+        console.log('Применяем фильтры:', filters);
+        renderDashboard(globalData, filters);
     }
 
     function renderDashboard(data, filters = {}) {
@@ -535,43 +753,81 @@
         const container = document.getElementById('tournamentsContainer');
         container.innerHTML = '';
 
+        // Рендерим статистику по ролям (не зависит от фильтров)
+        renderRoleStats(data);
+
         let totalTournamentsWithGames = 0;
         let totalGamesFound = 0;
         const playerName = extractPlayerName(data);
 
+        // Проверяем, есть ли активные фильтры по ролям (значение "yes")
+        const hasRoleYesFilters = 
+            filters.peaceful === 'yes' || 
+            filters.sheriff === 'yes' || 
+            filters.mafia === 'yes' || 
+            filters.don === 'yes';
+
         data.forEach(tournament => {
             // Фильтруем игры внутри турнира
             const filteredGames = tournament.games.filter(game => {
+                const roleLower = game.role ? game.role.toLowerCase() : '';
+                
                 // 1. Фильтр по результату
                 if (filters.result && filters.result !== 'all') {
                     if (filters.result === 'win' && !game.isWin) return false;
                     if (filters.result === 'loss' && game.isWin) return false;
                 }
 
-                // 2. Фильтр по команде (Мирный/Шериф или Маф/Дон)
-                if (filters.role && filters.role !== 'all') {
-                    const roleLower = game.role ? game.role.toLowerCase() : '';
-                    if (filters.role === 'red' && !roleLower.includes('мирный') && !roleLower.includes('шериф')) {
-                        return false;
+                // 2-5. Фильтры по ролям (работают как ИЛИ между собой)
+                if (hasRoleYesFilters) {
+                    // Если хотя бы один фильтр роли установлен в "yes",
+                    // проверяем соответствие ЛЮБОМУ из них
+                    let roleMatch = false;
+                    
+                    if (filters.peaceful === 'yes' && roleLower.includes('мирный')) {
+                        roleMatch = true;
                     }
-                    if (filters.role === 'black' && !roleLower.includes('маф') && !roleLower.includes('дон')) {
-                        return false;
+                    if (filters.sheriff === 'yes' && roleLower.includes('шериф')) {
+                        roleMatch = true;
                     }
+                    if (filters.mafia === 'yes' && roleLower.includes('маф')) {
+                        roleMatch = true;
+                    }
+                    if (filters.don === 'yes' && roleLower.includes('дон')) {
+                        roleMatch = true;
+                    }
+                    
+                    // Если ни одному фильтру "yes" не соответствует - отфильтровываем
+                    if (!roleMatch) return false;
                 }
+                
+                // Обработка фильтров "no" (исключаем эти роли)
+                if (filters.peaceful === 'no' && roleLower.includes('мирный')) return false;
+                if (filters.sheriff === 'no' && roleLower.includes('шериф')) return false;
+                if (filters.mafia === 'no' && roleLower.includes('маф')) return false;
+                if (filters.don === 'no' && roleLower.includes('дон')) return false;
 
-                // 3. Фильтр по качеству игры (ищем запись текущего игрока)
+                // 6. Фильтр по качеству игры (ищем запись текущего игрока)
                 if (filters.quality && filters.quality !== 'all') {
                     const youPlayer = Array.isArray(game.composition) ? game.composition.find(p => p.isYou) : null;
                     if (!youPlayer || youPlayer.playType !== filters.quality) return false;
                 }
 
-                // 4. Фильтр по статусу покидания
+                // 7. Фильтр по статусу покидания
                 if (filters.leave && filters.leave !== 'all') {
                     const youPlayer = Array.isArray(game.composition) ? game.composition.find(p => p.isYou) : null;
                     if (!youPlayer) return false;
                     
                     if (filters.leave === 'lg' && youPlayer.playType !== 'lg') return false;
                     if (filters.leave === 'not_lg' && youPlayer.playType === 'lg') return false;
+                }
+
+                // 8. Фильтр по смерти шерифа в первую ночь
+                if (filters.sheriffDeath && filters.sheriffDeath !== 'all') {
+                    const sheriffDied = checkSheriffDiedFirstNight(game.composition);
+                    
+                    if (filters.sheriffDeath === 'yes' && !sheriffDied) return false;
+                    if (filters.sheriffDeath === 'no' && (sheriffDied || sheriffDied === null)) return false;
                 }
 
                 return true;
