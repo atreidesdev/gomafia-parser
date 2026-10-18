@@ -540,13 +540,13 @@ tbody td:first-child {
             <div class="heatmap-controls">
                 <label style="font-weight: 600; font-size: 0.9rem;">Режим отображения:</label>
                 <select id="heatmapMode" class="filter-select" onchange="renderHeatmap()">
-                    <option value="all_together" selected>Общий винрейт (мин. 10 игр)</option>
+                    <option value="all_together" selected>Все игры за столом (мин. 10 игр)</option>
                     <option value="together_red">🟥 Вместе Красные (мин. 5 игр)</option>
                     <option value="together_black">⬛ Вместе Черные (мин. 5 игр)</option>
+                    <option value="same_color_all">Одноцвет (Кр+Ч вместе, мин. 10 игр)</option>
                     <option value="opposite_me_red">🟥 Вы (Кр) vs ⬛ Они (мин. 5 игр)</option>
                     <option value="opposite_me_black">⬛ Вы (Ч) vs 🟥 Они (мин. 5 игр)</option>
                     <option value="all_opposite">Разноцвет (мин. 10 игр)</option>
-                    <option value="same_color_all">Одноцвет (Кр+Ч вместе, мин. 10 игр)</option>
                 </select>
 
                 <label style="font-weight: 600; font-size: 0.9rem; margin-left: auto;">Сортировка:</label>
@@ -899,7 +899,8 @@ tbody td:first-child {
             
             // Определяем количество игр в зависимости от режима
             if (mode === 'all_together') {
-                games = p.togetherRed + p.togetherBlack;
+                // 🔥 ВСЕ игры за столом (сумма всех типов взаимодействий)
+                games = p.togetherRed + p.togetherBlack + p.playerRedOtherBlack + p.playerBlackOtherRed;
                 return games >= 10;
             } else if (mode === 'same_color_all') {
                 // Одноцвет: сумма красных и черных вместе
@@ -925,7 +926,11 @@ tbody td:first-child {
         }).map(p => {
             // Добавляем вычисленные поля для текущего режима
             let games = 0, wins = 0;
-            if (mode === 'all_together' || mode === 'same_color_all') {
+            if (mode === 'all_together') {
+                // 🔥 Считаем все победы во всех типах игр
+                games = p.togetherRed + p.togetherBlack + p.playerRedOtherBlack + p.playerBlackOtherRed;
+                wins = p.winsTogetherRed + p.winsTogetherBlack + p.winsPlayerRedOtherBlack + p.winsPlayerBlackOtherRed;
+            } else if (mode === 'same_color_all') {
                 games = p.togetherRed + p.togetherBlack;
                 wins = p.winsTogetherRed + p.winsTogetherBlack;
             } else if (mode === 'together_red') {
