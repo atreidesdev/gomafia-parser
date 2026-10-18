@@ -105,6 +105,54 @@
         .summary-value { font-size: 2rem; font-weight: 800; color: var(--accent); }
         .summary-label { color: var(--text-secondary); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em; margin-top: 0.5rem; }
 
+        /* 🔥 Новая сетка для статистики по ролям */
+        .role-stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        .role-stat-card {
+            background: var(--card-bg);
+            border-radius: 0.75rem;
+            padding: 1.25rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-left: 5px solid transparent;
+        }
+        .role-stat-info h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+            color: var(--text-primary);
+        }
+        .role-stat-info p {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+        .role-stat-values {
+            text-align: right;
+        }
+        .role-stat-wr {
+            font-size: 1.5rem;
+            font-weight: 800;
+            line-height: 1;
+        }
+        .role-stat-pts {
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-top: 0.25rem;
+        }
+
+        /* Цвета границ для карточек ролей */
+        .border-red { border-left-color: var(--role-red-text); }
+        .border-sheriff { border-left-color: var(--role-sheriff-text); }
+        .border-mafia { border-left-color: var(--role-mafia-text); }
+        .border-don { border-left-color: var(--role-don-text); }
+
+
         .section {
             background: var(--card-bg);
             border-radius: 0.75rem;
@@ -489,6 +537,7 @@ tbody td:first-child {
     </header>
 
     <div id="dashboard" class="hidden">
+        <!-- Основная сводка -->
         <div class="summary-grid">
             <div class="summary-card">
                 <div class="summary-value" id="playerName">-</div>
@@ -500,16 +549,17 @@ tbody td:first-child {
             </div>
             <div class="summary-card">
                 <div class="summary-value" id="overallWinrate">0%</div>
-                <div class="summary-label">Винрейт</div>
+                <div class="summary-label">Общий винрейт</div>
             </div>
             <div class="summary-card">
                 <div class="summary-value" id="avgPoints">0.00</div>
-                <div class="summary-label">Ср. баллы</div>
+                <div class="summary-label">Общий ср. балл</div>
             </div>
-            <div class="summary-card" title="KPI = (Победы × 10) + (Сумма баллов × 5)">
-                <div class="summary-value" id="kpiScore" style="cursor: help;">0</div>
-                <div class="summary-label">KPI Эффективности ℹ️</div>
-            </div>
+        </div>
+
+        <!-- 🔥 Статистика по ролям -->
+        <div class="role-stats-grid" id="roleStatsContainer">
+            <!-- Заполняется JS -->
         </div>
 
         <!-- Секция Графиков -->
@@ -662,12 +712,16 @@ tbody td:first-child {
         let targetTotalWins = 0;
         let targetTotalPoints = 0;
         const playerStats = {};
-        const tournamentResults = [];
+        
+        // Для статистики по ролям
+        const roleStats = {
+            'Мирный': { games: 0, wins: 0, points: 0 },
+            'Шериф': { games: 0, wins: 0, points: 0 },
+            'Мафия': { games: 0, wins: 0, points: 0 },
+            'Дон': { games: 0, wins: 0, points: 0 }
+        };
 
         data.forEach(tournament => {
-            let tGames = 0;
-            let tWins = 0;
-
             tournament.games.forEach(game => {
                 const targetRecord = game.composition.find(p => p.isYou);
                 if (!targetRecord) return;
@@ -675,11 +729,22 @@ tbody td:first-child {
                 targetPlayerName = targetRecord.name;
                 targetTotalGames++;
                 targetTotalPoints += (targetRecord.points || 0);
-                if (game.isWin) {
-                    targetTotalWins++;
-                    tWins++;
+                if (game.isWin) targetTotalWins++;
+
+                // 🔥 Исправленная логика сбора статистики по ролям
+                const r = targetRecord.role.toLowerCase();
+                let roleKey = '';
+                
+                if (r.includes('мирный')) roleKey = 'Мирный';
+                else if (r.includes('шериф')) roleKey = 'Шериф';
+                else if (r.includes('маф')) roleKey = 'Мафия'; // Ловит "Маф", "Мафия"
+                else if (r.includes('дон')) roleKey = 'Дон';
+
+                if (roleKey && roleStats[roleKey]) {
+                    roleStats[roleKey].games++;
+                    roleStats[roleKey].points += (targetRecord.points || 0);
+                    if (game.isWin) roleStats[roleKey].wins++;
                 }
-                tGames++;
 
                 const targetIsRed = (targetRecord.role === 'Мирный' || targetRecord.role === 'Шериф');
                 
@@ -736,13 +801,6 @@ tbody td:first-child {
                     }
                 });
             });
-
-            if (tGames > 0) {
-                tournamentResults.push({
-                    name: tournament.tournament,
-                    wr: (tWins / tGames) * 100
-                });
-            }
         });
 
         globalPlayerData = Object.values(playerStats).map(p => {
@@ -764,20 +822,57 @@ tbody td:first-child {
         const avgPts = targetTotalGames > 0 ? (targetTotalPoints / targetTotalGames).toFixed(2) : "0.00";
         document.getElementById('avgPoints').textContent = avgPts;
 
-        const kpi = targetTotalGames > 0 ? ((targetTotalWins * 10) + (targetTotalPoints * 5)).toFixed(0) : 0;
-        document.getElementById('kpiScore').textContent = kpi;
+        // Рендер статистики по ролям
+        renderRoleStats(roleStats);
 
         renderCharts(data);
-        renderHeatmap(); // Инициализация тепловой карты
+        renderHeatmap(); 
         renderTable();
         document.getElementById('dashboard').classList.remove('hidden');
+    }
+
+    function renderRoleStats(stats) {
+        const container = document.getElementById('roleStatsContainer');
+        container.innerHTML = '';
+
+        const roles = [
+            { key: 'Мирный', label: 'Мирный', border: 'border-red' },
+            { key: 'Шериф', label: 'Шериф', border: 'border-sheriff' },
+            { key: 'Мафия', label: 'Мафия', border: 'border-mafia' },
+            { key: 'Дон', label: 'Дон', border: 'border-don' }
+        ];
+
+        roles.forEach(role => {
+            const data = stats[role.key];
+            const wr = data.games > 0 ? ((data.wins / data.games) * 100).toFixed(1) : 0;
+            const avgPts = data.games > 0 ? (data.points / data.games).toFixed(2) : "0.00";
+            
+            // Цвет винрейта
+            let wrColorClass = 'text-neutral';
+            if (wr >= 60) wrColorClass = 'text-success';
+            else if (wr <= 40 && data.games > 0) wrColorClass = 'text-danger';
+
+            const html = `
+                <div class="role-stat-card ${role.border}">
+                    <div class="role-stat-info">
+                        <h3>${role.label}</h3>
+                        <p>${data.games} игр</p>
+                    </div>
+                    <div class="role-stat-values">
+                        <div class="role-stat-wr ${wrColorClass}">${wr}%</div>
+                        <div class="role-stat-pts">Ср. балл: ${avgPts}</div>
+                    </div>
+                </div>
+            `;
+            container.innerHTML += html;
+        });
     }
 
     function renderCharts(data) {
         const isDark = document.body.classList.contains('dark-mode');
         const textColor = isDark ? '#f1f5f9' : '#0f172a';
 
-        // 1. График Ролей (Исправлено: жесткий подсчет по данным JSON)
+        // 1. График Ролей
         let countPeaceful = 0;
         let countSheriff = 0;
         let countMafia = 0;
@@ -790,13 +885,11 @@ tbody td:first-child {
                     const r = me.role.toLowerCase();
                     if (r.includes('мирный')) countPeaceful++;
                     else if (r.includes('шериф')) countSheriff++;
-                    else if (r.includes('маф')) countMafia++; // Ловит "Маф", "Мафия", "mafia"
+                    else if (r.includes('маф')) countMafia++; 
                     else if (r.includes('дон')) countDon++;
                 }
             });
         });
-
-        console.log(`Статистика ролей: Мирный=${countPeaceful}, Шериф=${countSheriff}, Мафия=${countMafia}, Дон=${countDon}`);
 
         if (rolesChartInstance) rolesChartInstance.destroy();
         rolesChartInstance = new Chart(document.getElementById('rolesChart'), {
@@ -806,16 +899,16 @@ tbody td:first-child {
                 datasets: [{
                     data: [countPeaceful, countSheriff, countMafia, countDon],
                     backgroundColor: [
-                        '#fee2e2', // Мирный (Светло-красный)
-                        '#fef3c7', // Шериф (Желтый)
-                        '#e5e7eb', // Мафия (Серый)
-                        '#ede9fe'  // Дон (Фиолетовый)
+                        '#fee2e2', // Мирный
+                        '#fef3c7', // Шериф
+                        '#e5e7eb', // Мафия
+                        '#ede9fe'  // Дон
                     ],
                     borderColor: [
-                        '#fca5a5', // Red border
-                        '#fde047', // Sheriff border
-                        '#9ca3af', // Mafia border
-                        '#d8b4fe'  // Don border
+                        '#fca5a5', 
+                        '#fde047', 
+                        '#9ca3af', 
+                        '#d8b4fe'  
                     ],
                     borderWidth: 2
                 }]
@@ -832,8 +925,8 @@ tbody td:first-child {
             }
         });
 
-        // 2. График Тренда (Исправлено: убраны подписи снизу, полные названия в tooltip)
-        const labels = data.map(t => t.tournament); // Используем полное название для данных
+        // 2. График Тренда
+        const labels = data.map(t => t.tournament); 
         const wrData = data.map(t => {
             const wins = t.games.filter(g => g.isWin && g.composition.some(p => p.isYou)).length;
             const total = t.games.filter(g => g.composition.some(p => p.isYou)).length;
@@ -866,7 +959,7 @@ tbody td:first-child {
                         ticks: { color: textColor } 
                     },
                     x: { 
-                        display: false, // 🔥 Скрываем подписи снизу полностью
+                        display: false, 
                         ticks: { display: false } 
                     }
                 },
@@ -875,7 +968,6 @@ tbody td:first-child {
                     tooltip: {
                         callbacks: {
                             title: function(context) {
-                                // 🔥 Возвращаем полное название турнира без сокращений
                                 return context[0].label;
                             }
                         }
@@ -885,25 +977,21 @@ tbody td:first-child {
         });
     }
 
-    // Логика Тепловой Карты с Фильтрами и Пагинацией
+    // Логика Тепловой Карты
     function renderHeatmap() {
         const container = document.getElementById('heatmapContainer');
         const sortType = document.getElementById('heatmapSort').value;
         const mode = document.getElementById('heatmapMode').value;
         
-        // Сброс пагинации при смене фильтра
         heatmapDisplayCount = 20;
 
         let partners = globalPlayerData.filter(p => {
             let games = 0;
             
-            // Определяем количество игр в зависимости от режима
             if (mode === 'all_together') {
-                // 🔥 ВСЕ игры за столом (сумма всех типов взаимодействий)
                 games = p.togetherRed + p.togetherBlack + p.playerRedOtherBlack + p.playerBlackOtherRed;
                 return games >= 10;
             } else if (mode === 'same_color_all') {
-                // Одноцвет: сумма красных и черных вместе
                 games = p.togetherRed + p.togetherBlack;
                 return games >= 10;
             } else if (mode === 'together_red') {
@@ -924,10 +1012,8 @@ tbody td:first-child {
             }
             return false;
         }).map(p => {
-            // Добавляем вычисленные поля для текущего режима
             let games = 0, wins = 0;
             if (mode === 'all_together') {
-                // 🔥 Считаем все победы во всех типах игр
                 games = p.togetherRed + p.togetherBlack + p.playerRedOtherBlack + p.playerBlackOtherRed;
                 wins = p.winsTogetherRed + p.winsTogetherBlack + p.winsPlayerRedOtherBlack + p.winsPlayerBlackOtherRed;
             } else if (mode === 'same_color_all') {
@@ -958,7 +1044,6 @@ tbody td:first-child {
             };
         });
 
-        // Сортировка
         partners.sort((a, b) => {
             if (sortType === 'games_desc') return b.currentGames - a.currentGames;
             if (sortType === 'wr_desc') return b.currentWR - a.currentWR;
@@ -975,22 +1060,15 @@ tbody td:first-child {
         const btn = document.getElementById('loadMoreHeatmap');
         
         const visibleData = sortedHeatmapData.slice(0, heatmapDisplayCount);
-        
-        // Очищаем и рисуем заново
         container.innerHTML = '';
         
         visibleData.forEach(p => {
             const wr = Math.round(p.currentWR * 100);
             
-            // Цветовая схема: 
-            // <= 39%: Красный (Hue 0)
-            // >= 40%: Зеленый (Hue 120), становится насыщеннее с ростом %
             let hue;
             if (wr < 40) {
-                hue = 0; // Красный
+                hue = 0; 
             } else {
-                // Интерполяция от 40% до 100% в диапазон Hue 100 (зелено-изумрудный) до 140 (яркий зеленый)
-                // Нормализуем wr от 40 до 100 в диапазон 0-1
                 const normalized = (wr - 40) / 60;
                 hue = 100 + (normalized * 40); 
             }
@@ -1012,7 +1090,6 @@ tbody td:first-child {
             container.appendChild(cell);
         });
 
-        // Управление кнопкой
         if (heatmapDisplayCount >= sortedHeatmapData.length) {
             btn.style.display = 'none';
         } else {
