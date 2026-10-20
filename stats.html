@@ -901,6 +901,12 @@ tbody tr:hover td:first-child{background-color: var(--card-bg-subtle);}
 }
 .copy-btn:hover{background: var(--card-bg-subtle); color: var(--accent); border-color: var(--accent);}
 .copy-btn.copied{background: var(--success-soft); color: var(--success); border-color: var(--success);}
+.game-copy-btn{
+  padding: 0.15rem 0.4rem;
+  font-size: 0.72rem;
+  line-height: 1.2;
+  flex-shrink: 0;
+}
 .games-grid{
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
@@ -1305,7 +1311,7 @@ body.dark-mode .player-points{background: rgba(255,255,255,0.08);}
 
     <div class="viz-toolbar">
       <input type="text" id="playerSearch" class="search-input"
-             placeholder="🔍 Поиск по игроку" oninput="onPlayerSearchInput()">
+             placeholder="🔍 Игрок или несколько через запятую" oninput="onPlayerSearchInput()">
       <select id="sortMode" class="filter-select" onchange="applyVizFilters()">
         <option value="date">📅 По порядку (файл)</option>
         <option value="result">✅ По результату</option>
@@ -1397,8 +1403,8 @@ body.dark-mode .player-points{background: rgba(255,255,255,0.08);}
           <option value="together_red">🟥 Вместе Красные (≥5)</option>
           <option value="together_black">⬛ Вместе Черные (≥5)</option>
           <option value="same_color_all">Одноцвет (≥10)</option>
-          <option value="opposite_me_red">🟥 Я (Кр) vs ⬛ Они (≥5)</option>
-          <option value="opposite_me_black">⬛ Я (Ч) vs 🟥 Они (≥5)</option>
+          <option value="opposite_me_red">🟥 Я vs ⬛ Они (≥5)</option>
+          <option value="opposite_me_black">⬛ Я vs 🟥 Они (≥5)</option>
           <option value="all_opposite">Разноцвет (≥10)</option>
         </select>
         <label style="font-weight:600;font-size:.85rem;color:var(--text-secondary);margin-left:auto;">СОРТИРОВКА:</label>
@@ -1441,8 +1447,8 @@ body.dark-mode .player-points{background: rgba(255,255,255,0.08);}
               <th rowspan="2" onclick="sortTable(2)" data-col="2">Ср. баллы</th>
               <th colspan="2" class="header-peaceful-sheriff no-sort">🟥 Вместе (Кр)</th>
               <th colspan="2" class="header-sheriff-vs-black no-sort">⬛ Вместе (Ч)</th>
-              <th colspan="2" class="header-peaceful-sheriff no-sort">🟥 Я (Кр) vs ⬛</th>
-              <th colspan="2" class="header-sheriff-vs-black no-sort">⬛ Я (Ч) vs 🟥</th>
+              <th colspan="2" class="header-peaceful-sheriff no-sort">🟥 Я vs ⬛</th>
+              <th colspan="2" class="header-sheriff-vs-black no-sort">⬛ Я vs 🟥</th>
             </tr>
             <tr>
               <th onclick="sortTable(3)" data-col="3">Игры</th>
@@ -1783,6 +1789,40 @@ function fallbackCopy(text, cb) {
     cb && cb();
   } catch (e) {
     console.warn('Copy failed', e);
+  }
+}
+
+// ----- Скопировать инфо об игре: "Турнир, СТОЛ N" -----
+function buildGameCopyText(tournamentName, tableNumber) {
+  const raw = String(tournamentName || '').trim();
+  const commaIdx = raw.indexOf(',');
+  const t = (commaIdx === -1 ? raw : raw.slice(0, commaIdx)).trim();
+
+  let table = String(tableNumber || '').trim();
+  if (!table) return t;
+  if (/стол/i.test(table)) {
+    table = table.replace(/^стол\s*/i, 'СТОЛ ');
+  } else {
+    table = 'СТОЛ ' + table;
+  }
+  return t ? `${t}, ${table}` : table;
+}
+
+function copyGameInfo(text, btn) {
+  if (!text) return;
+  const done = () => {
+    if (!btn) return;
+    btn.classList.add('copied');
+    btn.textContent = '✓';
+    setTimeout(() => {
+      btn.classList.remove('copied');
+      btn.textContent = '📋';
+    }, 1200);
+  };
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(done).catch(() => fallbackCopy(text, done));
+  } else {
+    fallbackCopy(text, done);
   }
 }
 
@@ -2291,7 +2331,11 @@ function renderTournaments() {
 
   const filters = state.filters;
   const sortMode = state.sortMode;
-  const searchTerm = (document.getElementById('playerSearch').value || '').trim().toLowerCase();
+  const searchRaw = (document.getElementById('playerSearch').value || '').trim().toLowerCase();
+  const searchTerms = searchRaw
+    ? searchRaw.split(',').map(t => t.trim()).filter(Boolean)
+    : [];
+  const isMultiSearch = searchTerms.length > 1;
   let totalTournaments = 0, totalGames = 0;
 
   state.rawData.forEach(tournament => {
@@ -2300,10 +2344,14 @@ function renderTournaments() {
 
     let games = tournament.games.filter(g => {
       if (!gamePassesFilters(g, filters)) return false;
-      if (searchTerm) {
+      if (searchTerms.length) {
         if (!Array.isArray(g.composition)) return false;
-        if (!g.composition.some(p =>
-            (p.name || '').toLowerCase().includes(searchTerm))) return false;
+        const names = g.composition.map(p => (p.name || '').toLowerCase());
+        for (const term of searchTerms) {
+          if (!names.some(n => n.includes(term))) return false;
+        }
+        // для мультипоиска требуем, чтобы в игре был загруженный игрок
+        if (isMultiSearch && !g.composition.some(p => p.isYou)) return false;
       }
       return true;
     });
@@ -2419,7 +2467,10 @@ function renderTournaments() {
     if (totalGames === 0) {
       infoEl.textContent = 'По выбранным фильтрам игр не найдено';
     } else {
-      infoEl.innerHTML = `Найдено: <b>${totalGames}</b> ${pluralize(totalGames, 'игра', 'игры', 'игр')} · <b>${totalTournaments}</b> ${pluralize(totalTournaments, 'турнир', 'турнира', 'турниров')}`;
+      const searchHint = searchTerms.length
+        ? ` · поиск: <b>${escapeHtml(searchTerms.join(' + '))}</b>`
+        : '';
+      infoEl.innerHTML = `Найдено: <b>${totalGames}</b> ${pluralize(totalGames, 'игра', 'игры', 'игр')} · <b>${totalTournaments}</b> ${pluralize(totalTournaments, 'турнир', 'турнира', 'турниров')}${searchHint}`;
     }
   }
   if (totalGames === 0) {
@@ -2443,10 +2494,21 @@ function renderGameCard(game, tournament) {
     ? `<div class="game-mvp"><strong>MVP:</strong> ${game.mvp.map(m => `${m.name} (${m.role}, ${m.points})`).join(', ')}</div>`
     : '';
 
+  const copyText = buildGameCopyText(tournament.tournament, game.tableNumber);
+  const copyBtn = copyText
+    ? `<button class="copy-btn game-copy-btn" type="button"
+         title="Скопировать: ${escapeHtml(copyText)}"
+         data-copy-text="${escapeHtml(copyText)}"
+         onclick="event.preventDefault();event.stopPropagation();copyGameInfo(this.dataset.copyText,this);return false;">📋</button>`
+    : '';
+
   return `<div class="game-card">
     <div class="game-meta">
       <span>${game.gameNumber || ''}</span>
-      <span>${game.tableNumber || ''}${judge ? ' · ' + judge : ''}</span>
+      <span style="display:inline-flex;align-items:center;gap:.4rem;flex-wrap:wrap;">
+        <span>${game.tableNumber || ''}${judge ? ' · ' + judge : ''}</span>
+        ${copyBtn}
+      </span>
     </div>
     ${mvpHtml}
     <div style="display:flex;gap:.5rem;margin-bottom:.5rem;flex-wrap:wrap;align-items:center;">
@@ -3156,12 +3218,14 @@ function renderTable() {
     if (p.playerBlackOtherRed > maxes.playerBlackOtherRed) maxes.playerBlackOtherRed = p.playerBlackOtherRed;
   });
 
-  const gamesTd = (n, maxN) => {
+  const gamesTd = (n, maxN, playerName, matchType, title) => {
     if (n === 0) return '<td style="color:var(--text-muted);text-align:center;">0</td>';
     const intensity = Math.min(1, n / Math.max(maxN, 10));
     const alpha = (0.06 + intensity * 0.26).toFixed(2);
+    const escapedName = playerName.replace(/'/g, "\\'");
+    const escapedTitle = (title || '').replace(/'/g, "\\'");
     return `<td style="text-align:center;">
-      <span style="display:inline-block;padding:.2rem .55rem;border-radius:6px;font-weight:700;background:rgba(59,130,246,${alpha});">${n}</span>
+      <span class="clickable-num" style="background:rgba(59,130,246,${alpha});" onclick="openModal('${escapedName}', '${matchType || ''}', '${escapedTitle}')">${n}</span>
     </td>`;
   };
 
@@ -3187,12 +3251,12 @@ function renderTable() {
       <td style="font-weight:600;text-align:left;">
         <span class="player-name-clickable" onclick="openModal('${p.name.replace(/'/g,"\\'")}')">${p.name}</span>
       </td>
-      ${gamesTd(p.total, maxes.total)}
+      ${gamesTd(p.total, maxes.total, p.name, null, 'Все игры')}
       <td style="text-align:center;font-weight:700;" class="${cls}">${p.avgPoints > 0 ? '+' : ''}${avg}</td>
-      ${gamesTd(p.togetherRed, maxes.togetherRed)}${wrTd(p.togetherRed, p.wrTogetherRed, p.winsTogetherRed)}
-      ${gamesTd(p.togetherBlack, maxes.togetherBlack)}${wrTd(p.togetherBlack, p.wrTogetherBlack, p.winsTogetherBlack)}
-      ${gamesTd(p.playerRedOtherBlack, maxes.playerRedOtherBlack)}${wrTd(p.playerRedOtherBlack, p.wrPlayerRedOtherBlack, p.winsPlayerRedOtherBlack)}
-      ${gamesTd(p.playerBlackOtherRed, maxes.playerBlackOtherRed)}${wrTd(p.playerBlackOtherRed, p.wrPlayerBlackOtherRed, p.winsPlayerBlackOtherRed)}
+      ${gamesTd(p.togetherRed, maxes.togetherRed, p.name, 'togetherRed', '🟥 Вместе (Красные)')}${wrTd(p.togetherRed, p.wrTogetherRed, p.winsTogetherRed)}
+      ${gamesTd(p.togetherBlack, maxes.togetherBlack, p.name, 'togetherBlack', '⬛ Вместе (Чёрные)')}${wrTd(p.togetherBlack, p.wrTogetherBlack, p.winsTogetherBlack)}
+      ${gamesTd(p.playerRedOtherBlack, maxes.playerRedOtherBlack, p.name, 'oppositeTargetRed', '🟥 Я (Кр) vs ⬛')}${wrTd(p.playerRedOtherBlack, p.wrPlayerRedOtherBlack, p.winsPlayerRedOtherBlack)}
+      ${gamesTd(p.playerBlackOtherRed, maxes.playerBlackOtherRed, p.name, 'oppositeTargetBlack', '⬛ Я (Ч) vs 🟥')}${wrTd(p.playerBlackOtherRed, p.wrPlayerBlackOtherRed, p.winsPlayerBlackOtherRed)}
     `;
     tbody.appendChild(tr);
   });
@@ -3888,26 +3952,29 @@ function openJudgeGamesModal(judgeName, category, title) {
 // =====================================================================
 // MODAL
 // =====================================================================
-function openModal(playerName) {
+function openModal(playerName, matchType = null, title = null) {
   const player = state.displayedPartnerStats.find(p => p.name === playerName)
               || state.partnerStats.find(p => p.name === playerName);
   if (!player || !player.games) return;
-  state.currentModalGames = player.games;
-  document.getElementById('modalPlayerName').textContent =
-    `🎮 Игры с: ${playerName} (всего ${player.total})`;
-
+  
+  state.currentModalGames = player.games; // all games
+  
+  const modalTitle = title ? `${title} — ${playerName}` : `🎮 Игры с: ${playerName} (всего ${player.total})`;
+  document.getElementById('modalPlayerName').textContent = modalTitle;
+  
   const listContainer = document.getElementById('modalGamesList');
+  const typeFilterValue = matchType || 'all';
   listContainer.innerHTML = `
     <div style="margin-bottom:1.25rem;display:flex;gap:.6rem;align-items:center;flex-wrap:wrap;">
       <label style="font-weight:700;font-size:.8rem;color:var(--text-secondary);text-transform:uppercase;">Фильтры:</label>
       <input type="date" id="dateFromFilter" class="filter-select" onchange="applyGameFilter()">
       <input type="date" id="dateToFilter" class="filter-select" onchange="applyGameFilter()">
       <select id="typeFilter" class="filter-select" onchange="applyGameFilter()">
-        <option value="all">Все типы</option>
-        <option value="togetherRed">🟥 Вместе</option>
-        <option value="togetherBlack">⬛ Вместе</option>
-        <option value="oppositeTargetRed">Я 🟥 vs ⬛</option>
-        <option value="oppositeTargetBlack">Я ⬛ vs 🟥</option>
+        <option value="all" ${typeFilterValue==='all'?'selected':''}>Все типы</option>
+        <option value="togetherRed" ${typeFilterValue==='togetherRed'?'selected':''}>🟥 Вместе</option>
+        <option value="togetherBlack" ${typeFilterValue==='togetherBlack'?'selected':''}>⬛ Вместе</option>
+        <option value="oppositeTargetRed" ${typeFilterValue==='oppositeTargetRed'?'selected':''}>Я 🟥 vs ⬛</option>
+        <option value="oppositeTargetBlack" ${typeFilterValue==='oppositeTargetBlack'?'selected':''}>Я ⬛ vs 🟥</option>
       </select>
       <select id="resultFilter" class="filter-select" onchange="applyGameFilter()">
         <option value="all">Все результаты</option>
@@ -3916,7 +3983,7 @@ function openModal(playerName) {
       </select>
     </div>
     <div id="modalGamesContainer"></div>`;
-
+  
   applyGameFilter();
   document.getElementById('gameModal').classList.remove('hidden');
   document.body.style.overflow = 'hidden';
@@ -3996,12 +4063,21 @@ function applyGameFilter() {
     const myRoleBadge = myRole ? `<span class="badge ${getRoleBadgeClass(myRole)}">${myRole}</span>` : '';
     const dateStr = g.dateStart ? `<span style="font-size:.8rem;color:var(--text-secondary);margin-right:.5rem;">📅 ${g.dateStart}</span>` : '';
 
+    const copyText = buildGameCopyText(g.tournamentName, g.tableNumber);
+    const copyBtn = copyText
+      ? `<button class="copy-btn game-copy-btn" type="button"
+           title="Скопировать: ${escapeHtml(copyText)}"
+           data-copy-text="${escapeHtml(copyText)}"
+           onclick="event.preventDefault();event.stopPropagation();copyGameInfo(this.dataset.copyText,this);return false;">📋</button>`
+      : '';
+
     return `<div class="modal-game-card">
       <div class="modal-game-header">
         <div style="display:flex;align-items:center;flex-wrap:wrap;gap:.4rem;">
           <a href="${g.tournamentUrl || '#'}" target="_blank" class="modal-tournament-link">${g.tournamentName} ↗</a>
           ${dateStr}
           <span style="font-weight:600;color:var(--text-secondary);font-size:.8rem;">${[g.gameNumber, g.tableNumber].filter(Boolean).join(', ')}</span>
+          ${copyBtn}
         </div>
         <div class="modal-result-badges">
           ${myRoleBadge}
