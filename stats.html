@@ -385,7 +385,7 @@ body.dark-mode .role-stat-card.border-don{background: linear-gradient(90deg, rgb
 }
 .filter-group{display:flex;flex-direction:column;gap:.4rem;min-width:140px;}
 .filter-label{font-size:.72rem;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.05em;}
-.filter-select, .search-input, input[type=date], input[type=text]{
+.filter-select, .search-input, input[type=date], input[type=text], input[type=number]{
   padding: 0.6rem 0.9rem;
   border-radius: var(--radius-md);
   border: 1px solid var(--border-color);
@@ -417,11 +417,7 @@ body.dark-mode .role-stat-card.border-don{background: linear-gradient(90deg, rgb
   border: 1px solid var(--border-color);
   border-radius: var(--radius-md);
 }
-.min-games-pills{
-  display: flex;
-  gap: 0.35rem;
-  align-items: center;
-}
+.min-games-pills{display: flex; gap: 0.35rem; align-items: center;}
 .pill-btn{
   background: var(--card-bg);
   border: 1px solid var(--border-color);
@@ -433,14 +429,14 @@ body.dark-mode .role-stat-card.border-don{background: linear-gradient(90deg, rgb
   cursor: pointer;
   transition: all .15s ease;
 }
-.pill-btn:hover{
-  border-color: var(--accent);
-  color: var(--accent);
-}
-.pill-btn.active{
-  background: var(--accent);
-  color: #fff;
-  border-color: var(--accent);
+.pill-btn:hover{border-color: var(--accent); color: var(--accent);}
+.pill-btn.active{background: var(--accent); color: #fff; border-color: var(--accent);}
+
+.date-filter-box{
+  display: flex;
+  gap: .5rem;
+  align-items: center;
+  flex-wrap: wrap;
 }
 
 .table-container{
@@ -472,19 +468,14 @@ thead th{
   cursor: pointer;
   transition: background-color .15s;
 }
-thead th:hover{
-  background: #e8eefc;
-}
-body.dark-mode thead th:hover{
-  background: #17233d;
-}
+thead th:hover{background: #e8eefc;}
+body.dark-mode thead th:hover{background: #17233d;}
 thead th.no-sort{cursor: default;}
 thead th.no-sort:hover{background: var(--card-bg-subtle);}
 
 thead th.sort-asc::after{content: " ▲"; color: var(--accent); font-size: 0.7rem;}
 thead th.sort-desc::after{content: " ▼"; color: var(--accent); font-size: 0.7rem;}
 
-/* Заголовки групп колонок шерифов — непрозрачные тона */
 .header-peaceful-sheriff{
   background: #fce4e4!important;
   color: #b91c1c!important;
@@ -519,69 +510,32 @@ body.dark-mode .header-black-vs-sheriff{
   border-bottom: 2px solid #4a3d7a!important;
 }
 
-/* Выделение колонок ИТОГО */
-.col-pair-total{
-  background: rgba(59, 130, 246, 0.05);
-}
-body.dark-mode .col-pair-total{
-  background: rgba(59, 130, 246, 0.1);
-}
-th.col-pair-total{
-  background: #e8eefc!important;
-  font-weight: 800!important;
-  color: var(--accent)!important;
-}
-body.dark-mode th.col-pair-total{
-  background: #1c2745!important;
-}
+.col-pair-total{background: rgba(59, 130, 246, 0.05);}
+body.dark-mode .col-pair-total{background: rgba(59, 130, 246, 0.1);}
+th.col-pair-total{background: #e8eefc!important; font-weight: 800!important; color: var(--accent)!important;}
+body.dark-mode th.col-pair-total{background: #1c2745!important;}
 
-/* Sticky колонки и шапка */
 #tab-sheriffs .table-container,
 #tab-analytics .table-container,
-#tab-judges .table-container{
-  max-height: 80vh;
-  overflow-y: auto;
-}
-.sheriff-table, .stats-table, .judge-table{
-  border-collapse: separate;
-  border-spacing: 0;
-}
-.sheriff-table thead, .stats-table thead, .judge-table thead{
-  position: sticky;
-  top: 0;
-  z-index: 25;
-}
-.sheriff-table thead th, .stats-table thead th, .judge-table thead th{
-  box-shadow: 0 1px 0 var(--border-color);
-}
+#tab-judges .table-container{max-height: 80vh; overflow-y: auto;}
+.sheriff-table, .stats-table, .judge-table{border-collapse: separate; border-spacing: 0;}
+.sheriff-table thead, .stats-table thead, .judge-table thead{position: sticky; top: 0; z-index: 25;}
+.sheriff-table thead th, .stats-table thead th, .judge-table thead th{box-shadow: 0 1px 0 var(--border-color);}
 .sheriff-table thead tr:first-child th:first-child,
 .stats-table thead tr:first-child th:first-child,
 .judge-table thead tr:first-child th:first-child{
-  position: sticky;
-  left: 0;
-  z-index: 35;
-  background: var(--card-bg-subtle);
+  position: sticky; left: 0; z-index: 35; background: var(--card-bg-subtle);
 }
 .sheriff-table tbody td:first-child,
 .stats-table tbody td:first-child,
 .judge-table tbody td:first-child{
-  position: sticky;
-  left: 0;
-  z-index: 10;
-  background: var(--card-bg);
-  text-align: left;
-  padding-left: 1rem;
-  font-weight: 600;
+  position: sticky; left: 0; z-index: 10; background: var(--card-bg);
+  text-align: left; padding-left: 1rem; font-weight: 600;
   box-shadow: 2px 0 4px -2px rgba(0,0,0,0.1);
 }
-tbody tr:hover td{
-  background-color: var(--card-bg-subtle);
-}
-tbody tr:hover td:first-child{
-  background-color: var(--card-bg-subtle);
-}
+tbody tr:hover td{background-color: var(--card-bg-subtle);}
+tbody tr:hover td:first-child{background-color: var(--card-bg-subtle);}
 
-/* Интерактивные ячейки в таблицах */
 .cell-clickable {
   color: var(--accent);
   cursor: pointer;
@@ -598,9 +552,24 @@ tbody tr:hover td:first-child{
   color: var(--accent-hover);
   transform: scale(1.08);
 }
-.cell-clickable.total-badge{
-  background: var(--accent-soft);
-  box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.2);
+.cell-clickable.total-badge{background: var(--accent-soft); box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.2);}
+
+/* Кликабельные числовые бейджи (игры у судей) */
+.clickable-num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: .2rem .55rem;
+  border-radius: 6px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform .15s, filter .15s;
+  color: var(--text-primary);
+}
+.clickable-num:hover {
+  transform: scale(1.1);
+  filter: brightness(1.15);
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.35);
 }
 
 .mini-wr-cell{
@@ -618,10 +587,7 @@ tbody tr:hover td:first-child{
   border-radius: 2px;
   overflow: hidden;
 }
-.mini-wr-fill{
-  height: 100%;
-  border-radius: 2px;
-}
+.mini-wr-fill{height: 100%; border-radius: 2px;}
 
 .wr-high{color: var(--success); font-weight: 700;}
 .wr-mid{color: var(--warning); font-weight: 700;}
@@ -634,11 +600,7 @@ tbody tr:hover td:first-child{
 .text-danger{color:var(--danger);font-weight:700;}
 .text-neutral{color:var(--text-muted);font-weight:600;}
 
-/* Диаграммы */
-#wrChartContainer, #eloChartContainer {
-  position: relative;
-  height: 440px;
-}
+#wrChartContainer, #eloChartContainer {position: relative; height: 440px;}
 .charts-split-container {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -656,7 +618,6 @@ tbody tr:hover td:first-child{
   justify-content: center;
 }
 
-/* Modal */
 .modal-overlay{
   position: fixed;
   top: 0; left: 0; width: 100%; height: 100%;
@@ -722,12 +683,7 @@ tbody tr:hover td:first-child{
 }
 .modal-tournament-link{font-weight: 700; color: var(--accent); text-decoration: none;}
 .modal-tournament-link:hover{text-decoration: underline;}
-.modal-result-badges {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  flex-wrap: wrap;
-}
+.modal-result-badges {display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;}
 
 .composition-grid{
   display: grid;
@@ -805,7 +761,6 @@ tbody tr:hover td:first-child{
 .badge-role-mafia{background:var(--role-mafia-bg);color:var(--role-mafia-text);}
 .badge-role-don{background:var(--role-don-bg);color:var(--role-don-text);}
 
-/* Турниры и сетка карточек */
 .tournament-block{
   background: var(--card-bg);
   border: 1px solid var(--border-color);
@@ -816,9 +771,7 @@ tbody tr:hover td:first-child{
   border-left: 4px solid var(--accent);
   transition: box-shadow .2s ease;
 }
-.tournament-block:hover{
-  box-shadow: var(--shadow-md);
-}
+.tournament-block:hover{box-shadow: var(--shadow-md);}
 .tournament-block summary{
   cursor: pointer;
   list-style: none;
@@ -843,10 +796,7 @@ tbody tr:hover td:first-child{
   transition: transform .2s ease;
   font-weight: 700;
 }
-.tournament-block[open] summary::before{
-  transform: rotate(90deg);
-  color: var(--accent);
-}
+.tournament-block[open] summary::before{transform: rotate(90deg); color: var(--accent);}
 .tournament-header-inner{
   display: flex;
   flex-wrap: wrap;
@@ -855,13 +805,7 @@ tbody tr:hover td:first-child{
   flex: 1;
   min-width: 0;
 }
-.tournament-title-group{
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  flex: 1;
-  min-width: 0;
-}
+.tournament-title-group{display: flex; align-items: center; gap: 0.5rem; flex: 1; min-width: 0;}
 .tournament-title{
   color: var(--text-primary);
   text-decoration: none;
@@ -955,16 +899,8 @@ tbody tr:hover td:first-child{
   cursor: pointer;
   transition: all .15s ease;
 }
-.copy-btn:hover{
-  background: var(--card-bg-subtle);
-  color: var(--accent);
-  border-color: var(--accent);
-}
-.copy-btn.copied{
-  background: var(--success-soft);
-  color: var(--success);
-  border-color: var(--success);
-}
+.copy-btn:hover{background: var(--card-bg-subtle); color: var(--accent); border-color: var(--accent);}
+.copy-btn.copied{background: var(--success-soft); color: var(--success); border-color: var(--success);}
 .games-grid{
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
@@ -979,10 +915,7 @@ tbody tr:hover td:first-child{
   transition: transform .2s, box-shadow .2s;
   box-shadow: var(--shadow-sm);
 }
-.game-card:hover{
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-md);
-}
+.game-card:hover{transform: translateY(-2px); box-shadow: var(--shadow-md);}
 .game-meta{
   display: flex;
   justify-content: space-between;
@@ -1053,10 +986,6 @@ body.dark-mode .player-points{background: rgba(255,255,255,0.08);}
   border-color: var(--border-color)!important;
   border-style: dashed;
 }
-.player-tag.search-highlight{
-  outline: 2px solid var(--warning);
-  outline-offset: 1px;
-}
 
 .viz-toolbar{
   display: flex;
@@ -1099,7 +1028,6 @@ body.dark-mode .player-points{background: rgba(255,255,255,0.08);}
 .filter-result-info{text-align:center;font-weight:600;color:var(--text-secondary);font-size:.9rem;padding:.25rem 0 1.25rem;}
 .filter-result-info b{color:var(--accent);}
 
-/* Тепловая карта */
 .heatmap-controls{margin-bottom:1.25rem;display:flex;gap:1rem;align-items:center;flex-wrap:wrap;}
 .heatmap-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:.85rem;}
 .heatmap-cell{
@@ -1116,11 +1044,7 @@ body.dark-mode .player-points{background: rgba(255,255,255,0.08);}
   min-height: 85px;
   box-shadow: var(--shadow-sm);
 }
-.heatmap-cell:hover{
-  transform: translateY(-3px) scale(1.02);
-  z-index: 2;
-  box-shadow: var(--shadow-md);
-}
+.heatmap-cell:hover{transform: translateY(-3px) scale(1.02); z-index: 2; box-shadow: var(--shadow-md);}
 .heatmap-name{
   font-weight: 700;
   margin-bottom: 0.25rem;
@@ -1493,8 +1417,19 @@ body.dark-mode .player-points{background: rgba(255,255,255,0.08);}
         📋 Детальная статистика партнёров
         <button class="export-btn" onclick="exportToCSV()">📥 Экспорт CSV</button>
       </div>
-      <div class="table-toolbar">
+      <div class="table-toolbar" style="flex-wrap:wrap;">
         <input type="text" id="tableSearch" class="search-input" placeholder="🔍 Поиск игрока..." onkeyup="filterTable()">
+        <div class="date-filter-box">
+          <span style="font-size:.85rem;color:var(--text-secondary);font-weight:600;">📅</span>
+          <input type="date" id="tableDateFrom" class="filter-select" onchange="applyAnalyticsDateFilter()" title="Дата с">
+          <span style="font-size:.8rem;color:var(--text-secondary);">—</span>
+          <input type="date" id="tableDateTo" class="filter-select" onchange="applyAnalyticsDateFilter()" title="Дата по">
+          <button class="pill-btn" onclick="clearAnalyticsDateFilter()" title="Сбросить даты">✕</button>
+        </div>
+        <div class="date-filter-box">
+          <span style="font-size:.85rem;color:var(--text-secondary);font-weight:600;">Мин. игр:</span>
+          <input type="number" id="tableMinGames" class="filter-select" min="1" value="1" style="width:80px;padding:0.4rem 0.5rem;font-size:0.85rem;" oninput="onPartnerMinGamesChange()">
+        </div>
         <span style="font-size:0.8rem;color:var(--text-secondary);">Кликните на заголовок для сортировки</span>
       </div>
       <div class="table-container">
@@ -1535,13 +1470,18 @@ body.dark-mode .player-points{background: rgba(255,255,255,0.08);}
         <strong>Нажмите на количество игр</strong> для открытия карточек партий.
       </div>
 
-      <div class="table-toolbar">
+      <div class="table-toolbar" style="flex-wrap:wrap;">
         <input type="text" id="sheriffSearch" class="search-input" placeholder="🔍 Поиск шерифа..." oninput="filterSheriffsTable()">
-        <div class="min-games-pills">
-          <span style="font-size:0.8rem;color:var(--text-secondary);margin-right:4px;">Мин. игр шерифом:</span>
-          <button class="pill-btn active" data-min="1" onclick="setMinSheriffGames(1, this)">≥ 1</button>
-          <button class="pill-btn" data-min="3" onclick="setMinSheriffGames(3, this)">≥ 3</button>
-          <button class="pill-btn" data-min="5" onclick="setMinSheriffGames(5, this)">≥ 5</button>
+        <div class="date-filter-box">
+          <span style="font-size:.85rem;color:var(--text-secondary);font-weight:600;">📅</span>
+          <input type="date" id="sheriffDateFrom" class="filter-select" onchange="applySheriffDateFilter()" title="Дата с">
+          <span style="font-size:.8rem;color:var(--text-secondary);">—</span>
+          <input type="date" id="sheriffDateTo" class="filter-select" onchange="applySheriffDateFilter()" title="Дата по">
+          <button class="pill-btn" onclick="clearSheriffDateFilter()" title="Сбросить даты">✕</button>
+        </div>
+        <div class="date-filter-box">
+          <span style="font-size:.85rem;color:var(--text-secondary);font-weight:600;">Мин. игр шерифом:</span>
+          <input type="number" id="sheriffMinGames" class="filter-select" min="1" value="1" style="width:80px;padding:0.4rem 0.5rem;font-size:0.85rem;" oninput="onSheriffMinGamesChange()">
         </div>
       </div>
 
@@ -1602,11 +1542,22 @@ body.dark-mode .player-points{background: rgba(255,255,255,0.08);}
     <div class="section">
       <div class="section-title">🧑‍⚖️ Статистика по судьям</div>
       <div style="font-size:.9rem;color:var(--text-secondary);margin-bottom:1rem;">
-        Винрейты и средние баллы по ролям для каждого судьи. <strong>Кликните на заголовок</strong> для сортировки.
+        Винрейты и средние баллы по ролям для каждого судьи. <strong>Кликните на заголовок</strong> для сортировки,
+        <strong>кликните на число игр</strong> для открытия карточек партий.
       </div>
-      <div class="table-toolbar">
+      <div class="table-toolbar" style="flex-wrap:wrap;">
         <input type="text" id="judgeSearch" class="search-input" placeholder="🔍 Поиск судьи..." oninput="filterJudgesTable()">
-        <span style="font-size:0.8rem;color:var(--text-secondary);">Показаны все судьи за вашими столами</span>
+        <div class="date-filter-box">
+          <span style="font-size:.85rem;color:var(--text-secondary);font-weight:600;">📅</span>
+          <input type="date" id="judgeDateFrom" class="filter-select" onchange="applyJudgeDateFilter()" title="Дата с">
+          <span style="font-size:.8rem;color:var(--text-secondary);">—</span>
+          <input type="date" id="judgeDateTo" class="filter-select" onchange="applyJudgeDateFilter()" title="Дата по">
+          <button class="pill-btn" onclick="clearJudgeDateFilter()" title="Сбросить даты">✕</button>
+        </div>
+        <div class="date-filter-box">
+          <span style="font-size:.85rem;color:var(--text-secondary);font-weight:600;">Мин. игр:</span>
+          <input type="number" id="judgeMinGames" class="filter-select" min="1" value="1" style="width:80px;padding:0.4rem 0.5rem;font-size:0.85rem;" oninput="onJudgeMinGamesChange()">
+        </div>
       </div>
       <div class="table-container">
         <table class="judge-table" id="judgeTable">
@@ -1664,11 +1615,14 @@ const state = {
   rawData: [],
   flatGames: [],
   partnerStats: [],
+  displayedPartnerStats: [],
   judgeStats: [],
   judgeSort: null,
   sheriffStats: [],
   sheriffSort: null,
   minSheriffGames: 1,
+  minJudgeGames: 1,
+  minPartnerGames: 1,
   targetPlayer: '',
   filters: {},
   sortMode: 'date',
@@ -1678,7 +1632,13 @@ const state = {
   sortDirection: {},
   heatmapDisplayCount: 20,
   sortedHeatmapData: [],
-  currentModalGames: []
+  currentModalGames: [],
+  sheriffDateFrom: '',
+  sheriffDateTo: '',
+  judgeDateFrom: '',
+  judgeDateTo: '',
+  analyticsDateFrom: '',
+  analyticsDateTo: ''
 };
 
 // =====================================================================
@@ -1768,6 +1728,29 @@ function extractTournamentName(fullName) {
   const commaIdx = fullName.indexOf(',');
   const short = commaIdx === -1 ? fullName : fullName.slice(0, commaIdx);
   return short.trim();
+}
+
+function tournamentOverlapsRange(tournament, dateFrom, dateTo) {
+  if (!dateFrom && !dateTo) return true;
+  const start = tournament.dateStart ? new Date(tournament.dateStart) : null;
+  const end   = tournament.dateEnd ? new Date(tournament.dateEnd) : start;
+  if (!start) return true;
+  if (dateFrom) {
+    const from = new Date(dateFrom);
+    if (end && end < from) return false;
+  }
+  if (dateTo) {
+    const to = new Date(dateTo);
+    to.setHours(23, 59, 59, 999);
+    if (start > to) return false;
+  }
+  return true;
+}
+
+function filterFlatGamesByDate(flatGames, dateFrom, dateTo) {
+  if (!dateFrom && !dateTo) return flatGames;
+  return flatGames.filter(({ tournament }) =>
+    tournamentOverlapsRange(tournament, dateFrom, dateTo));
 }
 
 function copyTournamentName(text, btn) {
@@ -1878,6 +1861,7 @@ async function processData(data) {
   state.flatGames = flatGames;
   state.targetPlayer = targetPlayer;
   state.partnerStats = computePartnerStats(flatGames);
+  state.displayedPartnerStats = [...state.partnerStats];
   state.judgeStats = [];
   state.judgeSort = null;
   state.sheriffStats = [];
@@ -1887,6 +1871,29 @@ async function processData(data) {
   state.sortMode = 'date';
   state.hideRoles = false;
   state.heatmapDisplayCount = 20;
+  state.minSheriffGames = 1;
+  state.minJudgeGames = 1;
+  state.minPartnerGames = 1;
+  state.sheriffDateFrom = '';
+  state.sheriffDateTo = '';
+  state.judgeDateFrom = '';
+  state.judgeDateTo = '';
+  state.analyticsDateFrom = '';
+  state.analyticsDateTo = '';
+
+  const setVal = (id, v) => {
+    const el = document.getElementById(id);
+    if (el) el.value = v;
+  };
+  setVal('sheriffMinGames', '1');
+  setVal('judgeMinGames', '1');
+  setVal('tableMinGames', '1');
+  setVal('sheriffDateFrom', '');
+  setVal('sheriffDateTo', '');
+  setVal('judgeDateFrom', '');
+  setVal('judgeDateTo', '');
+  setVal('tableDateFrom', '');
+  setVal('tableDateTo', '');
 
   renderViz();
   renderAnalytics();
@@ -2561,29 +2568,13 @@ function renderAnalytics() {
   if (!state.flatGames.length) return;
 
   let totalGames = 0, totalWins = 0, totalPoints = 0;
-const roleStats = {
-  peaceful: { games: 0, wins: 0, points: 0, mvp: 0, bad: 0 },
-  sheriff:  { games: 0, wins: 0, points: 0, mvp: 0, bad: 0 },
-  mafia:    { games: 0, wins: 0, points: 0, mvp: 0, bad: 0 },
-  don:      { games: 0, wins: 0, points: 0, mvp: 0, bad: 0 }
-};
+  const roleStats = {
+    peaceful: { games: 0, wins: 0, points: 0, mvp: 0, bad: 0 },
+    sheriff:  { games: 0, wins: 0, points: 0, mvp: 0, bad: 0 },
+    mafia:    { games: 0, wins: 0, points: 0, mvp: 0, bad: 0 },
+    don:      { games: 0, wins: 0, points: 0, mvp: 0, bad: 0 }
+  };
 
-state.flatGames.forEach(({ game }) => {
-  const me = Array.isArray(game.composition) ? game.composition.find(p => p.isYou) : null;
-  if (!me) return;
-  totalGames++;
-  totalPoints += me.points || 0;
-  if (game.isWin) totalWins++;
-  const isMvp = Array.isArray(game.mvp) && game.mvp.some(m => m.name === me.name);
-  const k = getRoleKey(me.role);
-  if (roleStats[k]) {
-    roleStats[k].games++;
-    roleStats[k].points += me.points || 0;
-    if (game.isWin) roleStats[k].wins++;
-    if (isMvp) roleStats[k].mvp++;
-    if (me.playType === 'r') roleStats[k].bad++;   // 🔻 плохие игры
-  }
-});
   state.flatGames.forEach(({ game }) => {
     const me = Array.isArray(game.composition) ? game.composition.find(p => p.isYou) : null;
     if (!me) return;
@@ -2597,6 +2588,7 @@ state.flatGames.forEach(({ game }) => {
       roleStats[k].points += me.points || 0;
       if (game.isWin) roleStats[k].wins++;
       if (isMvp) roleStats[k].mvp++;
+      if (me.playType === 'r') roleStats[k].bad++;
     }
   });
 
@@ -2709,7 +2701,6 @@ function computeRadarMetrics(gamesList) {
   };
 }
 
-
 function renderRadarChart() {
   if (!state.flatGames.length) return;
   const isDark = document.body.classList.contains('dark-mode');
@@ -2808,6 +2799,7 @@ function renderRadarChart() {
     }
   });
 }
+
 function renderEloChart() {
   if (!state.rawData.length) return;
   const isDark = document.body.classList.contains('dark-mode');
@@ -2917,6 +2909,7 @@ function renderEloChart() {
     }
   });
 }
+
 function onWrChartModeChange() {
   const mode = document.getElementById('wrChartMode').value;
   const container = document.getElementById('wrChartContainer');
@@ -3139,32 +3132,67 @@ function loadMoreHeatmap() {
 function renderTable() {
   const tbody = document.getElementById('statsTableBody');
   tbody.innerHTML = '';
-  state.partnerStats.forEach(p => {
+
+  const minGames = state.minPartnerGames || 1;
+  const filtered = state.displayedPartnerStats.filter(p => p.total >= minGames);
+
+  if (!filtered.length) {
+    tbody.innerHTML = `<tr><td colspan="11" class="empty-state">Нет партнёров с минимум ${minGames} ${pluralize(minGames, 'игрой','играми','играми')}</td></tr>`;
+    return;
+  }
+
+  const maxes = {
+    total: 1,
+    togetherRed: 1,
+    togetherBlack: 1,
+    playerRedOtherBlack: 1,
+    playerBlackOtherRed: 1
+  };
+  filtered.forEach(p => {
+    if (p.total > maxes.total) maxes.total = p.total;
+    if (p.togetherRed > maxes.togetherRed) maxes.togetherRed = p.togetherRed;
+    if (p.togetherBlack > maxes.togetherBlack) maxes.togetherBlack = p.togetherBlack;
+    if (p.playerRedOtherBlack > maxes.playerRedOtherBlack) maxes.playerRedOtherBlack = p.playerRedOtherBlack;
+    if (p.playerBlackOtherRed > maxes.playerBlackOtherRed) maxes.playerBlackOtherRed = p.playerBlackOtherRed;
+  });
+
+  const gamesTd = (n, maxN) => {
+    if (n === 0) return '<td style="color:var(--text-muted);text-align:center;">0</td>';
+    const intensity = Math.min(1, n / Math.max(maxN, 10));
+    const alpha = (0.06 + intensity * 0.26).toFixed(2);
+    return `<td style="text-align:center;">
+      <span style="display:inline-block;padding:.2rem .55rem;border-radius:6px;font-weight:700;background:rgba(59,130,246,${alpha});">${n}</span>
+    </td>`;
+  };
+
+  const wrTd = (n, wr, wins) => {
+    if (n === 0) return '<td style="color:var(--text-muted);text-align:center;">—</td>';
+    const pctNum = Math.round(wr * 100);
+    const pct = (wr * 100).toFixed(1);
+    const wrCls = pctNum >= 60 ? 'wr-high' : pctNum <= 40 ? 'wr-low' : 'wr-mid';
+    const barCls = pctNum >= 60 ? 'winrate-good' : pctNum <= 40 ? 'winrate-bad' : 'winrate-mid';
+    return `<td title="${wins} побед / ${n} игр">
+      <div class="mini-wr-cell">
+        <span class="${wrCls}">${pct}%</span>
+        <div class="mini-wr-bar"><div class="mini-wr-fill ${barCls}" style="width:${pct}%"></div></div>
+      </div>
+    </td>`;
+  };
+
+  filtered.forEach(p => {
     const tr = document.createElement('tr');
-    const gamesTd = n => n === 0
-      ? '<td style="color:var(--text-muted);text-align:center;">0</td>'
-      : `<td style="text-align:center;">${n}</td>`;
-    const wrTd = (n, wr) => {
-      if (n === 0) return '<td style="color:var(--text-muted);text-align:center;">-</td>';
-      const pct = (wr * 100).toFixed(1);
-      const cls = pct >= 60 ? 'winrate-good' : pct <= 40 ? 'winrate-bad' : 'winrate-mid';
-      return `<td style="text-align:center;">
-        <div style="font-size:.85rem;font-weight:700;margin-bottom:3px;">${pct}%</div>
-        <div class="winrate-bar"><div class="winrate-fill ${cls}" style="width:${pct}%"></div></div>
-      </td>`;
-    };
     const avg = p.avgPoints.toFixed(2);
     const cls = p.avgPoints > 0 ? 'text-success' : p.avgPoints < 0 ? 'text-danger' : 'text-neutral';
     tr.innerHTML = `
       <td style="font-weight:600;text-align:left;">
         <span class="player-name-clickable" onclick="openModal('${p.name.replace(/'/g,"\\'")}')">${p.name}</span>
       </td>
-      <td style="text-align:center;">${p.total}</td>
+      ${gamesTd(p.total, maxes.total)}
       <td style="text-align:center;font-weight:700;" class="${cls}">${p.avgPoints > 0 ? '+' : ''}${avg}</td>
-      ${gamesTd(p.togetherRed)}${wrTd(p.togetherRed, p.wrTogetherRed)}
-      ${gamesTd(p.togetherBlack)}${wrTd(p.togetherBlack, p.wrTogetherBlack)}
-      ${gamesTd(p.playerRedOtherBlack)}${wrTd(p.playerRedOtherBlack, p.wrPlayerRedOtherBlack)}
-      ${gamesTd(p.playerBlackOtherRed)}${wrTd(p.playerBlackOtherRed, p.wrPlayerBlackOtherRed)}
+      ${gamesTd(p.togetherRed, maxes.togetherRed)}${wrTd(p.togetherRed, p.wrTogetherRed, p.winsTogetherRed)}
+      ${gamesTd(p.togetherBlack, maxes.togetherBlack)}${wrTd(p.togetherBlack, p.wrTogetherBlack, p.winsTogetherBlack)}
+      ${gamesTd(p.playerRedOtherBlack, maxes.playerRedOtherBlack)}${wrTd(p.playerRedOtherBlack, p.wrPlayerRedOtherBlack, p.winsPlayerRedOtherBlack)}
+      ${gamesTd(p.playerBlackOtherRed, maxes.playerBlackOtherRed)}${wrTd(p.playerBlackOtherRed, p.wrPlayerBlackOtherRed, p.winsPlayerBlackOtherRed)}
     `;
     tbody.appendChild(tr);
   });
@@ -3202,7 +3230,7 @@ function sortTable(colIdx) {
     if (+th.getAttribute('data-col') === colIdx) th.classList.add(isAsc ? 'sort-asc' : 'sort-desc');
   });
 
-  state.partnerStats.sort((a, b) => {
+  state.displayedPartnerStats.sort((a, b) => {
     let va = a[cfg.key], vb = b[cfg.key];
     if (cfg.type === 'string') { va = String(va).toLowerCase(); vb = String(vb).toLowerCase(); }
     if (va < vb) return isAsc ? -1 : 1;
@@ -3217,13 +3245,16 @@ function exportToCSV() {
   const headers = ['Игрок', 'Всего', 'Ср. баллы', 'Вместе Кр (игры)', 'Вместе Кр (WR)',
     'Вместе Ч (игры)', 'Вместе Ч (WR)', 'ЯКр vs Они (игры)', 'ЯКр vs Они (WR)',
     'ЯЧ vs Они (игры)', 'ЯЧ vs Они (WR)'];
-  const rows = state.partnerStats.map(p => [
-    p.name, p.total, (p.avgPoints > 0 ? '+' : '') + p.avgPoints.toFixed(2),
-    p.togetherRed, (p.wrTogetherRed * 100).toFixed(1) + '%',
-    p.togetherBlack, (p.wrTogetherBlack * 100).toFixed(1) + '%',
-    p.playerRedOtherBlack, (p.wrPlayerRedOtherBlack * 100).toFixed(1) + '%',
-    p.playerBlackOtherRed, (p.wrPlayerBlackOtherRed * 100).toFixed(1) + '%'
-  ]);
+  const minGames = state.minPartnerGames || 1;
+  const rows = state.displayedPartnerStats
+    .filter(p => p.total >= minGames)
+    .map(p => [
+      p.name, p.total, (p.avgPoints > 0 ? '+' : '') + p.avgPoints.toFixed(2),
+      p.togetherRed, (p.wrTogetherRed * 100).toFixed(1) + '%',
+      p.togetherBlack, (p.wrTogetherBlack * 100).toFixed(1) + '%',
+      p.playerRedOtherBlack, (p.wrPlayerRedOtherBlack * 100).toFixed(1) + '%',
+      p.playerBlackOtherRed, (p.wrPlayerBlackOtherRed * 100).toFixed(1) + '%'
+    ]);
   const csv = '\uFEFF' + [headers, ...rows].map(r => r.join(';')).join('\n');
   const link = document.createElement('a');
   link.href = encodeURI('data:text/csv;charset=utf-8,' + csv);
@@ -3416,10 +3447,9 @@ function updateSheriffSortIndicators() {
   });
 }
 
-function setMinSheriffGames(min, btn) {
-  state.minSheriffGames = min;
-  document.querySelectorAll('.min-games-pills .pill-btn').forEach(b => b.classList.remove('active'));
-  if (btn) btn.classList.add('active');
+function onSheriffMinGamesChange() {
+  const v = parseInt(document.getElementById('sheriffMinGames').value, 10);
+  state.minSheriffGames = (!v || v < 1) ? 1 : v;
   renderSheriffRows();
 }
 
@@ -3512,7 +3542,9 @@ function renderSheriffs() {
     return;
   }
 
-  state.sheriffStats = computeSheriffStats(state.flatGames);
+  const filtered = filterFlatGamesByDate(state.flatGames, state.sheriffDateFrom, state.sheriffDateTo);
+  state.sheriffStats = computeSheriffStats(filtered);
+
   if (state.sheriffSort && state.sheriffSort.col !== null) {
     const { col, dir } = state.sheriffSort;
     state.sheriffStats.sort((a, b) => {
@@ -3575,7 +3607,7 @@ function openSheriffCategoryModal(playerName, categoryKey, title) {
 // =====================================================================
 function computeJudgeStats(flatGames) {
   const judges = {};
-  flatGames.forEach(({ game }) => {
+  flatGames.forEach(({ game, tournament }) => {
     const judge = game.tableJudge || '—';
     if (!judges[judge]) {
       judges[judge] = {
@@ -3583,11 +3615,12 @@ function computeJudgeStats(flatGames) {
         total: 0,
         totalPoints: 0,
         totalWins: 0,
+        gamesList: [],
         roles: {
-          peaceful: { games: 0, wins: 0, points: 0 },
-          sheriff:  { games: 0, wins: 0, points: 0 },
-          mafia:    { games: 0, wins: 0, points: 0 },
-          don:      { games: 0, wins: 0, points: 0 }
+          peaceful: { games: 0, wins: 0, points: 0, list: [] },
+          sheriff:  { games: 0, wins: 0, points: 0, list: [] },
+          mafia:    { games: 0, wins: 0, points: 0, list: [] },
+          don:      { games: 0, wins: 0, points: 0, list: [] }
         }
       };
     }
@@ -3596,16 +3629,31 @@ function computeJudgeStats(flatGames) {
     const k = getRoleKey(me.role);
     if (!judges[judge].roles[k]) return;
 
+    const item = {
+      tournamentName: tournament.tournament,
+      tournamentUrl: tournament.url,
+      dateStart: tournament.dateStart,
+      dateEnd: tournament.dateEnd,
+      gameNumber: game.gameNumber,
+      tableNumber: game.tableNumber,
+      winner: game.winner,
+      role: game.role || me.role,
+      isWin: game.isWin,
+      composition: game.composition
+    };
+
     const j = judges[judge];
     const points = me.points || 0;
     j.total++;
     j.totalPoints += points;
     if (game.isWin) j.totalWins++;
+    j.gamesList.push(item);
 
     const r = j.roles[k];
     r.games++;
     r.points += points;
     if (game.isWin) r.wins++;
+    r.list.push(item);
   });
 
   return Object.values(judges).map(j => {
@@ -3617,7 +3665,8 @@ function computeJudgeStats(flatGames) {
         wins: r.wins,
         points: r.points,
         wr: r.games > 0 ? r.wins / r.games : null,
-        avgPoints: r.games > 0 ? r.points / r.games : null
+        avgPoints: r.games > 0 ? r.points / r.games : null,
+        list: r.list
       };
     });
     return {
@@ -3682,19 +3731,18 @@ function updateJudgeSortIndicators() {
   });
 }
 
+function onJudgeMinGamesChange() {
+  const v = parseInt(document.getElementById('judgeMinGames').value, 10);
+  state.minJudgeGames = (!v || v < 1) ? 1 : v;
+  renderJudgeRows();
+}
+
 function filterJudgesTable() {
   const query = (document.getElementById('judgeSearch')?.value || '').trim().toLowerCase();
   document.querySelectorAll('#judgeStatsBody tr').forEach(tr => {
     const text = tr.cells[0]?.textContent.toLowerCase() || '';
     tr.style.display = text.includes(query) ? '' : 'none';
   });
-}
-
-function wrSpan(wr) {
-  if (wr === null || wr === undefined) return '<span class="text-neutral">—</span>';
-  const pct = Math.round(wr * 100);
-  const cls = pct >= 60 ? 'wr-high' : pct <= 40 ? 'wr-low' : 'wr-mid';
-  return `<span class="${cls}">${pct}%</span>`;
 }
 
 function avgSpan(avg) {
@@ -3709,20 +3757,65 @@ function renderJudgeRows() {
     tbody.innerHTML = '<tr><td colspan="17" class="empty-state">Нет данных по судьям</td></tr>';
     return;
   }
-  const roleCells = r => `<td>${r.games || '—'}</td><td>${wrSpan(r.wr)}</td><td>${avgSpan(r.avgPoints)}</td>`;
-  tbody.innerHTML = state.judgeStats.map(j => `
-    <tr>
-      <td style="font-weight:600;text-align:left;">🧑‍⚖️ ${j.name}</td>
-      <td style="font-weight:700;">${j.total || '—'}</td>
-      ${roleCells(j.roleStats.peaceful)}
-      ${roleCells(j.roleStats.sheriff)}
-      ${roleCells(j.roleStats.mafia)}
-      ${roleCells(j.roleStats.don)}
-      <td class="col-pair-total" style="font-weight:700;">${j.total || '—'}</td>
-      <td class="col-pair-total">${wrSpan(j.overallWr)}</td>
-      <td class="col-pair-total">${avgSpan(j.overallAvgPoints)}</td>
-    </tr>
-  `).join('');
+
+  const minGames = state.minJudgeGames || 1;
+  const filtered = state.judgeStats.filter(j => j.total >= minGames);
+
+  if (!filtered.length) {
+    tbody.innerHTML = `<tr><td colspan="17" class="empty-state">Нет судей с минимум ${minGames} ${pluralize(minGames, 'игрой','играми','играми')}</td></tr>`;
+    return;
+  }
+
+  const maxes = { total: 1, peaceful: 1, sheriff: 1, mafia: 1, don: 1 };
+  filtered.forEach(j => {
+    if (j.total > maxes.total) maxes.total = j.total;
+    ['peaceful', 'sheriff', 'mafia', 'don'].forEach(k => {
+      const g = j.roleStats[k].games;
+      if (g > maxes[k]) maxes[k] = g;
+    });
+  });
+
+  const gamesInner = (n, maxN, judgeName, category, title) => {
+    if (!n) return '<span class="text-neutral">—</span>';
+    const intensity = Math.min(1, n / Math.max(maxN, 10));
+    const alpha = (0.06 + intensity * 0.26).toFixed(2);
+    const escapedName = judgeName.replace(/'/g, "\\'");
+    const escapedTitle = title.replace(/'/g, "\\'");
+    return `<span class="clickable-num" style="background:rgba(59,130,246,${alpha});" onclick="openJudgeGamesModal('${escapedName}','${category}','${escapedTitle}')">${n}</span>`;
+  };
+
+  const wrInner = (wr, wins, n) => {
+    if (wr === null || wr === undefined) return '<span class="text-neutral">—</span>';
+    const pctNum = Math.round(wr * 100);
+    const pct = (wr * 100).toFixed(1);
+    const wrCls  = pctNum >= 60 ? 'wr-high' : pctNum <= 40 ? 'wr-low' : 'wr-mid';
+    const barCls = pctNum >= 60 ? 'winrate-good' : pctNum <= 40 ? 'winrate-bad' : 'winrate-mid';
+    return `<div class="mini-wr-cell" title="${wins} побед / ${n} игр">
+      <span class="${wrCls}">${pct}%</span>
+      <div class="mini-wr-bar"><div class="mini-wr-fill ${barCls}" style="width:${pct}%"></div></div>
+    </div>`;
+  };
+
+  tbody.innerHTML = filtered.map(j => {
+    const roleCells = (r, roleKey, roleLabel) =>
+      `<td>${gamesInner(r.games, maxes[roleKey], j.name, roleKey, roleLabel)}</td>` +
+      `<td>${wrInner(r.wr, r.wins, r.games)}</td>` +
+      `<td>${avgSpan(r.avgPoints)}</td>`;
+
+    return `
+      <tr>
+        <td style="font-weight:600;text-align:left;">🧑‍⚖️ ${j.name}</td>
+        <td style="font-weight:700;">${gamesInner(j.total, maxes.total, j.name, 'total', 'Все игры')}</td>
+        ${roleCells(j.roleStats.peaceful, 'peaceful', 'Мирный')}
+        ${roleCells(j.roleStats.sheriff, 'sheriff', 'Шериф')}
+        ${roleCells(j.roleStats.mafia, 'mafia', 'Мафия')}
+        ${roleCells(j.roleStats.don, 'don', 'Дон')}
+        <td class="col-pair-total" style="font-weight:700;">${gamesInner(j.total, maxes.total, j.name, 'total', 'Общий итог')}</td>
+        <td class="col-pair-total">${wrInner(j.overallWr, j.totalWins, j.total)}</td>
+        <td class="col-pair-total">${avgSpan(j.overallAvgPoints)}</td>
+      </tr>
+    `;
+  }).join('');
   filterJudgesTable();
 }
 
@@ -3735,7 +3828,9 @@ function renderJudges() {
     return;
   }
 
-  state.judgeStats = computeJudgeStats(state.flatGames);
+  const filtered = filterFlatGamesByDate(state.flatGames, state.judgeDateFrom, state.judgeDateTo);
+  state.judgeStats = computeJudgeStats(filtered);
+
   if (state.judgeSort && state.judgeSort.col !== null) {
     const { col, dir } = state.judgeSort;
     state.judgeStats.sort((a, b) => {
@@ -3751,11 +3846,51 @@ function renderJudges() {
   renderJudgeRows();
 }
 
+function openJudgeGamesModal(judgeName, category, title) {
+  const j = state.judgeStats.find(item => item.name === judgeName);
+  if (!j) return;
+
+  let games;
+  if (category === 'total') {
+    games = j.gamesList || [];
+  } else {
+    games = (j.roleStats[category] && j.roleStats[category].list) ? j.roleStats[category].list : [];
+  }
+
+  if (!games || !games.length) return;
+
+  state.currentModalGames = games;
+  document.getElementById('modalPlayerName').textContent =
+    `🧑‍⚖️ ${judgeName} — ${title} (${games.length})`;
+
+  const listContainer = document.getElementById('modalGamesList');
+  listContainer.innerHTML = `
+    <div style="margin-bottom:1.25rem;display:flex;gap:.6rem;align-items:center;flex-wrap:wrap;">
+      <label style="font-weight:700;font-size:.8rem;color:var(--text-secondary);text-transform:uppercase;">Фильтры:</label>
+      <input type="date" id="dateFromFilter" class="filter-select" onchange="applyGameFilter()">
+      <input type="date" id="dateToFilter" class="filter-select" onchange="applyGameFilter()">
+      <select id="typeFilter" class="filter-select" style="display:none;">
+        <option value="all">Все типы</option>
+      </select>
+      <select id="resultFilter" class="filter-select" onchange="applyGameFilter()">
+        <option value="all">Все результаты</option>
+        <option value="win">✅ Победы</option>
+        <option value="loss">❌ Поражения</option>
+      </select>
+    </div>
+    <div id="modalGamesContainer"></div>`;
+
+  applyGameFilter();
+  document.getElementById('gameModal').classList.remove('hidden');
+  document.body.style.overflow = 'hidden';
+}
+
 // =====================================================================
 // MODAL
 // =====================================================================
 function openModal(playerName) {
-  const player = state.partnerStats.find(p => p.name === playerName);
+  const player = state.displayedPartnerStats.find(p => p.name === playerName)
+              || state.partnerStats.find(p => p.name === playerName);
   if (!player || !player.games) return;
   state.currentModalGames = player.games;
   document.getElementById('modalPlayerName').textContent =
@@ -3883,6 +4018,71 @@ function closeModal() {
   document.body.style.overflow = '';
 }
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+// =====================================================================
+// DATE FILTERS
+// =====================================================================
+function applySheriffDateFilter() {
+  state.sheriffDateFrom = document.getElementById('sheriffDateFrom')?.value || '';
+  state.sheriffDateTo   = document.getElementById('sheriffDateTo')?.value || '';
+  renderSheriffs();
+}
+function clearSheriffDateFilter() {
+  const from = document.getElementById('sheriffDateFrom');
+  const to = document.getElementById('sheriffDateTo');
+  if (from) from.value = '';
+  if (to) to.value = '';
+  state.sheriffDateFrom = '';
+  state.sheriffDateTo = '';
+  renderSheriffs();
+}
+
+function applyJudgeDateFilter() {
+  state.judgeDateFrom = document.getElementById('judgeDateFrom')?.value || '';
+  state.judgeDateTo   = document.getElementById('judgeDateTo')?.value || '';
+  renderJudges();
+}
+function clearJudgeDateFilter() {
+  const from = document.getElementById('judgeDateFrom');
+  const to = document.getElementById('judgeDateTo');
+  if (from) from.value = '';
+  if (to) to.value = '';
+  state.judgeDateFrom = '';
+  state.judgeDateTo = '';
+  renderJudges();
+}
+
+function applyAnalyticsDateFilter() {
+  if (!state.flatGames.length) return;
+  state.analyticsDateFrom = document.getElementById('tableDateFrom')?.value || '';
+  state.analyticsDateTo   = document.getElementById('tableDateTo')?.value || '';
+  if (!state.analyticsDateFrom && !state.analyticsDateTo) {
+    state.displayedPartnerStats = [...state.partnerStats];
+  } else {
+    const filtered = filterFlatGamesByDate(state.flatGames, state.analyticsDateFrom, state.analyticsDateTo);
+    state.displayedPartnerStats = computePartnerStats(filtered);
+  }
+  renderTable();
+  filterTable();
+}
+function clearAnalyticsDateFilter() {
+  const from = document.getElementById('tableDateFrom');
+  const to = document.getElementById('tableDateTo');
+  if (from) from.value = '';
+  if (to) to.value = '';
+  state.analyticsDateFrom = '';
+  state.analyticsDateTo = '';
+  state.displayedPartnerStats = [...state.partnerStats];
+  renderTable();
+  filterTable();
+}
+
+function onPartnerMinGamesChange() {
+  const v = parseInt(document.getElementById('tableMinGames').value, 10);
+  state.minPartnerGames = (!v || v < 1) ? 1 : v;
+  renderTable();
+  filterTable();
+}
 
 // =====================================================================
 // THEME
