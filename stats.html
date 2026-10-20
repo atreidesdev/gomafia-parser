@@ -8,6 +8,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@2.2.0/dist/chartjs-plugin-zoom.min.js"></script>
 <style>
 :root{
   --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
@@ -554,7 +555,6 @@ tbody tr:hover td:first-child{background-color: var(--card-bg-subtle);}
 }
 .cell-clickable.total-badge{background: var(--accent-soft); box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.2);}
 
-/* Кликабельные числовые бейджи (игры у судей) */
 .clickable-num {
   display: inline-flex;
   align-items: center;
@@ -1279,6 +1279,14 @@ body.dark-mode .player-points{background: rgba(255,255,255,0.08);}
         </select>
       </div>
       <div class="filter-group">
+        <label class="filter-label">MVP проигравших</label>
+        <select id="filterLosingMvp" class="filter-select" onchange="applyVizFilters()">
+          <option value="all">Любой</option>
+          <option value="yes">🥈 Я MVP проигравших</option>
+          <option value="no">Не MVP проигравших</option>
+        </select>
+      </div>
+      <div class="filter-group">
         <label class="filter-label">Тип турнира</label>
         <select id="filterTournamentType" class="filter-select" onchange="applyVizFilters()">
           <option value="all">Все типы</option>
@@ -1346,7 +1354,7 @@ body.dark-mode .player-points{background: rgba(255,255,255,0.08);}
       </div>
       <div class="section" style="margin-bottom:0;">
         <div class="section-title">
-          🕸️ Радар стиля игры (Spider Chart)
+          🕸️ Радар стиля игры
           <select id="radarRoleSelect" class="filter-select" onchange="renderRadarChart()">
             <option value="don" selected>👑 Дон</option>
             <option value="sheriff">🕵️ Шериф</option>
@@ -1372,6 +1380,7 @@ body.dark-mode .player-points{background: rgba(255,255,255,0.08);}
             <option value="50">Окно 50</option>
             <option value="0">Без сглаживания</option>
           </select>
+          <button class="pill-btn" onclick="resetWrZoom()" title="Сбросить масштаб графика">↺ Сброс</button>
         </div>
       </div>
       <div class="chart-container" id="wrChartContainer"><canvas id="wrChart"></canvas></div>
@@ -1424,7 +1433,7 @@ body.dark-mode .player-points{background: rgba(255,255,255,0.08);}
         <button class="export-btn" onclick="exportToCSV()">📥 Экспорт CSV</button>
       </div>
       <div class="table-toolbar" style="flex-wrap:wrap;">
-        <input type="text" id="tableSearch" class="search-input" placeholder="🔍 Поиск игрока..." onkeyup="filterTable()">
+        <input type="text" id="tableSearch" class="search-input" placeholder="🔍 Поиск игрока..." oninput="onTableSearchInput()">
         <div class="date-filter-box">
           <span style="font-size:.85rem;color:var(--text-secondary);font-weight:600;">📅</span>
           <input type="date" id="tableDateFrom" class="filter-select" onchange="applyAnalyticsDateFilter()" title="Дата с">
@@ -1477,7 +1486,7 @@ body.dark-mode .player-points{background: rgba(255,255,255,0.08);}
       </div>
 
       <div class="table-toolbar" style="flex-wrap:wrap;">
-        <input type="text" id="sheriffSearch" class="search-input" placeholder="🔍 Поиск шерифа..." oninput="filterSheriffsTable()">
+        <input type="text" id="sheriffSearch" class="search-input" placeholder="🔍 Поиск шерифа..." oninput="onSheriffSearchInput()">
         <div class="date-filter-box">
           <span style="font-size:.85rem;color:var(--text-secondary);font-weight:600;">📅</span>
           <input type="date" id="sheriffDateFrom" class="filter-select" onchange="applySheriffDateFilter()" title="Дата с">
@@ -1552,7 +1561,7 @@ body.dark-mode .player-points{background: rgba(255,255,255,0.08);}
         <strong>кликните на число игр</strong> для открытия карточек партий.
       </div>
       <div class="table-toolbar" style="flex-wrap:wrap;">
-        <input type="text" id="judgeSearch" class="search-input" placeholder="🔍 Поиск судьи..." oninput="filterJudgesTable()">
+        <input type="text" id="judgeSearch" class="search-input" placeholder="🔍 Поиск судьи..." oninput="onJudgeSearchInput()">
         <div class="date-filter-box">
           <span style="font-size:.85rem;color:var(--text-secondary);font-weight:600;">📅</span>
           <input type="date" id="judgeDateFrom" class="filter-select" onchange="applyJudgeDateFilter()" title="Дата с">
@@ -1694,11 +1703,27 @@ function wrTextStyle(wr) {
   return `color:hsl(${hue},75%,var(--wr-light));font-weight:700;`;
 }
 
+// Обычный MVP игры — "я" в массиве game.mvp
 function isPlayerMvp(game) {
   if (!Array.isArray(game.mvp)) return false;
   const me = Array.isArray(game.composition) ? game.composition.find(p => p.isYou) : null;
   if (!me) return false;
   return game.mvp.some(m => m.name === me.name);
+}
+
+// MVP проигравшей команды
+function isLosingTeamMvp(game) {
+  const me = Array.isArray(game.composition) ? game.composition.find(p => p.isYou) : null;
+  if (!me) return false;
+  if (game.isWin) return false;
+  if (isPlayerMvp(game)) return false;
+
+  const myPoints = me.points || 0;
+  if (myPoints < 0.5) return false;
+
+  const meIsRed = isRed(me.role);
+  const teammates = game.composition.filter(p => !p.isYou && isRed(p.role) === meIsRed);
+  return teammates.every(p => myPoints >= (p.points || 0));
 }
 
 function getWinnerName(game, myRoleKey) {
@@ -1792,7 +1817,6 @@ function fallbackCopy(text, cb) {
   }
 }
 
-// ----- Скопировать инфо об игре: "Турнир, СТОЛ N" -----
 function buildGameCopyText(tournamentName, tableNumber) {
   const raw = String(tournamentName || '').trim();
   const commaIdx = raw.indexOf(',');
@@ -1934,6 +1958,18 @@ async function processData(data) {
   setVal('judgeDateTo', '');
   setVal('tableDateFrom', '');
   setVal('tableDateTo', '');
+  setVal('filterResult', 'all');
+  setVal('filterPeaceful', 'all');
+  setVal('filterSheriffRole', 'all');
+  setVal('filterMafia', 'all');
+  setVal('filterDon', 'all');
+  setVal('filterQuality', 'all');
+  setVal('filterLeave', 'all');
+  setVal('filterSheriffDeath', 'all');
+  setVal('filterMvp', 'all');
+  setVal('filterLosingMvp', 'all');
+  setVal('filterTournamentType', 'all');
+  setVal('filterTournamentFinal', 'all');
 
   renderViz();
   renderAnalytics();
@@ -2190,6 +2226,7 @@ function readFilters() {
     leave: document.getElementById('filterLeave').value,
     sheriffDeath: document.getElementById('filterSheriffDeath').value,
     mvp: document.getElementById('filterMvp').value,
+    losingMvp: document.getElementById('filterLosingMvp').value,
     tournamentType: document.getElementById('filterTournamentType').value,
     tournamentFinal: document.getElementById('filterTournamentFinal').value
   };
@@ -2263,6 +2300,11 @@ function gamePassesFilters(game, f) {
     const isMvp = isPlayerMvp(game);
     if (f.mvp === 'yes' && !isMvp) return false;
     if (f.mvp === 'no' && isMvp) return false;
+  }
+  if (f.losingMvp && f.losingMvp !== 'all') {
+    const isLosingMvp = isLosingTeamMvp(game);
+    if (f.losingMvp === 'yes' && !isLosingMvp) return false;
+    if (f.losingMvp === 'no' && isLosingMvp) return false;
   }
   return true;
 }
@@ -2350,7 +2392,6 @@ function renderTournaments() {
         for (const term of searchTerms) {
           if (!names.some(n => n.includes(term))) return false;
         }
-        // для мультипоиска требуем, чтобы в игре был загруженный игрок
         if (isMultiSearch && !g.composition.some(p => p.isYou)) return false;
       }
       return true;
@@ -2494,6 +2535,10 @@ function renderGameCard(game, tournament) {
     ? `<div class="game-mvp"><strong>MVP:</strong> ${game.mvp.map(m => `${m.name} (${m.role}, ${m.points})`).join(', ')}</div>`
     : '';
 
+  const losingMvpBadge = isLosingTeamMvp(game)
+    ? `<span class="badge" style="background:#fef3c7;color:#92400e;" title="MVP проигравшей команды (≥0.5 баллов)">🥈 MVP проигравших</span>`
+    : '';
+
   const copyText = buildGameCopyText(tournament.tournament, game.tableNumber);
   const copyBtn = copyText
     ? `<button class="copy-btn game-copy-btn" type="button"
@@ -2514,6 +2559,7 @@ function renderGameCard(game, tournament) {
     <div style="display:flex;gap:.5rem;margin-bottom:.5rem;flex-wrap:wrap;align-items:center;">
       <span class="badge ${getRoleBadgeClass(myRole)}">${myRole || '?'}</span>
       ${resultBadge}
+      ${losingMvpBadge}
     </div>
     <div class="composition">${formatComposition(game.composition)}</div>
   </div>`;
@@ -2558,7 +2604,28 @@ function toggleHideRoles() {
 let searchDebounceTimer = null;
 function onPlayerSearchInput() {
   clearTimeout(searchDebounceTimer);
-  searchDebounceTimer = setTimeout(() => applyVizFilters(), 200);
+  searchDebounceTimer = setTimeout(() => applyVizFilters(), 500);
+}
+
+// =====================================================================
+// DEBOUNCE: партнёры / судьи / шерифы
+// =====================================================================
+let tableSearchDebounceTimer = null;
+function onTableSearchInput() {
+  clearTimeout(tableSearchDebounceTimer);
+  tableSearchDebounceTimer = setTimeout(() => filterTable(), 300);
+}
+
+let judgeSearchDebounceTimer = null;
+function onJudgeSearchInput() {
+  clearTimeout(judgeSearchDebounceTimer);
+  judgeSearchDebounceTimer = setTimeout(() => filterJudgesTable(), 300);
+}
+
+let sheriffSearchDebounceTimer = null;
+function onSheriffSearchInput() {
+  clearTimeout(sheriffSearchDebounceTimer);
+  sheriffSearchDebounceTimer = setTimeout(() => filterSheriffsTable(), 300);
 }
 
 // =====================================================================
@@ -2631,10 +2698,10 @@ function renderAnalytics() {
 
   let totalGames = 0, totalWins = 0, totalPoints = 0;
   const roleStats = {
-    peaceful: { games: 0, wins: 0, points: 0, mvp: 0, bad: 0 },
-    sheriff:  { games: 0, wins: 0, points: 0, mvp: 0, bad: 0 },
-    mafia:    { games: 0, wins: 0, points: 0, mvp: 0, bad: 0 },
-    don:      { games: 0, wins: 0, points: 0, mvp: 0, bad: 0 }
+    peaceful: { games: 0, wins: 0, points: 0, mvp: 0, losingMvp: 0, bad: 0 },
+    sheriff:  { games: 0, wins: 0, points: 0, mvp: 0, losingMvp: 0, bad: 0 },
+    mafia:    { games: 0, wins: 0, points: 0, mvp: 0, losingMvp: 0, bad: 0 },
+    don:      { games: 0, wins: 0, points: 0, mvp: 0, losingMvp: 0, bad: 0 }
   };
 
   state.flatGames.forEach(({ game }) => {
@@ -2643,13 +2710,14 @@ function renderAnalytics() {
     totalGames++;
     totalPoints += me.points || 0;
     if (game.isWin) totalWins++;
-    const isMvp = Array.isArray(game.mvp) && game.mvp.some(m => m.name === me.name);
+    const isMvp = isPlayerMvp(game);
     const k = getRoleKey(me.role);
     if (roleStats[k]) {
       roleStats[k].games++;
       roleStats[k].points += me.points || 0;
       if (game.isWin) roleStats[k].wins++;
       if (isMvp) roleStats[k].mvp++;
+      if (isLosingTeamMvp(game)) roleStats[k].losingMvp++;
       if (me.playType === 'r') roleStats[k].bad++;
     }
   });
@@ -2681,11 +2749,12 @@ function renderAnRoleStats(stats) {
     const badCount = d.bad || 0;
     const cls = wr >= 60 ? 'text-success' : wr <= 40 && d.games > 0 ? 'text-danger' : 'text-neutral';
     const mvp = d.mvp || 0;
+    const losingMvp = d.losingMvp || 0;
     return `<div class="role-stat-card ${r.border}">
       <div class="role-stat-info"><h3>${r.label}</h3><p>${d.games} игр</p></div>
       <div class="role-stat-values">
         <div class="role-stat-wr ${cls}">${wr}%</div>
-        <div class="role-stat-pts">Ср: ${avgPts} · 🌟 ${mvp} · 🔻 ${badCount}</div>
+        <div class="role-stat-pts">Ср: ${avgPts} · <span title="Обычный MVP">🌟</span> ${mvp} · <span title="MVP проигравшей команды (≥0.5 баллов и лучший среди своих)">🥈</span> ${losingMvp} · 🔻 ${badCount}</div>
       </div>
     </div>`;
   }).join('');
@@ -2729,10 +2798,10 @@ function renderAnalyticsCharts() {
 
 function computeRadarMetrics(gamesList) {
   if (!gamesList || gamesList.length === 0) {
-    return { count: 0, wr: 0, scaledAvg: 0, rawAvg: 0, mvpRate: 0, firstKillRate: 0, goodRate: 0 };
+    return { count: 0, wr: 0, scaledAvg: 0, rawAvg: 0, mvpRate: 0, losingMvpRate: 0, firstKillRate: 0, goodRate: 0 };
   }
   const count = gamesList.length;
-  let wins = 0, totalPoints = 0, mvpCount = 0, firstKillCount = 0, goodCount = 0;
+  let wins = 0, totalPoints = 0, mvpCount = 0, losingMvpCount = 0, firstKillCount = 0, goodCount = 0;
 
   gamesList.forEach(({ game }) => {
     if (game.isWin) wins++;
@@ -2743,12 +2812,15 @@ function computeRadarMetrics(gamesList) {
       if (me.playType === 'y' || me.playType === 'gg') goodCount++;
     }
     if (isPlayerMvp(game)) mvpCount++;
+    if (isLosingTeamMvp(game)) losingMvpCount++;
   });
 
+  const losses = count - wins;
   const wr = (wins / count) * 100;
   const rawAvg = totalPoints / count;
   const scaledAvg = Math.max(0, Math.min(100, rawAvg * 25 + 25));
-  const mvpRate = (mvpCount / count) * 100;
+  const mvpRate = wins > 0 ? (mvpCount / wins) * 100 : 0;
+  const losingMvpRate = losses > 0 ? (losingMvpCount / losses) * 100 : 0;
   const firstKillRate = (firstKillCount / count) * 100;
   const goodRate = (goodCount / count) * 100;
 
@@ -2758,10 +2830,12 @@ function computeRadarMetrics(gamesList) {
     scaledAvg: Math.round(scaledAvg * 10) / 10,
     rawAvg: Math.round(rawAvg * 100) / 100,
     mvpRate: Math.round(mvpRate * 10) / 10,
+    losingMvpRate: Math.round(losingMvpRate * 10) / 10,
     firstKillRate: Math.round(firstKillRate * 10) / 10,
     goodRate: Math.round(goodRate * 10) / 10
   };
 }
+
 
 function renderRadarChart() {
   if (!state.flatGames.length) return;
@@ -2792,7 +2866,7 @@ function renderRadarChart() {
   const canvas = document.getElementById('radarChart');
   if (!canvas) return;
 
-  const labels = ['Винрейт', 'Средний балл', 'Частота MVP', 'Первый ушедший', 'Хорошие игры'];
+    const labels = ['Винрейт', 'Средний балл', 'MVP от побед', 'MVP проигравших', 'Первый ушедший', 'Хорошие игры'];
 
   state.charts.radar = new Chart(canvas, {
     type: 'radar',
@@ -2803,7 +2877,7 @@ function renderRadarChart() {
           label: `Все роли (${allMetrics.count} игр)`,
           data: [
             allMetrics.wr, allMetrics.scaledAvg, allMetrics.mvpRate,
-            allMetrics.firstKillRate, allMetrics.goodRate
+            allMetrics.losingMvpRate, allMetrics.firstKillRate, allMetrics.goodRate
           ],
           borderColor: '#3b82f6',
           backgroundColor: 'rgba(59, 130, 246, 0.15)',
@@ -2815,7 +2889,7 @@ function renderRadarChart() {
           label: `${roleCfg.label} (${roleMetrics.count} игр)`,
           data: [
             roleMetrics.wr, roleMetrics.scaledAvg, roleMetrics.mvpRate,
-            roleMetrics.firstKillRate, roleMetrics.goodRate
+            roleMetrics.losingMvpRate, roleMetrics.firstKillRate, roleMetrics.goodRate
           ],
           borderColor: roleCfg.color,
           backgroundColor: roleCfg.bg,
@@ -2846,13 +2920,14 @@ function renderRadarChart() {
             label: (item) => {
               const m = item.dataset._metrics;
               if (!m) return `${item.dataset.label}: ${item.formattedValue}`;
-              const realValues = [
-                `${m.wr}%`,
-                m.rawAvg.toFixed(2),
-                `${m.mvpRate}%`,
-                `${m.firstKillRate}%`,
-                `${m.goodRate}%`
-              ];
+            const realValues = [
+              `${m.wr}%`,
+              m.rawAvg.toFixed(2),
+              `${m.mvpRate}%`,
+              `${m.losingMvpRate}%`,
+              `${m.firstKillRate}%`,
+              `${m.goodRate}%`
+            ];
               return `${item.dataset.label}: ${realValues[item.dataIndex] ?? item.formattedValue}`;
             }
           }
@@ -2980,6 +3055,12 @@ function onWrChartModeChange() {
   renderWinrateChart();
 }
 
+function resetWrZoom() {
+  if (state.charts.wr && typeof state.charts.wr.resetZoom === 'function') {
+    state.charts.wr.resetZoom();
+  }
+}
+
 function renderWinrateChart() {
   if (!state.flatGames.length) return;
   const isDark = document.body.classList.contains('dark-mode');
@@ -3031,7 +3112,25 @@ function renderWinrateChart() {
       options: {
         responsive: true, maintainAspectRatio: false,
         interaction: { mode: 'index', intersect: false },
-        plugins: { legend: { display: false } },
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            callbacks: {
+              title: (items) => {
+                const t = tournaments[items[0].dataIndex];
+                return t ? extractTournamentName(t.name || '') : '';
+              },
+              label: (item) => {
+                const t = tournaments[item.dataIndex];
+                if (!t) return '';
+                return [
+                  `Винрейт: ${t.wr.toFixed(1)}%`,
+                  `Игр: ${t.games} · Побед: ${t.wins}`
+                ];
+              }
+            }
+          }
+        },
         scales: {
           y: { beginAtZero: true, max: 100, ticks: { color: textColor, font: { family: 'Inter' } }, grid: { color: isDark ? '#1e293b' : '#f1f5f9' } },
           x: { display: false }
@@ -3046,16 +3145,26 @@ function renderWinrateChart() {
   let datasetLabel;
   const isCumulative = (windowSize === 0);
 
+  const collectTournaments = slice => {
+    const names = [];
+    const seen = new Set();
+    slice.forEach(g => {
+      const n = extractTournamentName(g.tournament.tournament || '');
+      if (n && !seen.has(n)) { seen.add(n); names.push(n); }
+    });
+    return names;
+  };
+
   if (isCumulative) {
     for (let i = 0; i < games.length; i++) {
       const slice = games.slice(0, i + 1);
       const wins = slice.filter(g => g.game.isWin).length;
+      const currentGameTournament = extractTournamentName(games[i].tournament.tournament || '');
       points.push({
         startGame: 1,
         endGame: i + 1,
         wr: (wins / slice.length) * 100,
-        startTournament: slice[0].tournament.tournament,
-        endTournament: slice[slice.length - 1].tournament.tournament
+        tournaments: currentGameTournament ? [currentGameTournament] : []
       });
     }
     datasetLabel = 'Кумулятивный винрейт %';
@@ -3071,8 +3180,7 @@ function renderWinrateChart() {
         startGame: i - windowSize + 2,
         endGame: i + 1,
         wr: (wins / windowSize) * 100,
-        startTournament: slice[0].tournament.tournament,
-        endTournament: slice[slice.length - 1].tournament.tournament
+        tournaments: collectTournaments(slice)
       });
     }
     datasetLabel = `Винрейт % (окно ${windowSize})`;
@@ -3095,14 +3203,54 @@ function renderWinrateChart() {
     },
     options: {
       responsive: true, maintainAspectRatio: false,
+      animation: false,
       interaction: { mode: 'index', intersect: false },
       scales: {
         y: { beginAtZero: true, max: 100, ticks: { color: textColor, font: { family: 'Inter' } }, grid: { color: isDark ? '#1e293b' : '#f1f5f9' } },
         x: { display: false }
       },
-      plugins: { legend: { labels: { color: textColor, font: { family: 'Inter', weight: 600 } } } }
+      plugins: {
+        legend: { labels: { color: textColor, font: { family: 'Inter', weight: 600 } } },
+        tooltip: {
+          callbacks: {
+            title: (items) => {
+              const p = points[items[0].dataIndex];
+              if (!p || !p.tournaments || !p.tournaments.length) return '';
+              return p.tournaments;
+            },
+            label: (item) => {
+              const p = points[item.dataIndex];
+              if (!p) return '';
+              return [
+                `Винрейт: ${p.wr.toFixed(1)}%`,
+                `Игры: #${p.startGame}–#${p.endGame}`
+              ];
+            }
+          }
+        },
+        zoom: {
+          pan: {
+            enabled: true,
+            mode: 'x',
+            modifierKey: null,
+            onPanStart: ({ chart }) => { chart.canvas.style.cursor = 'grabbing'; },
+            onPanComplete: ({ chart }) => { chart.canvas.style.cursor = 'grab'; }
+          },
+          zoom: {
+            wheel: { enabled: true, speed: 0.1 },
+            pinch: { enabled: true },
+            mode: 'x'
+          },
+          limits: {
+            x: { min: 'original', max: 'original' }
+          }
+        }
+      }
     }
   });
+
+  const cvs = document.getElementById('wrChart');
+  if (cvs) cvs.style.cursor = 'grab';
 }
 
 function renderHeatmap() {
@@ -3956,12 +4104,12 @@ function openModal(playerName, matchType = null, title = null) {
   const player = state.displayedPartnerStats.find(p => p.name === playerName)
               || state.partnerStats.find(p => p.name === playerName);
   if (!player || !player.games) return;
-  
-  state.currentModalGames = player.games; // all games
-  
+
+  state.currentModalGames = player.games;
+
   const modalTitle = title ? `${title} — ${playerName}` : `🎮 Игры с: ${playerName} (всего ${player.total})`;
   document.getElementById('modalPlayerName').textContent = modalTitle;
-  
+
   const listContainer = document.getElementById('modalGamesList');
   const typeFilterValue = matchType || 'all';
   listContainer.innerHTML = `
@@ -3983,7 +4131,7 @@ function openModal(playerName, matchType = null, title = null) {
       </select>
     </div>
     <div id="modalGamesContainer"></div>`;
-  
+
   applyGameFilter();
   document.getElementById('gameModal').classList.remove('hidden');
   document.body.style.overflow = 'hidden';
@@ -4061,6 +4209,9 @@ function applyGameFilter() {
       ? `<span class="badge" style="background:#d1fae5;color:#065f46;">✅ ${winnerTitle}</span>`
       : `<span class="badge" style="background:#fee2e2;color:#991b1b;">❌ ${winnerTitle}</span>`;
     const myRoleBadge = myRole ? `<span class="badge ${getRoleBadgeClass(myRole)}">${myRole}</span>` : '';
+    const losingMvpBadge = isLosingTeamMvp(g)
+      ? `<span class="badge" style="background:#fef3c7;color:#92400e;" title="MVP проигравшей команды (≥0.5 баллов)">🥈 MVP проигравших</span>`
+      : '';
     const dateStr = g.dateStart ? `<span style="font-size:.8rem;color:var(--text-secondary);margin-right:.5rem;">📅 ${g.dateStart}</span>` : '';
 
     const copyText = buildGameCopyText(g.tournamentName, g.tableNumber);
@@ -4081,6 +4232,7 @@ function applyGameFilter() {
         </div>
         <div class="modal-result-badges">
           ${myRoleBadge}
+          ${losingMvpBadge}
           ${winnerBadge}
         </div>
       </div>
