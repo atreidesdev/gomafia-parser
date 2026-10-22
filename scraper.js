@@ -69,6 +69,15 @@ function int(v) {
     return isNaN(n) ? null : n;
 }
 
+// Парсит ELO-дельту из ячейки списка турниров: "+83", "-19", "–", "" и т.п.
+function parseEloFromList(v) {
+    if (v === null || v === undefined) return null;
+    const s = String(v).trim().replace(',', '.');
+    if (!s || s === '–' || s === '-' || s === '—') return null;
+    const m = s.match(/^[+-]?\d+(?:\.\d+)?/);
+    return m ? parseFloat(m[0]) : null;
+}
+
 function getLhStatus(p, lhKey, lhMap) {
     const loginLower = (p.login || '').toLowerCase();
     if (lhMap && lhMap[lhKey] && lhMap[lhKey][loginLower]) {
@@ -379,6 +388,17 @@ async function parsePlayerHistory(playerUrl, targetRoles, matchMode, startIdx, e
                 timeout: 30000
             });
 
+            // Определяем индексы колонок по заголовку (на сайте шапка в <td>, не <th>)
+            const headerCells = await page.$$eval(
+                'table thead tr > td, table thead tr > th',
+                els => els.map(el => el.innerText.trim())
+            );
+            const idxElo = headerCells.findIndex(h => /^elo$/i.test(h));
+            const idxGG = headerCells.findIndex(h => /^gg$/i.test(h));
+            if (idxElo < 0) {
+                console.warn('⚠️ Колонка ELO не найдена в шапке таблицы. ELO будет только из JSON.');
+            }
+
             const rows = await page.$$('table tbody tr');
             if (rows.length === 0) {
                 console.log('⚠️ Таблица турниров не найдена или список закончился.');
@@ -388,6 +408,11 @@ async function parsePlayerHistory(playerUrl, targetRoles, matchMode, startIdx, e
             for (const row of rows) {
                 const cells = await row.$$('td');
                 const cellTexts = await Promise.all(cells.map(c => c.evaluate(el => el.innerText.trim())));
+
+                // ELO и GG из списка турниров (источник истины для «правильного» ELO)
+                const eloDeltaFromList = idxElo >= 0 ? parseEloFromList(cellTexts[idxElo]) : null;
+                const ggFromList = idxGG >= 0 ? num(cellTexts[idxGG]) : null;
+
                 const rawTournamentName = cellTexts[1] || 'Неизвестный турнир';
                 const tournamentName = rawTournamentName.replace(/\n/g, ', ');
                 const linkElement = await row.$('td:nth-child(2) a');
@@ -472,6 +497,13 @@ async function parsePlayerHistory(playerUrl, targetRoles, matchMode, startIdx, e
                     const standingsFinal = dedupeStandings(
                         jsonStandings.standings.length > 0 ? jsonStandings.standings : snapshot.standings
                     );
+
+                    // Перекрываем ELO значением из списка турниров (если оно доступно)
+                    const standingsWithListElo = standingsFinal.map(s => ({
+                        ...s,
+                        elo_delta: eloDeltaFromList != null ? eloDeltaFromList : s.elo_delta,
+                        gg: (s.gg == null && ggFromList != null) ? ggFromList : s.gg
+                    }));
 
                     const matchingGames = [];
                     let judgeMissingLogged = false;
@@ -561,10 +593,13 @@ async function parsePlayerHistory(playerUrl, targetRoles, matchMode, startIdx, e
                             dateEnd,
                             type: typeCode,
                             elo_average: eloAverage,
+                            // ELO из списка турниров (правильная дельта за турнир)
+                            elo_delta: eloDeltaFromList,
+                            gg: ggFromList,
                             star,
                             hasFinalStage: jsonStandings.hasFinalStage,
                             inFinal: playedInFinal,
-                            standings: standingsFinal,
+                            standings: standingsWithListElo,
                             team: teamInfo?.myTeam || null,
                             games: matchingGames
                         });
@@ -577,10 +612,13 @@ async function parsePlayerHistory(playerUrl, targetRoles, matchMode, startIdx, e
                             const mt = teamInfo.myTeam;
                             console.log(`  👥 Команда «${mt.title}» — место ${mt.place ?? '?'} из ${mt.teamsTotal} (Σ ${mt.sum ?? '?'}, GG ${mt.gg ?? '?'})`);
                         }
-                        if (standingsFinal.length) {
-                            console.log(`  📊 ` + standingsFinal.map(s =>
+                        console.log(`  📈 ELO (из списка): ${eloDeltaFromList != null ? (eloDeltaFromList > 0 ? '+' : '') + eloDeltaFromList : '—'}` +
+                            (ggFromList != null ? ` | GG (из списка): ${ggFromList}` : ''));
+                        if (standingsWithListElo.length) {
+                            console.log(`  📊 ` + standingsWithListElo.map(s =>
                                 `[${s.source}] ${s.stage}: место ${s.rank ?? '?'} (${s.total_points ?? '?'})` +
-                                (s.gg != null ? ` | GG: ${s.gg}` : '')
+                                (s.gg != null ? ` | GG: ${s.gg}` : '') +
+                                (s.elo_delta != null ? ` | ELO: ${s.elo_delta > 0 ? '+' : ''}${s.elo_delta}` : '')
                             ).join(' | '));
                         }
                     }
@@ -758,15 +796,17 @@ async function parsePlayerHistory(playerUrl, targetRoles, matchMode, startIdx, e
 
             console.log('\n📋 Сводка:');
             results.forEach(t => {
+                const eloStr = t.elo_delta != null ? ` | Δ ELO: ${t.elo_delta > 0 ? '+' : ''}${t.elo_delta}` : '';
                 console.log(`\n🏆 ${t.tournament} (${t.dateStart ?? '?'} – ${t.dateEnd ?? '?'})`);
-                console.log(`   ⭐ ${t.star ?? '?'} | ELO ср.: ${t.elo_average ?? '?'}` + (t.type === 'team' ? ' | Командный' : ' | Личный'));
+                console.log(`   ⭐ ${t.star ?? '?'} | ELO ср.: ${t.elo_average ?? '?'}${eloStr}` + (t.type === 'team' ? ' | Командный' : ' | Личный'));
                 console.log(`🔗 ${t.url}`);
                 if (t.hasFinalStage) {
                     console.log(`   🏁 Финал: ${t.inFinal ? '✅ игрок в финале' : '❌ не прошёл в финал или не играл'}`);
                 }
                 (t.standings || []).forEach(s =>
                     console.log(`   📊 [${s.source}] ${s.stage}: место ${s.rank ?? '?'} | ${s.total_points ?? '?'} очков` +
-                        (s.gg != null ? ` | GG: ${s.gg}` : '')));
+                        (s.gg != null ? ` | GG: ${s.gg}` : '') +
+                        (s.elo_delta != null ? ` | ELO: ${s.elo_delta > 0 ? '+' : ''}${s.elo_delta}` : '')));
                 t.games.forEach(g => {
                     const r = g.isWin ? '✅ Победа' : '❌ Поражение';
                     const j = g.tableJudge ? ` | Судья: ${g.tableJudge}` : '';

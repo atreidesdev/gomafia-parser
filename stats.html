@@ -48,8 +48,9 @@
             --role-lg-partial-text: #15803d;
             --role-lg-full-bg: #e0f2fe;
             --role-lg-full-text: #0369a1;
-            --role-lg-zero-bg: #e2e8f0;
-            --role-lg-zero-text: #475569;
+            --role-lg-zero-bg: transparent;
+            --role-lg-zero-text: #64748b;
+            --role-lg-zero-border: #94a3b8;
 
             --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.06);
             --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.08),
@@ -89,8 +90,9 @@
             --role-lg-partial-text: #86efac;
             --role-lg-full-bg: rgba(14, 165, 233, 0.24);
             --role-lg-full-text: #7dd3fc;
-            --role-lg-zero-bg: rgba(100, 116, 139, 0.28);
+            --role-lg-zero-bg: transparent;
             --role-lg-zero-text: #cbd5e1;
+            --role-lg-zero-border: #64748b;
 
             --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.5);
             --shadow-md: 0 6px 12px -2px rgb(0 0 0 / 0.6);
@@ -843,7 +845,6 @@
             font-weight: 600;
          }
 
-         /* Ссылка на профиль игрока */
          .player-link {
             color: var(--accent);
             text-decoration: none;
@@ -866,7 +867,8 @@
          }
 
          #wrChartContainer,
-         #eloChartContainer {
+         #eloChartContainer,
+         #ggChartContainer {
             position: relative;
             height: 440px;
          }
@@ -1068,6 +1070,7 @@
             background: var(--role-lg-zero-bg) !important;
             color: var(--role-lg-zero-text) !important;
             font-weight: 600;
+            border: 1.5px dashed var(--role-lg-zero-border) !important;
          }
 
          .composition-player.is-you {
@@ -1138,6 +1141,7 @@
          .badge-lh-zero {
             background: var(--role-lg-zero-bg);
             color: var(--role-lg-zero-text);
+            border: 1.5px dashed var(--role-lg-zero-border);
          }
 
          .mvp-badge-inline {
@@ -1516,6 +1520,7 @@
             background: var(--role-lg-zero-bg) !important;
             color: var(--role-lg-zero-text) !important;
             font-weight: 600;
+            border: 1.5px dashed var(--role-lg-zero-border) !important;
          }
 
          .player-tag.is-you {
@@ -2305,7 +2310,7 @@
                            class="legend-dot"
                            style="
                               background: var(--role-lg-zero-bg);
-                              border: 1px solid #94a3b8;
+                              border: 1.5px dashed var(--role-lg-zero-border);
                            "
                         ></div>
                         <span class="lg-label">Нулевой</span>
@@ -2513,7 +2518,7 @@
                            color: var(--text-secondary);
                            font-weight: 500;
                         "
-                        >(старт 1000, исключены дельты &gt; 400 ELO)</span
+                        >(старт 1000)</span
                      >
                      <select
                         id="eloChartMode"
@@ -2529,6 +2534,38 @@
                </div>
                <div class="chart-container" id="eloChartContainer">
                   <canvas id="eloChart"></canvas>
+               </div>
+            </div>
+
+            <div class="section">
+               <div class="section-title">
+                  🎯 GG по годам
+                  <div
+                     style="
+                        display: flex;
+                        gap: 0.5rem;
+                        align-items: center;
+                        flex-wrap: wrap;
+                     "
+                  >
+                     <select
+                        id="ggChartMode"
+                        class="filter-select"
+                        onchange="onGgChartModeChange()"
+                     >
+                        <option value="yearly" selected>По годам (сумма)</option>
+                        <option value="tournaments">По турнирам за выбранный год</option>
+                     </select>
+                     <select
+                        id="ggYearSelect"
+                        class="filter-select"
+                        style="display: none"
+                        onchange="renderGgChart()"
+                     ></select>
+                  </div>
+               </div>
+               <div class="chart-container" id="ggChartContainer">
+                  <canvas id="ggChart"></canvas>
                </div>
             </div>
 
@@ -3143,7 +3180,7 @@
             sortMode: "date",
             hideRoles: false,
             currentTab: "viz",
-            charts: { roles: null, wr: null, radar: null, elo: null },
+            charts: { roles: null, wr: null, radar: null, elo: null, gg: null },
             sortDirection: {},
             heatmapDisplayCount: 20,
             sortedHeatmapData: [],
@@ -4423,6 +4460,21 @@
                   standing.elo_delta !== null
                      ? `${standing.elo_delta > 0 ? "+" : ""}${standing.elo_delta}`
                      : "";
+               const ggRaw =
+                  tournament.gg !== undefined &&
+                  tournament.gg !== null &&
+                  tournament.gg !== ""
+                     ? parseFloat(tournament.gg)
+                     : standing &&
+                         standing.gg !== undefined &&
+                         standing.gg !== null &&
+                         standing.gg !== ""
+                       ? parseFloat(standing.gg)
+                       : null;
+               const gg =
+                  ggRaw !== null && !isNaN(ggRaw)
+                     ? `${ggRaw > 0 ? "+" : ""}${ggRaw}`
+                     : "";
 
                const preFinalRank =
                   inFinal &&
@@ -4446,6 +4498,9 @@
                   quickHtml += `<span class="tq-item"><span class="tq-lbl">Место</span><b>${rank}</b></span>`;
                }
                quickHtml += `<span class="tq-item"><span class="tq-lbl">Баллы</span><b>${totalPoints}</b></span>`;
+               if (gg) {
+                  quickHtml += `<span class="tq-item"><span class="tq-lbl">GG</span><b>${gg}</b></span>`;
+               }
                if (team) {
                   quickHtml += `<span class="tq-item"><span class="tq-lbl">Команда</span><b>${teamPlace}</b></span>`;
                }
@@ -4477,6 +4532,10 @@
                if (elo)
                   chips.push(
                      `<span class="meta-chip">📈 ELO: <b>${elo}</b></span>`,
+                  );
+               if (gg)
+                  chips.push(
+                     `<span class="meta-chip">🎯 GG: <b>${gg}</b></span>`,
                   );
 
                const metaChips = chips.join("");
@@ -4975,6 +5034,8 @@
             renderRadarChart();
             renderWinrateChart();
             renderEloChart();
+            updateGgYearSelect();
+            renderGgChart();
          }
 
          function computeRadarMetrics(gamesList) {
@@ -5231,24 +5292,30 @@
                         !/отбор|квалиф/i.test(s.stage),
                   ) || null;
                const standing = finalStanding || standings[0] || null;
-               if (!standing) return;
 
                let delta = null;
                if (
-                  standing.elo_delta !== undefined &&
-                  standing.elo_delta !== null &&
-                  standing.elo_delta !== ""
+                  t.elo_delta !== undefined &&
+                  t.elo_delta !== null &&
+                  t.elo_delta !== ""
                ) {
-                  delta = parseFloat(standing.elo_delta);
-               } else if (
-                  standing.elo !== undefined &&
-                  standing.elo !== null &&
-                  standing.elo !== ""
-               ) {
-                  delta = parseFloat(standing.elo);
+                  delta = parseFloat(t.elo_delta);
+               } else if (standing) {
+                  if (
+                     standing.elo_delta !== undefined &&
+                     standing.elo_delta !== null &&
+                     standing.elo_delta !== ""
+                  ) {
+                     delta = parseFloat(standing.elo_delta);
+                  } else if (
+                     standing.elo !== undefined &&
+                     standing.elo !== null &&
+                     standing.elo !== ""
+                  ) {
+                     delta = parseFloat(standing.elo);
+                  }
                }
                if (delta === null || isNaN(delta)) return;
-               if (delta > 400) return;
 
                cumulative += delta;
                eloPoints.push({
@@ -5258,7 +5325,7 @@
                   delta: Math.round(delta * 10) / 10,
                   cumulative: Math.round(cumulative * 10) / 10,
                   rank:
-                     standing.rank !== undefined && standing.rank !== null
+                     standing && standing.rank !== undefined && standing.rank !== null
                         ? standing.rank
                         : "—",
                });
@@ -5266,7 +5333,7 @@
 
             if (eloPoints.length <= 1) {
                container.innerHTML =
-                  '<p class="empty-state">Нет данных ELO (или все значения &gt; 400).</p>';
+                  '<p class="empty-state">Нет данных ELO.</p>';
                return;
             }
 
@@ -5353,6 +5420,251 @@
                   },
                },
             });
+         }
+
+         // ===== GG CHART =====
+         function getTournamentYear(t) {
+            const dateStr = t.dateStart || t.dateEnd;
+            if (!dateStr) return null;
+            const m = String(dateStr).match(/^(\d{4})/);
+            return m ? parseInt(m[1], 10) : null;
+         }
+
+         function getTournamentGg(t) {
+            if (t.gg !== undefined && t.gg !== null && t.gg !== "") {
+               const n = parseFloat(t.gg);
+               if (!isNaN(n)) return n;
+            }
+            const standings = Array.isArray(t.standings) ? t.standings : [];
+            for (const s of standings) {
+               if (s.gg !== undefined && s.gg !== null && s.gg !== "") {
+                  const n = parseFloat(s.gg);
+                  if (!isNaN(n)) return n;
+               }
+            }
+            return null;
+         }
+
+         function collectGgData() {
+            const list = [...state.rawData].reverse();
+            return list
+               .map((t) => ({
+                  tournament: t,
+                  year: getTournamentYear(t),
+                  gg: getTournamentGg(t),
+               }))
+               .filter((x) => x.gg !== null && x.year !== null);
+         }
+
+         function updateGgYearSelect() {
+            const yearSelect = document.getElementById("ggYearSelect");
+            if (!yearSelect) return [];
+            const data = collectGgData();
+            const years = [...new Set(data.map((x) => x.year))].sort(
+               (a, b) => a - b,
+            );
+            const current = yearSelect.value;
+            yearSelect.innerHTML = years
+               .map((y) => `<option value="${y}">${y}</option>`)
+               .join("");
+            if (current && years.includes(+current)) {
+               yearSelect.value = String(current);
+            } else if (years.length) {
+               yearSelect.value = String(years[years.length - 1]);
+            }
+            return years;
+         }
+
+         function onGgChartModeChange() {
+            const mode = document.getElementById("ggChartMode").value;
+            const yearSelect = document.getElementById("ggYearSelect");
+            if (yearSelect) {
+               yearSelect.style.display =
+                  mode === "tournaments" ? "" : "none";
+            }
+            if (mode === "tournaments") updateGgYearSelect();
+            renderGgChart();
+         }
+
+         function renderGgChart() {
+            if (!state.rawData.length) return;
+            const isDark = document.body.classList.contains("dark-mode");
+            const textColor = isDark ? "#f8fafc" : "#0f172a";
+            const container = document.getElementById("ggChartContainer");
+            if (!container) return;
+
+            if (state.charts.gg) {
+               state.charts.gg.destroy();
+               state.charts.gg = null;
+            }
+            if (!container.querySelector("canvas")) {
+               container.innerHTML = '<canvas id="ggChart"></canvas>';
+            }
+
+            const mode = document.getElementById("ggChartMode").value;
+            const data = collectGgData();
+            if (!data.length) {
+               container.innerHTML =
+                  '<p class="empty-state">Нет данных GG.</p>';
+               return;
+            }
+
+            if (mode === "yearly") {
+               const byYear = {};
+               data.forEach((x) => {
+                  byYear[x.year] = (byYear[x.year] || 0) + x.gg;
+               });
+               const years = Object.keys(byYear)
+                  .map(Number)
+                  .sort((a, b) => a - b);
+               const values = years.map(
+                  (y) => Math.round(byYear[y] * 10) / 10,
+               );
+
+               state.charts.gg = new Chart(
+                  document.getElementById("ggChart"),
+                  {
+                     type: "bar",
+                     data: {
+                        labels: years.map(String),
+                        datasets: [
+                           {
+                              label: "Сумма GG за год",
+                              data: values,
+                              backgroundColor: values.map((v) =>
+                                 v >= 0
+                                    ? "rgba(16,185,129,.75)"
+                                    : "rgba(239,68,68,.75)",
+                              ),
+                              borderColor: values.map((v) =>
+                                 v >= 0 ? "#10b981" : "#ef4444",
+                              ),
+                              borderWidth: 1.5,
+                              borderRadius: 6,
+                           },
+                        ],
+                     },
+                     options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                           legend: { display: false },
+                           tooltip: {
+                              callbacks: {
+                                 title: (items) =>
+                                    `Год: ${years[items[0].dataIndex]}`,
+                                 label: (item) => {
+                                    const y = years[item.dataIndex];
+                                    const tours = data.filter(
+                                       (x) => x.year === y,
+                                    );
+                                    const v = values[item.dataIndex];
+                                    return [
+                                       `GG: ${v > 0 ? "+" : ""}${v}`,
+                                       `Турниров: ${tours.length}`,
+                                    ];
+                                 },
+                              },
+                           },
+                        },
+                        scales: {
+                           y: {
+                              beginAtZero: false,
+                              ticks: {
+                                 color: textColor,
+                                 font: { family: "Inter" },
+                              },
+                              grid: {
+                                 color: isDark ? "#1e293b" : "#f1f5f9",
+                              },
+                           },
+                           x: {
+                              ticks: {
+                                 color: textColor,
+                                 font: { family: "Inter" },
+                              },
+                              grid: { display: false },
+                           },
+                        },
+                     },
+                  },
+               );
+               return;
+            }
+
+            // mode === "tournaments"
+            const years = updateGgYearSelect();
+            const yearSelect = document.getElementById("ggYearSelect");
+            const selectedYear =
+               yearSelect && yearSelect.value
+                  ? parseInt(yearSelect.value, 10)
+                  : years[years.length - 1];
+            const yearData = data.filter((x) => x.year === selectedYear);
+            if (!yearData.length) {
+               container.innerHTML =
+                  '<p class="empty-state">За выбранный год нет данных GG.</p>';
+               return;
+            }
+            const values = yearData.map((x) => x.gg);
+            const fullNames = yearData.map(
+               (x) => x.tournament.tournament || "Турнир",
+            );
+
+            state.charts.gg = new Chart(
+               document.getElementById("ggChart"),
+               {
+                  type: "bar",
+                  data: {
+                     labels: yearData.map((_, i) => `#${i + 1}`),
+                     datasets: [
+                        {
+                           label: `GG за ${selectedYear}`,
+                           data: values,
+                           backgroundColor: values.map((v) =>
+                              v >= 0
+                                 ? "rgba(16,185,129,.75)"
+                                 : "rgba(239,68,68,.75)",
+                           ),
+                           borderColor: values.map((v) =>
+                              v >= 0 ? "#10b981" : "#ef4444",
+                           ),
+                           borderWidth: 1.5,
+                           borderRadius: 6,
+                        },
+                     ],
+                  },
+                  options: {
+                     responsive: true,
+                     maintainAspectRatio: false,
+                     plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                           callbacks: {
+                              title: (items) =>
+                                 fullNames[items[0].dataIndex] || "",
+                              label: (item) => {
+                                 const v = values[item.dataIndex];
+                                 return `GG: ${v > 0 ? "+" : ""}${v}`;
+                              },
+                           },
+                        },
+                     },
+                     scales: {
+                        y: {
+                           beginAtZero: false,
+                           ticks: {
+                              color: textColor,
+                              font: { family: "Inter" },
+                           },
+                           grid: {
+                              color: isDark ? "#1e293b" : "#f1f5f9",
+                           },
+                        },
+                        x: { display: false },
+                     },
+                  },
+               },
+            );
          }
 
          function onWrChartModeChange() {
