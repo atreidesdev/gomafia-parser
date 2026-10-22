@@ -356,6 +356,11 @@
             box-shadow: var(--shadow-sm);
             position: relative;
             overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 100%;
+            gap: 0.75rem;
          }
          .insight-card::before {
             content: "";
@@ -371,6 +376,7 @@
             font-size: 1rem;
             margin-bottom: 0.75rem;
             color: var(--text-primary);
+            flex-shrink: 0;
          }
          .insight-values {
             display: grid;
@@ -1872,39 +1878,89 @@
             <div class="insights-grid">
                <div class="insight-card">
                   <div class="insight-title">💀 Смерть шерифа в 1 ночь</div>
+                  <div class="insight-values" style="margin-bottom: 0.9rem">
+                     <div>
+                        <span class="iv-val" id="sheriffDeathTotal">0</span
+                        ><span class="iv-lbl">игр</span>
+                     </div>
+                  </div>
                   <div
                      style="
-                        text-align: center;
-                        font-size: 0.85rem;
-                        color: var(--text-secondary);
-                        margin-bottom: 0.75rem;
+                        border-top: 1px dashed var(--border-color);
+                        padding-top: 0.75rem;
                      "
                   >
-                     Всего: <strong id="sheriffDeathTotal">0</strong> игр
-                  </div>
-                  <div class="insight-values three-col">
-                     <div>
-                        <span class="iv-val" id="sdPeacefulWR">—</span
-                        ><span class="iv-lbl"
-                           >Мирный<br />(<span id="sdPeacefulCount">0</span
-                           >)</span
+                     <div
+                        style="
+                           font-size: 0.72rem;
+                           font-weight: 700;
+                           color: var(--text-secondary);
+                           text-transform: uppercase;
+                           margin-bottom: 0.5rem;
+                           text-align: center;
+                        "
+                     >
+                        Статистика по ролям
+                        <span
+                           style="
+                              display: block;
+                              font-size: 0.62rem;
+                              font-weight: 500;
+                              color: var(--text-muted);
+                              text-transform: none;
+                              letter-spacing: 0;
+                              margin-top: 0.15rem;
+                           "
+                           >крупно — винрейт · внизу — кол-во игр</span
                         >
                      </div>
-                     <div>
-                        <span class="iv-val" id="sdSheriffWR">—</span
-                        ><span class="iv-lbl"
-                           >Шериф<br />(<span id="sdSheriffCount">0</span
-                           >)</span
-                        >
-                     </div>
-                     <div>
-                        <span class="iv-val" id="sdBlackWR">—</span
-                        ><span class="iv-lbl"
-                           >Чёрные<br />(<span id="sdBlackCount">0</span>)</span
-                        >
+                     <div class="insight-values three-col">
+                        <div>
+                           <span class="iv-val" id="sdPeacefulWR">—</span>
+                           <span class="iv-lbl">Мирный</span>
+                           <div
+                              style="
+                                 font-size: 0.7rem;
+                                 font-weight: 600;
+                                 color: var(--text-secondary);
+                                 margin-top: 0.35rem;
+                              "
+                           >
+                              <span id="sdPeacefulCount">0</span> игр
+                           </div>
+                        </div>
+                        <div>
+                           <span class="iv-val" id="sdSheriffWR">—</span>
+                           <span class="iv-lbl">Шериф</span>
+                           <div
+                              style="
+                                 font-size: 0.7rem;
+                                 font-weight: 600;
+                                 color: var(--text-secondary);
+                                 margin-top: 0.35rem;
+                              "
+                           >
+                              <span id="sdSheriffCount">0</span> игр
+                           </div>
+                        </div>
+                        <div>
+                           <span class="iv-val" id="sdBlackWR">—</span>
+                           <span class="iv-lbl">Чёрные</span>
+                           <div
+                              style="
+                                 font-size: 0.7rem;
+                                 font-weight: 600;
+                                 color: var(--text-secondary);
+                                 margin-top: 0.35rem;
+                              "
+                           >
+                              <span id="sdBlackCount">0</span> игр
+                           </div>
+                        </div>
                      </div>
                   </div>
                </div>
+
                <div class="insight-card">
                   <div class="insight-title">🚪 Уход в первую ночь</div>
                   <div class="insight-values" style="margin-bottom: 0.9rem">
@@ -1944,8 +2000,8 @@
                               letter-spacing: 0;
                               margin-top: 0.15rem;
                            "
-                           >крупно — винрейт · в скобках — кол-во игр и доля от
-                           всех ЛХ</span
+                           >крупно — винрейт · внизу — кол-во игр и доля от всех
+                           ЛХ</span
                         >
                      </div>
                      <div class="insight-values three-col">
@@ -1956,18 +2012,6 @@
                               style="color: #0284c7; font-size: 1.25rem"
                               >—</span
                            >
-                           <div
-                              style="
-                                 font-size: 0.6rem;
-                                 font-weight: 700;
-                                 color: var(--text-muted);
-                                 text-transform: uppercase;
-                                 letter-spacing: 0.06em;
-                                 margin-top: -0.15rem;
-                              "
-                           >
-                              винрейт
-                           </div>
                            <span class="iv-lbl">Полный</span>
                            <div
                               style="
@@ -1988,18 +2032,6 @@
                               style="color: var(--success); font-size: 1.25rem"
                               >—</span
                            >
-                           <div
-                              style="
-                                 font-size: 0.6rem;
-                                 font-weight: 700;
-                                 color: var(--text-muted);
-                                 text-transform: uppercase;
-                                 letter-spacing: 0.06em;
-                                 margin-top: -0.15rem;
-                              "
-                           >
-                              винрейт
-                           </div>
                            <span class="iv-lbl">Частичный</span>
                            <div
                               style="
@@ -2023,18 +2055,6 @@
                               "
                               >—</span
                            >
-                           <div
-                              style="
-                                 font-size: 0.6rem;
-                                 font-weight: 700;
-                                 color: var(--text-muted);
-                                 text-transform: uppercase;
-                                 letter-spacing: 0.06em;
-                                 margin-top: -0.15rem;
-                              "
-                           >
-                              винрейт
-                           </div>
                            <span class="iv-lbl">Нулевой</span>
                            <div
                               style="
@@ -2052,7 +2072,6 @@
                   </div>
                </div>
             </div>
-
             <div class="section">
                <div class="section-title">🔥 Серии</div>
                <div class="table-container">
@@ -5104,27 +5123,32 @@
                      responsive: true,
                      maintainAspectRatio: false,
                      plugins: {
-   legend: {
-      position: "bottom",
-      labels: {
-         color: textColor,
-         font: { family: "Inter", weight: 600 },
-      },
-   },
-   tooltip: {
-      callbacks: {
-         label: (item) => {
-            const values = item.dataset.data;
-            const total = values.reduce((a, b) => a + b, 0);
-            const pct =
-               total > 0
-                  ? ((item.parsed / total) * 100).toFixed(1)
-                  : "0.0";
-            return `${item.label}: ${item.parsed} игр · ${pct}%`;
-         },
-      },
-   },
-},
+                        legend: {
+                           position: "bottom",
+                           labels: {
+                              color: textColor,
+                              font: { family: "Inter", weight: 600 },
+                           },
+                        },
+                        tooltip: {
+                           callbacks: {
+                              label: (item) => {
+                                 const values = item.dataset.data;
+                                 const total = values.reduce(
+                                    (a, b) => a + b,
+                                    0,
+                                 );
+                                 const pct =
+                                    total > 0
+                                       ? ((item.parsed / total) * 100).toFixed(
+                                            1,
+                                         )
+                                       : "0.0";
+                                 return `${item.label}: ${item.parsed} игр · ${pct}%`;
+                              },
+                           },
+                        },
+                     },
                   },
                },
             );
