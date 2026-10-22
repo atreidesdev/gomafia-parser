@@ -12,6 +12,7 @@
       />
       <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
       <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@2.2.0/dist/chartjs-plugin-zoom.min.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
       <style>
          :root {
             --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI",
@@ -24,7 +25,6 @@
             --text-primary: #0f172a;
             --text-secondary: #64748b;
             --text-muted: #94a3b8;
-
             --accent: #3b82f6;
             --accent-hover: #2563eb;
             --accent-soft: rgba(59, 130, 246, 0.1);
@@ -34,7 +34,6 @@
             --danger-soft: rgba(239, 68, 68, 0.14);
             --warning: #f59e0b;
             --warning-soft: rgba(245, 158, 11, 0.14);
-
             --role-red-bg: #fee2e2;
             --role-red-text: #b91c1c;
             --role-sheriff-bg: #fef3c7;
@@ -43,7 +42,6 @@
             --role-mafia-text: #334155;
             --role-don-bg: #ede9fe;
             --role-don-text: #6d28d9;
-
             --role-lg-partial-bg: #dcfce7;
             --role-lg-partial-text: #15803d;
             --role-lg-full-bg: #e0f2fe;
@@ -51,7 +49,6 @@
             --role-lg-zero-bg: transparent;
             --role-lg-zero-text: #64748b;
             --role-lg-zero-border: #94a3b8;
-
             --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.06);
             --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.08),
                0 2px 4px -2px rgb(0 0 0 / 0.05);
@@ -72,11 +69,9 @@
             --text-primary: #f8fafc;
             --text-secondary: #94a3b8;
             --text-muted: #64748b;
-
             --accent: #3b82f6;
             --accent-hover: #60a5fa;
             --accent-soft: rgba(59, 130, 246, 0.22);
-
             --role-red-bg: rgba(239, 68, 68, 0.2);
             --role-red-text: #fca5a5;
             --role-sheriff-bg: rgba(245, 158, 11, 0.2);
@@ -85,7 +80,6 @@
             --role-mafia-text: #cbd5e1;
             --role-don-bg: rgba(139, 92, 246, 0.25);
             --role-don-text: #d8b4fe;
-
             --role-lg-partial-bg: rgba(16, 185, 129, 0.22);
             --role-lg-partial-text: #86efac;
             --role-lg-full-bg: rgba(14, 165, 233, 0.24);
@@ -93,7 +87,6 @@
             --role-lg-zero-bg: transparent;
             --role-lg-zero-text: #cbd5e1;
             --role-lg-zero-border: #64748b;
-
             --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.5);
             --shadow-md: 0 6px 12px -2px rgb(0 0 0 / 0.6);
             --shadow-lg: 0 16px 32px -4px rgb(0 0 0 / 0.75);
@@ -421,7 +414,9 @@
             justify-content: space-between;
             border-left-width: 5px;
             border-left-style: solid;
-            transition: transform 0.2s ease;
+            transition:
+               transform 0.2s ease,
+               box-shadow 0.2s ease;
          }
          .role-stat-card:hover {
             transform: translateY(-2px);
@@ -464,12 +459,56 @@
             border-left-color: #8b5cf6 !important;
          }
 
+         .role-stat-card.border-red {
+            background: linear-gradient(
+               90deg,
+               rgba(239, 68, 68, 0.07) 0%,
+               var(--card-bg) 60%
+            );
+            box-shadow:
+               var(--shadow-sm),
+               0 8px 22px -12px rgba(239, 68, 68, 0.35);
+         }
+         .role-stat-card.border-sheriff {
+            background: linear-gradient(
+               90deg,
+               rgba(245, 158, 11, 0.07) 0%,
+               var(--card-bg) 60%
+            );
+            box-shadow:
+               var(--shadow-sm),
+               0 8px 22px -12px rgba(245, 158, 11, 0.35);
+         }
+         .role-stat-card.border-mafia {
+            background: linear-gradient(
+               90deg,
+               rgba(100, 116, 139, 0.07) 0%,
+               var(--card-bg) 60%
+            );
+            box-shadow:
+               var(--shadow-sm),
+               0 8px 22px -12px rgba(100, 116, 139, 0.35);
+         }
+         .role-stat-card.border-don {
+            background: linear-gradient(
+               90deg,
+               rgba(139, 92, 246, 0.07) 0%,
+               var(--card-bg) 60%
+            );
+            box-shadow:
+               var(--shadow-sm),
+               0 8px 22px -12px rgba(139, 92, 246, 0.35);
+         }
+
          body.dark-mode .role-stat-card.border-red {
             background: linear-gradient(
                90deg,
                rgba(239, 68, 68, 0.14) 0%,
                var(--card-bg) 60%
             ) !important;
+            box-shadow:
+               var(--shadow-sm),
+               0 8px 22px -12px rgba(239, 68, 68, 0.55);
          }
          body.dark-mode .role-stat-card.border-sheriff {
             background: linear-gradient(
@@ -477,6 +516,9 @@
                rgba(245, 158, 11, 0.14) 0%,
                var(--card-bg) 60%
             ) !important;
+            box-shadow:
+               var(--shadow-sm),
+               0 8px 22px -12px rgba(245, 158, 11, 0.55);
          }
          body.dark-mode .role-stat-card.border-mafia {
             background: linear-gradient(
@@ -484,6 +526,9 @@
                rgba(148, 163, 184, 0.14) 0%,
                var(--card-bg) 60%
             ) !important;
+            box-shadow:
+               var(--shadow-sm),
+               0 8px 22px -12px rgba(148, 163, 184, 0.55);
          }
          body.dark-mode .role-stat-card.border-don {
             background: linear-gradient(
@@ -491,6 +536,9 @@
                rgba(139, 92, 246, 0.14) 0%,
                var(--card-bg) 60%
             ) !important;
+            box-shadow:
+               var(--shadow-sm),
+               0 8px 22px -12px rgba(139, 92, 246, 0.55);
          }
 
          .filter-panel {
@@ -638,7 +686,6 @@
          thead th.no-sort:hover {
             background: var(--card-bg-subtle);
          }
-
          thead th.sort-asc::after {
             content: " ▲";
             color: var(--accent);
@@ -831,7 +878,6 @@
          .winrate-mid {
             background: var(--warning);
          }
-
          .text-success {
             color: var(--success);
             font-weight: 700;
@@ -1129,7 +1175,6 @@
             background: var(--role-don-bg);
             color: var(--role-don-text);
          }
-
          .badge-lh-full {
             background: var(--role-lg-full-bg);
             color: var(--role-lg-full-text);
@@ -1505,7 +1550,6 @@
             color: var(--role-don-text);
             border-color: transparent;
          }
-
          .player-tag.play-lg-partial {
             background: var(--role-lg-partial-bg) !important;
             color: var(--role-lg-partial-text) !important;
@@ -1522,7 +1566,6 @@
             font-weight: 600;
             border: 1.5px dashed var(--role-lg-zero-border) !important;
          }
-
          .player-tag.is-you {
             border: 2px solid var(--warning) !important;
             font-weight: 700;
@@ -1743,6 +1786,37 @@
             background: #059669;
             transform: translateY(-1px);
          }
+
+         /* NEW: chart image download button */
+         .chart-export-btn {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            border-radius: var(--radius-md);
+            padding: 0.45rem 0.75rem;
+            font-size: 0.85rem;
+            cursor: pointer;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            transition: all 0.15s ease;
+            box-shadow: var(--shadow-sm);
+            white-space: nowrap;
+         }
+         .chart-export-btn:hover {
+            background: var(--accent-soft);
+            border-color: var(--accent);
+            color: var(--accent);
+            transform: translateY(-1px);
+         }
+         .chart-export-btn:active {
+            transform: translateY(0);
+         }
+         .chart-export-btn:disabled {
+            opacity: 0.6;
+            cursor: wait;
+         }
       </style>
    </head>
    <body>
@@ -1778,7 +1852,7 @@
             <button class="tab-btn" data-tab="judges">🧑‍⚖️ Судьи</button>
          </nav>
 
-         <!-- ========== VIZ TAB ========== -->
+         <!-- VIZ TAB -->
          <section id="tab-viz" class="tab-panel">
             <div class="stats-grid">
                <div class="stat-card">
@@ -1810,22 +1884,22 @@
                   </div>
                   <div class="insight-values three-col">
                      <div>
-                        <span class="iv-val" id="sdPeacefulWR">—</span>
-                        <span class="iv-lbl"
+                        <span class="iv-val" id="sdPeacefulWR">—</span
+                        ><span class="iv-lbl"
                            >Мирный<br />(<span id="sdPeacefulCount">0</span
                            >)</span
                         >
                      </div>
                      <div>
-                        <span class="iv-val" id="sdSheriffWR">—</span>
-                        <span class="iv-lbl"
+                        <span class="iv-val" id="sdSheriffWR">—</span
+                        ><span class="iv-lbl"
                            >Шериф<br />(<span id="sdSheriffCount">0</span
                            >)</span
                         >
                      </div>
                      <div>
-                        <span class="iv-val" id="sdBlackWR">—</span>
-                        <span class="iv-lbl"
+                        <span class="iv-val" id="sdBlackWR">—</span
+                        ><span class="iv-lbl"
                            >Чёрные<br />(<span id="sdBlackCount">0</span>)</span
                         >
                      </div>
@@ -1835,12 +1909,12 @@
                   <div class="insight-title">🚪 Уход в первую ночь</div>
                   <div class="insight-values" style="margin-bottom: 0.9rem">
                      <div>
-                        <span class="iv-val" id="firstLeaveCount">0</span>
-                        <span class="iv-lbl">игр</span>
+                        <span class="iv-val" id="firstLeaveCount">0</span
+                        ><span class="iv-lbl">игр</span>
                      </div>
                      <div>
-                        <span class="iv-val" id="firstLeaveWR">—</span>
-                        <span class="iv-lbl">винрейт</span>
+                        <span class="iv-val" id="firstLeaveWR">—</span
+                        ><span class="iv-lbl">винрейт</span>
                      </div>
                   </div>
                   <div
@@ -1870,10 +1944,9 @@
                               letter-spacing: 0;
                               margin-top: 0.15rem;
                            "
+                           >крупно — винрейт · в скобках — кол-во игр и доля от
+                           всех ЛХ</span
                         >
-                           крупно — винрейт · в скобках — кол-во игр и доля от
-                           всех ЛХ
-                        </span>
                      </div>
                      <div class="insight-values three-col">
                         <div>
@@ -1903,7 +1976,6 @@
                                  color: var(--text-secondary);
                                  margin-top: 0.35rem;
                               "
-                              title="Количество игр с полным ЛХ · доля от всех смертей в первую ночь"
                            >
                               <span id="lhFullCount">0</span> игр ·
                               <span id="lhFullPct">—</span> от ЛХ
@@ -1936,7 +2008,6 @@
                                  color: var(--text-secondary);
                                  margin-top: 0.35rem;
                               "
-                              title="Количество игр с частичным ЛХ · доля от всех смертей в первую ночь"
                            >
                               <span id="lhPartialCount">0</span> игр ·
                               <span id="lhPartialPct">—</span> от ЛХ
@@ -1972,7 +2043,6 @@
                                  color: var(--text-secondary);
                                  margin-top: 0.35rem;
                               "
-                              title="Количество игр с нулевым ЛХ · доля от всех смертей в первую ночь"
                            >
                               <span id="lhZeroCount">0</span> игр ·
                               <span id="lhZeroPct">—</span> от ЛХ
@@ -2073,8 +2143,8 @@
 
             <div class="filter-panel">
                <div class="filter-group">
-                  <label class="filter-label">Результат</label>
-                  <select
+                  <label class="filter-label">Результат</label
+                  ><select
                      id="filterResult"
                      class="filter-select"
                      onchange="applyVizFilters()"
@@ -2085,8 +2155,8 @@
                   </select>
                </div>
                <div class="filter-group">
-                  <label class="filter-label">Мирный</label>
-                  <select
+                  <label class="filter-label">Мирный</label
+                  ><select
                      id="filterPeaceful"
                      class="filter-select"
                      onchange="applyVizFilters()"
@@ -2097,8 +2167,8 @@
                   </select>
                </div>
                <div class="filter-group">
-                  <label class="filter-label">Шериф</label>
-                  <select
+                  <label class="filter-label">Шериф</label
+                  ><select
                      id="filterSheriffRole"
                      class="filter-select"
                      onchange="applyVizFilters()"
@@ -2109,8 +2179,8 @@
                   </select>
                </div>
                <div class="filter-group">
-                  <label class="filter-label">Мафия</label>
-                  <select
+                  <label class="filter-label">Мафия</label
+                  ><select
                      id="filterMafia"
                      class="filter-select"
                      onchange="applyVizFilters()"
@@ -2121,8 +2191,8 @@
                   </select>
                </div>
                <div class="filter-group">
-                  <label class="filter-label">Дон</label>
-                  <select
+                  <label class="filter-label">Дон</label
+                  ><select
                      id="filterDon"
                      class="filter-select"
                      onchange="applyVizFilters()"
@@ -2133,8 +2203,8 @@
                   </select>
                </div>
                <div class="filter-group">
-                  <label class="filter-label">Качество игры</label>
-                  <select
+                  <label class="filter-label">Качество игры</label
+                  ><select
                      id="filterQuality"
                      class="filter-select"
                      onchange="applyVizFilters()"
@@ -2145,8 +2215,8 @@
                   </select>
                </div>
                <div class="filter-group">
-                  <label class="filter-label">Покидание</label>
-                  <select
+                  <label class="filter-label">Покидание</label
+                  ><select
                      id="filterLeave"
                      class="filter-select"
                      onchange="applyVizFilters()"
@@ -2157,8 +2227,8 @@
                   </select>
                </div>
                <div class="filter-group">
-                  <label class="filter-label">Смерть шерифа</label>
-                  <select
+                  <label class="filter-label">Смерть шерифа</label
+                  ><select
                      id="filterSheriffDeath"
                      class="filter-select"
                      onchange="applyVizFilters()"
@@ -2169,8 +2239,8 @@
                   </select>
                </div>
                <div class="filter-group">
-                  <label class="filter-label">MVP</label>
-                  <select
+                  <label class="filter-label">MVP</label
+                  ><select
                      id="filterMvp"
                      class="filter-select"
                      onchange="applyVizFilters()"
@@ -2181,8 +2251,8 @@
                   </select>
                </div>
                <div class="filter-group">
-                  <label class="filter-label">MVP проигравших</label>
-                  <select
+                  <label class="filter-label">MVP проигравших</label
+                  ><select
                      id="filterLosingMvp"
                      class="filter-select"
                      onchange="applyVizFilters()"
@@ -2193,8 +2263,8 @@
                   </select>
                </div>
                <div class="filter-group">
-                  <label class="filter-label">Тип турнира</label>
-                  <select
+                  <label class="filter-label">Тип турнира</label
+                  ><select
                      id="filterTournamentType"
                      class="filter-select"
                      onchange="applyVizFilters()"
@@ -2205,8 +2275,8 @@
                   </select>
                </div>
                <div class="filter-group">
-                  <label class="filter-label">Финал</label>
-                  <select
+                  <label class="filter-label">Финал</label
+                  ><select
                      id="filterTournamentFinal"
                      class="filter-select"
                      onchange="applyVizFilters()"
@@ -2268,16 +2338,12 @@
                      </div>
                   </div>
                </div>
-
                <div class="legend-group">
                   <div class="legend-group-title">
                      💀 Статусы ПУ / ЛХ<span class="lg-count">3</span>
                   </div>
                   <div class="legend-items">
-                     <div
-                        class="legend-item"
-                        title="Первый ушедший, правильно указал всех 3 чёрных"
-                     >
+                     <div class="legend-item">
                         <div
                            class="legend-dot"
                            style="
@@ -2285,13 +2351,10 @@
                               border: 1px solid #7dd3fc;
                            "
                         ></div>
-                        <span class="lg-label">Полный</span>
-                        <span class="lg-desc">3 чёрных</span>
+                        <span class="lg-label">Полный</span
+                        ><span class="lg-desc">3 чёрных</span>
                      </div>
-                     <div
-                        class="legend-item"
-                        title="Первый ушедший, правильно указал 1-2 чёрных"
-                     >
+                     <div class="legend-item">
                         <div
                            class="legend-dot"
                            style="
@@ -2299,13 +2362,10 @@
                               border: 1px solid #86efac;
                            "
                         ></div>
-                        <span class="lg-label">Частичный</span>
-                        <span class="lg-desc">1–2 чёрных</span>
+                        <span class="lg-label">Частичный</span
+                        ><span class="lg-desc">1–2 чёрных</span>
                      </div>
-                     <div
-                        class="legend-item"
-                        title="Первый ушедший, не угадал ни одного чёрного"
-                     >
+                     <div class="legend-item">
                         <div
                            class="legend-dot"
                            style="
@@ -2313,48 +2373,41 @@
                               border: 1.5px dashed var(--role-lg-zero-border);
                            "
                         ></div>
-                        <span class="lg-label">Нулевой</span>
-                        <span class="lg-desc">0 чёрных</span>
+                        <span class="lg-label">Нулевой</span
+                        ><span class="lg-desc">0 чёрных</span>
                      </div>
                   </div>
                </div>
-
                <div class="legend-group">
                   <div class="legend-group-title">
                      ⭐ Качество игры<span class="lg-count">2</span>
                   </div>
                   <div class="legend-items">
                      <div class="legend-item">
-                        <span class="play-icon" style="font-size: 1rem"
-                           >🌟</span
-                        >
-                        <span class="lg-label">Хорошо</span>
+                        <span class="play-icon" style="font-size: 1rem">🌟</span
+                        ><span class="lg-label">Хорошо</span>
                      </div>
                      <div class="legend-item">
-                        <span class="play-icon" style="font-size: 1rem"
-                           >🔻</span
-                        >
-                        <span class="lg-label">Плохо</span>
+                        <span class="play-icon" style="font-size: 1rem">🔻</span
+                        ><span class="lg-label">Плохо</span>
                      </div>
                   </div>
                </div>
-
                <div class="legend-group">
                   <div class="legend-group-title">
                      🏆 Награды<span class="lg-count">2</span>
                   </div>
                   <div class="legend-items">
                      <div class="legend-item">
-                        <span class="mvp-badge-inline">👑 MVP</span>
-                        <span class="lg-label">Лучший в игре</span>
+                        <span class="mvp-badge-inline">👑 MVP</span
+                        ><span class="lg-label">Лучший в игре</span>
                      </div>
                      <div class="legend-item">
-                        <span class="losing-mvp-badge-inline">🥈 MVP</span>
-                        <span class="lg-label">Лучший среди проигравших</span>
+                        <span class="losing-mvp-badge-inline">🥈 MVP</span
+                        ><span class="lg-label">Лучший среди проигравших</span>
                      </div>
                   </div>
                </div>
-
                <div class="legend-group">
                   <div class="legend-group-title">
                      🎯 Выделение<span class="lg-count">1</span>
@@ -2393,21 +2446,20 @@
                   <option value="role">🎭 По роли</option>
                   <option value="points">⭐ По моим очкам</option>
                </select>
-               <label class="toggle-label">
-                  <input
+               <label class="toggle-label"
+                  ><input
                      type="checkbox"
                      id="hideRolesToggle"
                      onchange="toggleHideRoles()"
-                  />
-                  Скрыть чужие роли
-               </label>
+                  />Скрыть чужие роли</label
+               >
             </div>
 
             <div id="filterResultInfo" class="filter-result-info"></div>
             <div id="tournamentsContainer"></div>
          </section>
 
-         <!-- ========== ANALYTICS TAB ========== -->
+         <!-- ANALYTICS TAB -->
          <section id="tab-analytics" class="tab-panel hidden">
             <div class="summary-grid">
                <div class="summary-card">
@@ -2427,39 +2479,61 @@
                   <div class="summary-label">Ср. балл</div>
                </div>
             </div>
-
             <div class="role-stats-grid" id="anRoleStatsGrid"></div>
-
             <div class="charts-split-container">
                <div class="section" style="margin-bottom: 0">
-                  <div class="section-title">🎭 Распределение ролей</div>
+                  <div class="section-title">
+                     <span>🎭 Распределение ролей</span>
+                     <button
+                        class="chart-export-btn"
+                        onclick="exportChartAsPng('roles', 'roles_distribution')"
+                        title="Скачать PNG"
+                     >
+                        📷 Скачать
+                     </button>
+                  </div>
                   <div class="chart-container-split">
                      <canvas id="rolesChart"></canvas>
                   </div>
                </div>
                <div class="section" style="margin-bottom: 0">
                   <div class="section-title">
-                     🕸️ Радар стиля игры
-                     <select
-                        id="radarRoleSelect"
-                        class="filter-select"
-                        onchange="renderRadarChart()"
+                     <span>🕸️ Радар стиля игры</span>
+                     <div
+                        style="
+                           display: flex;
+                           gap: 0.5rem;
+                           align-items: center;
+                           flex-wrap: wrap;
+                        "
                      >
-                        <option value="don" selected>👑 Дон</option>
-                        <option value="sheriff">🕵️ Шериф</option>
-                        <option value="mafia">⬛ Мафия</option>
-                        <option value="peaceful">🟥 Мирный</option>
-                     </select>
+                        <select
+                           id="radarRoleSelect"
+                           class="filter-select"
+                           onchange="renderRadarChart()"
+                        >
+                           <option value="don" selected>👑 Дон</option>
+                           <option value="sheriff">🕵️ Шериф</option>
+                           <option value="mafia">⬛ Мафия</option>
+                           <option value="peaceful">🟥 Мирный</option>
+                        </select>
+                        <button
+                           class="chart-export-btn"
+                           onclick="exportChartAsPng('radar', 'radar_style')"
+                           title="Скачать PNG"
+                        >
+                           📷 Скачать
+                        </button>
+                     </div>
                   </div>
                   <div class="chart-container-split">
                      <canvas id="radarChart"></canvas>
                   </div>
                </div>
             </div>
-
             <div class="section">
                <div class="section-title">
-                  📈 Винрейт
+                  <span>📈 Винрейт</span>
                   <div
                      style="
                         display: flex;
@@ -2468,6 +2542,17 @@
                         flex-wrap: wrap;
                      "
                   >
+                     <select
+                        id="wrChartRoleFilter"
+                        class="filter-select"
+                        onchange="renderWinrateChart()"
+                     >
+                        <option value="all">🎭 Все роли</option>
+                        <option value="peaceful">🟥 Мирный</option>
+                        <option value="sheriff">🕵️ Шериф</option>
+                        <option value="mafia">⬛ Мафия</option>
+                        <option value="don">👑 Дон</option>
+                     </select>
                      <select
                         id="wrChartMode"
                         class="filter-select"
@@ -2490,9 +2575,16 @@
                      <button
                         class="pill-btn"
                         onclick="resetWrZoom()"
-                        title="Сбросить масштаб графика"
+                        title="Сбросить масштаб"
                      >
                         ↺ Сброс
+                     </button>
+                     <button
+                        class="chart-export-btn"
+                        onclick="exportChartAsPng('wr', 'winrate_chart')"
+                        title="Скачать PNG"
+                     >
+                        📷 Скачать
                      </button>
                   </div>
                </div>
@@ -2500,10 +2592,9 @@
                   <canvas id="wrChart"></canvas>
                </div>
             </div>
-
             <div class="section">
                <div class="section-title">
-                  📈 График ELO
+                  <span>📈 График ELO</span>
                   <div
                      style="
                         display: flex;
@@ -2530,16 +2621,22 @@
                         </option>
                         <option value="delta">Дельта по турнирам</option>
                      </select>
+                     <button
+                        class="chart-export-btn"
+                        onclick="exportChartAsPng('elo', 'elo_chart')"
+                        title="Скачать PNG"
+                     >
+                        📷 Скачать
+                     </button>
                   </div>
                </div>
                <div class="chart-container" id="eloChartContainer">
                   <canvas id="eloChart"></canvas>
                </div>
             </div>
-
             <div class="section">
                <div class="section-title">
-                  🎯 GG по годам
+                  <span>🎯 GG по годам</span>
                   <div
                      style="
                         display: flex;
@@ -2566,13 +2663,19 @@
                         style="display: none"
                         onchange="renderGgChart()"
                      ></select>
+                     <button
+                        class="chart-export-btn"
+                        onclick="exportChartAsPng('gg', 'gg_chart')"
+                        title="Скачать PNG"
+                     >
+                        📷 Скачать
+                     </button>
                   </div>
                </div>
                <div class="chart-container" id="ggChartContainer">
                   <canvas id="ggChart"></canvas>
                </div>
             </div>
-
             <div class="section">
                <div class="section-title">🔥 Тепловая карта взаимодействий</div>
                <div
@@ -2644,7 +2747,6 @@
                   Показать ещё
                </button>
             </div>
-
             <div class="section">
                <div class="section-title">
                   📋 Детальная статистика партнёров
@@ -2777,7 +2879,7 @@
             </div>
          </section>
 
-         <!-- ========== SHERIFFS TAB ========== -->
+         <!-- SHERIFFS TAB -->
          <section id="tab-sheriffs" class="tab-panel hidden">
             <div class="section">
                <div class="section-title">🕵️ Аналитика по шерифам</div>
@@ -2792,7 +2894,6 @@
                   <strong>Нажмите на количество игр</strong> для открытия
                   карточек партий.
                </div>
-
                <div class="table-toolbar" style="flex-wrap: wrap">
                   <input
                      type="text"
@@ -2860,7 +2961,6 @@
                      />
                   </div>
                </div>
-
                <div class="table-container">
                   <table class="sheriff-table" id="sheriffTable">
                      <thead>
@@ -2904,13 +3004,11 @@
                            <th colspan="2" class="col-pair-total no-sort">
                               Итого
                            </th>
-
                            <th colspan="2" class="no-sort">Я шериф vs мафия</th>
                            <th colspan="2" class="no-sort">Я шериф vs дон</th>
                            <th colspan="2" class="col-pair-total no-sort">
                               Итого
                            </th>
-
                            <th colspan="2" class="no-sort">Я дон vs шериф</th>
                            <th colspan="2" class="no-sort">Я мафия vs шериф</th>
                            <th colspan="2" class="col-pair-total no-sort">
@@ -2936,7 +3034,6 @@
                            >
                               WR
                            </th>
-
                            <th data-col="8" onclick="sortSheriffs(8)">И</th>
                            <th data-col="9" onclick="sortSheriffs(9)">WR</th>
                            <th data-col="10" onclick="sortSheriffs(10)">И</th>
@@ -2955,7 +3052,6 @@
                            >
                               WR
                            </th>
-
                            <th data-col="14" onclick="sortSheriffs(14)">И</th>
                            <th data-col="15" onclick="sortSheriffs(15)">WR</th>
                            <th data-col="16" onclick="sortSheriffs(16)">И</th>
@@ -2982,7 +3078,7 @@
             </div>
          </section>
 
-         <!-- ========== JUDGES TAB ========== -->
+         <!-- JUDGES TAB -->
          <section id="tab-judges" class="tab-panel hidden">
             <div class="section">
                <div class="section-title">🧑‍⚖️ Статистика по судьям</div>
@@ -3146,7 +3242,6 @@
          </section>
       </div>
 
-      <!-- Modal View -->
       <div
          id="gameModal"
          class="modal-overlay hidden"
@@ -3195,13 +3290,16 @@
             judgeDateTo: "",
             analyticsDateFrom: "",
             analyticsDateTo: "",
+            tableDisplayCount: 50,
+            tournamentDisplayCount: 20,
+            filteredTournaments: [],
+            totalFilteredGames: 0,
          };
 
          // =====================================================================
          // UTILS
          // =====================================================================
          const delay = (ms) => new Promise((r) => setTimeout(r, ms));
-
          function showLoading(text) {
             document.getElementById("loadingText").textContent = text;
             document
@@ -3215,7 +3313,6 @@
             document.getElementById("errorContainer").innerHTML =
                `<div class="error-msg">${msg}</div>`;
          }
-
          function renderPlayerNameLink(el, name, url) {
             if (!el) return;
             if (url) {
@@ -3224,7 +3321,6 @@
                el.textContent = name;
             }
          }
-
          function getRoleKey(role) {
             if (!role) return "other";
             const r = role.toLowerCase();
@@ -3261,11 +3357,9 @@
             const k = getRoleKey(role);
             return k === "peaceful" || k === "sheriff";
          }
-
          function getPlayerLhStatus(p, game) {
             if (!p) return null;
             if (p.lhStatus) return p.lhStatus;
-
             if (game && game.firstKill) {
                const fkName = (
                   game.firstKill.name ||
@@ -3275,14 +3369,11 @@
                if (
                   fkName === (p.name || "").toLowerCase() &&
                   game.firstKill.lhStatus
-               ) {
+               )
                   return game.firstKill.lhStatus;
-               }
             }
-
             const isFk = p.playType === "lg" || p.isFirstKill;
             if (!isFk) return null;
-
             const pts = p.first_kill_point ?? p.points;
             if (typeof pts === "number") {
                if (pts >= 0.4) return "полный";
@@ -3291,27 +3382,17 @@
             }
             return "частичный";
          }
-
          function getLhClass(lhStatus) {
             if (lhStatus === "полный") return "play-lg-full";
             if (lhStatus === "частичный") return "play-lg-partial";
             if (lhStatus === "нулевой") return "play-lg-zero";
             return "play-lg-partial";
          }
-
-         function getLhBadgeClass(lhStatus) {
-            if (lhStatus === "полный") return "badge-lh-full";
-            if (lhStatus === "частичный") return "badge-lh-partial";
-            if (lhStatus === "нулевой") return "badge-lh-zero";
-            return "badge-lh-partial";
-         }
-
          function wrTextStyle(wr) {
             const t = Math.max(0, Math.min(100, wr));
             const hue = Math.round(t * 1.25);
             return `color:hsl(${hue},75%,var(--wr-light));font-weight:700;`;
          }
-
          function isPlayerMvp(game) {
             if (!Array.isArray(game.mvp)) return false;
             const me = Array.isArray(game.composition)
@@ -3320,17 +3401,14 @@
             if (!me) return false;
             return game.mvp.some((m) => m.name === me.name);
          }
-
          function isGivenPlayerMvp(game, playerName) {
             if (!Array.isArray(game.mvp) || !playerName) return false;
             return game.mvp.some((m) => m.name === playerName);
          }
-
          function isGivenPlayerLosingMvp(game, player) {
             if (!game || !player || !Array.isArray(game.composition))
                return false;
             if (isGivenPlayerMvp(game, player.name)) return false;
-
             const playerRed = isRed(player.role);
             const isWinningTeam = game.isWin
                ? player.isYou
@@ -3339,18 +3417,14 @@
                : player.isYou
                  ? false
                  : isRed(game.role) !== playerRed;
-
             if (isWinningTeam) return false;
-
             const pts = player.points || 0;
             if (pts < 0.5) return false;
-
             const teammates = game.composition.filter(
                (p) => p.name !== player.name && isRed(p.role) === playerRed,
             );
             return teammates.every((p) => pts >= (p.points || 0));
          }
-
          function isLosingTeamMvp(game) {
             const me = Array.isArray(game.composition)
                ? game.composition.find((p) => p.isYou)
@@ -3358,7 +3432,6 @@
             if (!me) return false;
             return isGivenPlayerLosingMvp(game, me);
          }
-
          function getWinnerName(game, myRoleKey) {
             if (game.winner) {
                const w = String(game.winner).toLowerCase();
@@ -3369,13 +3442,9 @@
                return `Победа: ${game.winner}`;
             }
             const myRed = myRoleKey === "peaceful" || myRoleKey === "sheriff";
-            if (game.isWin) {
-               return myRed ? "Победа мирных" : "Победа чёрных";
-            } else {
-               return myRed ? "Победа чёрных" : "Победа мирных";
-            }
+            if (game.isWin) return myRed ? "Победа мирных" : "Победа чёрных";
+            return myRed ? "Победа чёрных" : "Победа мирных";
          }
-
          function pluralize(n, one, few, many) {
             const m10 = n % 10,
                m100 = n % 100;
@@ -3383,7 +3452,6 @@
             if (m10 >= 2 && m10 <= 4 && (m100 < 10 || m100 >= 20)) return few;
             return many;
          }
-
          function escapeHtml(s) {
             return String(s).replace(
                /[&<>"']/g,
@@ -3397,7 +3465,6 @@
                   })[c],
             );
          }
-
          function extractTournamentName(fullName) {
             if (!fullName) return "";
             const commaIdx = fullName.indexOf(",");
@@ -3405,7 +3472,6 @@
                commaIdx === -1 ? fullName : fullName.slice(0, commaIdx);
             return short.trim();
          }
-
          function tournamentOverlapsRange(tournament, dateFrom, dateTo) {
             if (!dateFrom && !dateTo) return true;
             const start = tournament.dateStart
@@ -3426,14 +3492,12 @@
             }
             return true;
          }
-
          function filterFlatGamesByDate(flatGames, dateFrom, dateTo) {
             if (!dateFrom && !dateTo) return flatGames;
             return flatGames.filter(({ tournament }) =>
                tournamentOverlapsRange(tournament, dateFrom, dateTo),
             );
          }
-
          function copyTournamentName(text, btn) {
             const done = () => {
                if (!btn) return;
@@ -3444,16 +3508,13 @@
                   btn.textContent = "📋";
                }, 1200);
             };
-            if (navigator.clipboard && navigator.clipboard.writeText) {
+            if (navigator.clipboard && navigator.clipboard.writeText)
                navigator.clipboard
                   .writeText(text)
                   .then(done)
                   .catch(() => fallbackCopy(text, done));
-            } else {
-               fallbackCopy(text, done);
-            }
+            else fallbackCopy(text, done);
          }
-
          function fallbackCopy(text, cb) {
             try {
                const ta = document.createElement("textarea");
@@ -3469,36 +3530,28 @@
                console.warn("Copy failed", e);
             }
          }
-
          function extractGameNumber(value) {
             if (value === null || value === undefined) return null;
             const m = String(value).match(/\d+/);
             return m ? parseInt(m[0], 10) : null;
          }
-
          function parseDateOnly(value) {
             if (!value) return null;
             const s = String(value).trim();
-
             const iso = s.match(/^(\d{4})-(\d{2})-(\d{2})/);
-            if (iso) {
-               return new Date(Date.UTC(+iso[1], +iso[2] - 1, +iso[3]));
-            }
-
+            if (iso) return new Date(Date.UTC(+iso[1], +iso[2] - 1, +iso[3]));
             const d = new Date(s);
             if (isNaN(d.getTime())) return null;
             return new Date(
                Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()),
             );
          }
-
          function formatDateShort(d) {
             if (!d) return "";
             const dd = String(d.getUTCDate()).padStart(2, "0");
             const mm = String(d.getUTCMonth() + 1).padStart(2, "0");
             return `${dd}.${mm}`;
          }
-
          function getGameDate(
             gameNumber,
             dateStart,
@@ -3510,28 +3563,22 @@
             const start = parseDateOnly(dateStart);
             if (!start) return "";
             if (!num) return formatDateShort(start);
-
             const end = parseDateOnly(dateEnd) || start;
             const days = Math.max(1, Math.floor((end - start) / 86400000) + 1);
             const total = totalGames || num;
-
             let dayStarts = [1];
-
-            if (days === 1) {
-               dayStarts = [1];
-            } else if (days === 2) {
-               if (total >= 15) {
-                  dayStarts = [1, 8];
-               } else if (total === 10) {
-                  dayStarts = [1, 6];
-               } else {
+            if (days === 1) dayStarts = [1];
+            else if (days === 2) {
+               if (total >= 15) dayStarts = [1, 8];
+               else if (total === 10) dayStarts = [1, 6];
+               else {
                   const half = Math.ceil(total / 2);
                   dayStarts = [1, half + 1];
                }
             } else if (days === 3) {
-               if (total === 25) {
+               if (total === 25)
                   dayStarts = hasFinalStage ? [1, 8, 16] : [1, 9, 18];
-               } else {
+               else {
                   const per = Math.ceil(total / 3);
                   dayStarts = [1, per + 1, 2 * per + 1];
                }
@@ -3539,7 +3586,6 @@
                const per = Math.ceil(total / days);
                dayStarts = Array.from({ length: days }, (_, i) => i * per + 1);
             }
-
             let dayIndex = 0;
             for (let i = dayStarts.length - 1; i >= 0; i--) {
                if (num >= dayStarts[i]) {
@@ -3547,12 +3593,10 @@
                   break;
                }
             }
-
             const d = new Date(start);
             d.setUTCDate(d.getUTCDate() + dayIndex);
             return formatDateShort(d);
          }
-
          function buildGameCopyText(
             tournamentName,
             tableNumber,
@@ -3565,16 +3609,12 @@
             const raw = String(tournamentName || "").trim();
             const commaIdx = raw.indexOf(",");
             const t = (commaIdx === -1 ? raw : raw.slice(0, commaIdx)).trim();
-
             let table = String(tableNumber || "").trim();
             if (table) {
-               if (/стол/i.test(table)) {
+               if (/стол/i.test(table))
                   table = table.replace(/^стол\s*/i, "СТОЛ ");
-               } else {
-                  table = "СТОЛ " + table;
-               }
+               else table = "СТОЛ " + table;
             }
-
             const dateStr = getGameDate(
                gameNumber,
                dateStart,
@@ -3582,15 +3622,12 @@
                totalGames,
                hasFinalStage,
             );
-
             return [t, table, dateStr].filter(Boolean).join(", ");
          }
-
          function copyGameInfo(text, btn) {
             if (!text) return;
-            if (btn && !btn.dataset.originalHtml) {
+            if (btn && !btn.dataset.originalHtml)
                btn.dataset.originalHtml = btn.innerHTML;
-            }
             const done = () => {
                if (!btn) return;
                btn.classList.add("copied");
@@ -3600,16 +3637,13 @@
                   btn.innerHTML = btn.dataset.originalHtml;
                }, 1200);
             };
-            if (navigator.clipboard && navigator.clipboard.writeText) {
+            if (navigator.clipboard && navigator.clipboard.writeText)
                navigator.clipboard
                   .writeText(text)
                   .then(done)
                   .catch(() => fallbackCopy(text, done));
-            } else {
-               fallbackCopy(text, done);
-            }
+            else fallbackCopy(text, done);
          }
-
          function searchGameInBrowser(text, btn) {
             if (!text) return;
             copyGameInfo(text, btn);
@@ -3620,20 +3654,137 @@
                "noopener,noreferrer",
             );
          }
-
          function openGameInTournament(url, gameNumber) {
             if (!url) return;
             const base = String(url).split("#")[0].split("?")[0];
             const num = extractGameNumber(gameNumber);
-            const tourNum = num || null;
-            const fragment = tourNum
-               ? `#:~:text=${encodeURIComponent("Тур " + tourNum)}`
+            const fragment = num
+               ? `#:~:text=${encodeURIComponent("Тур " + num)}`
                : "";
             window.open(
                base + "?tab=games" + fragment,
                "_blank",
                "noopener,noreferrer",
             );
+         }
+
+         // =====================================================================
+         // EXPORT: TOURNAMENT & CHART PNG
+         // =====================================================================
+         async function exportTournamentToPng(detailsEl) {
+            if (!detailsEl) return;
+            if (typeof html2canvas !== "function") {
+               alert(
+                  "html2canvas не загружен. Проверьте подключение к интернету.",
+               );
+               return;
+            }
+            const titleEl = detailsEl.querySelector(".tournament-title");
+            const rawTitle = (titleEl?.textContent || "tournament")
+               .trim()
+               .replace(/↗\s*$/, "");
+            const safeTitle =
+               rawTitle
+                  .replace(/[^\wа-яА-ЯёЁ\s\-]/g, "")
+                  .replace(/\s+/g, "_")
+                  .slice(0, 60) || "tournament";
+            const wasOpen = detailsEl.open;
+            if (!wasOpen) detailsEl.open = true;
+            const hidden = [];
+            detailsEl
+               .querySelectorAll(".copy-btn, .game-copy-btn, .chart-export-btn")
+               .forEach((btn) => {
+                  hidden.push([btn, btn.style.visibility]);
+                  btn.style.visibility = "hidden";
+               });
+            const isDark = document.body.classList.contains("dark-mode");
+            const bgColor = isDark ? "#090d16" : "#f1f5f9";
+            try {
+               await new Promise((r) => setTimeout(r, 60));
+               const canvas = await html2canvas(detailsEl, {
+                  backgroundColor: bgColor,
+                  scale: 2,
+                  useCORS: true,
+                  logging: false,
+                  windowWidth: detailsEl.offsetWidth || 1400,
+               });
+               const link = document.createElement("a");
+               const playerSuffix = state.targetPlayer
+                  ? `_${state.targetPlayer}`
+                  : "";
+               link.download = `tournament_${safeTitle}${playerSuffix}.png`;
+               link.href = canvas.toDataURL("image/png");
+               link.click();
+            } catch (err) {
+               console.error("PNG export error:", err);
+               alert("Ошибка экспорта PNG: " + err.message);
+            } finally {
+               hidden.forEach(([btn, vis]) => {
+                  btn.style.visibility = vis;
+               });
+               if (!wasOpen) detailsEl.open = false;
+            }
+         }
+
+         // === NEW: export any chart as PNG ===
+         async function exportChartAsPng(chartKey, filename) {
+            const chart = state.charts[chartKey];
+            if (!chart || !chart.canvas) {
+               alert("График ещё не построен.");
+               return;
+            }
+            const canvasEl = chart.canvas;
+            const container = canvasEl.parentElement || canvasEl;
+            const isDark = document.body.classList.contains("dark-mode");
+            const bg = isDark ? "#0d1424" : "#ffffff";
+            const safePlayer =
+               (state.targetPlayer || "player")
+                  .replace(/[^\wа-яА-ЯёЁ]/g, "_")
+                  .slice(0, 40) || "player";
+            const safeName = `${filename}_${safePlayer}`;
+
+            // Temporarily disable button if possible
+            const btn = document.querySelector(
+               `.chart-export-btn[onclick*="'${chartKey}'"]`,
+            );
+            const originalText = btn ? btn.textContent : null;
+            if (btn) {
+               btn.disabled = true;
+               btn.textContent = "⏳ Готовим...";
+            }
+
+            try {
+               let dataUrl;
+               if (typeof html2canvas === "function") {
+                  // Give flexbox a moment to render
+                  await new Promise((r) => setTimeout(r, 30));
+                  const captured = await html2canvas(container, {
+                     backgroundColor: bg,
+                     scale: 2,
+                     useCORS: true,
+                     logging: false,
+                     windowWidth: container.offsetWidth || 900,
+                  });
+                  dataUrl = captured.toDataURL("image/png");
+               } else {
+                  // Fallback (transparent background)
+                  dataUrl = chart.toBase64Image();
+               }
+               const a = document.createElement("a");
+               a.href = dataUrl;
+               a.download = safeName + ".png";
+               document.body.appendChild(a);
+               a.click();
+               document.body.removeChild(a);
+            } catch (err) {
+               console.error("Chart PNG export error:", err);
+               alert("Ошибка экспорта: " + err.message);
+            } finally {
+               if (btn && originalText !== null) {
+                  btn.disabled = false;
+                  btn.textContent = originalText;
+               }
+            }
          }
 
          // =====================================================================
@@ -3666,7 +3817,6 @@
                console.error(err);
             }
          }
-
          function readFile(file) {
             return new Promise((res, rej) => {
                const r = new FileReader();
@@ -3679,13 +3829,11 @@
          async function processData(data) {
             if (!Array.isArray(data))
                throw new Error("JSON должен содержать массив турниров");
-
             let total = 0;
             data.forEach((t) => {
                if (Array.isArray(t.games)) total += t.games.length;
             });
             showLoading(`Обработка 0/${total} игр...`);
-
             const flatGames = [];
             let processed = 0;
             for (const t of data) {
@@ -3699,7 +3847,6 @@
                   }
                }
             }
-
             let targetPlayer = "Неизвестно";
             for (const item of flatGames) {
                const arr = item.game.composition;
@@ -3711,14 +3858,12 @@
                   }
                }
             }
-
-            let playerProfileUrl = null;
-            let playerProfileId = null;
+            let playerProfileUrl = null,
+               playerProfileId = null;
             if (data.length > 0 && data[0].playerUrl) {
                playerProfileUrl = data[0].playerUrl;
                playerProfileId = data[0].playerId ?? null;
             }
-
             showLoading(
                `Обработка ${total}/${total} игр... Считаем партнёров...`,
             );
@@ -3749,6 +3894,9 @@
             state.judgeDateTo = "";
             state.analyticsDateFrom = "";
             state.analyticsDateTo = "";
+            state.tableDisplayCount = 50;
+            state.tournamentDisplayCount = 20;
+            state.filteredTournaments = [];
 
             const setVal = (id, v) => {
                const el = document.getElementById(id);
@@ -3801,7 +3949,6 @@
                .forEach((p) =>
                   p.classList.toggle("hidden", p.id !== "tab-" + name),
                );
-
             if (name === "analytics")
                setTimeout(() => renderAnalyticsCharts(), 50);
             if (name === "sheriffs") setTimeout(() => renderSheriffs(), 50);
@@ -3827,7 +3974,6 @@
             );
             document.getElementById("hideRolesToggle").checked =
                state.hideRoles;
-
             renderRoleStatsViz();
             renderSeatTable();
             renderInsights();
@@ -3868,10 +4014,18 @@
                   if (game.isWin) stats[k].wins++;
                }
             });
+            const totalAll = Object.values(stats).reduce(
+               (sum, s) => sum + s.games,
+               0,
+            );
             grid.innerHTML = Object.entries(stats)
                .map(([k, s]) => {
                   const wr =
                      s.games > 0 ? Math.round((s.wins / s.games) * 100) : 0;
+                  const pct =
+                     totalAll > 0
+                        ? ((s.games / totalAll) * 100).toFixed(1)
+                        : "0.0";
                   const wrClass =
                      wr >= 60
                         ? "text-success"
@@ -3879,10 +4033,8 @@
                           ? "text-danger"
                           : "text-neutral";
                   return `<div class="role-stat-card ${s.border}">
-      <div class="role-stat-info"><h3>${s.label}</h3><p>${s.games} игр</p></div>
-      <div class="role-stat-values">
-        <div class="role-stat-wr ${wrClass}">${wr}%</div>
-      </div>
+      <div class="role-stat-info"><h3>${s.label}</h3><p>${s.games} игр · ${pct}%</p></div>
+      <div class="role-stat-values"><div class="role-stat-wr ${wrClass}">${wr}%</div></div>
     </div>`;
                })
                .join("");
@@ -3924,7 +4076,6 @@
                stats[category].games++;
                if (game.isWin) stats[category].wins++;
             });
-
             document.getElementById("sheriffDeathTotal").textContent = total;
             const setWR = (idCount, idWR, s) => {
                document.getElementById(idCount).textContent = s.games;
@@ -3941,24 +4092,19 @@
          function renderFirstLeaveInsight() {
             let count = 0,
                wins = 0;
-
             const lhStats = {
                full: { count: 0, wins: 0 },
                partial: { count: 0, wins: 0 },
                zero: { count: 0, wins: 0 },
             };
-
             state.flatGames.forEach(({ game }) => {
                if (!Array.isArray(game.composition)) return;
                const me = game.composition.find((p) => p.isYou);
                if (!me) return;
-
                const isFk = me.playType === "lg" || me.isFirstKill;
                if (!isFk) return;
-
                count++;
                if (game.isWin) wins++;
-
                const status = getPlayerLhStatus(me, game);
                if (status === "полный") {
                   lhStats.full.count++;
@@ -3971,30 +4117,25 @@
                   if (game.isWin) lhStats.zero.wins++;
                }
             });
-
             document.getElementById("firstLeaveCount").textContent = count;
             document.getElementById("firstLeaveWR").textContent =
                count > 0 ? Math.round((wins / count) * 100) + "%" : "—";
-
             const setLhValues = (prefix, data, totalDeaths) => {
-               const cEl = document.getElementById(`${prefix}Count`);
-               const wrEl = document.getElementById(`${prefix}WR`);
-               const pctEl = document.getElementById(`${prefix}Pct`);
+               const cEl = document.getElementById(`${prefix}Count`),
+                  wrEl = document.getElementById(`${prefix}WR`),
+                  pctEl = document.getElementById(`${prefix}Pct`);
                if (cEl) cEl.textContent = data.count;
-               if (wrEl) {
+               if (wrEl)
                   wrEl.textContent =
                      data.count > 0
                         ? Math.round((data.wins / data.count) * 100) + "%"
                         : "—";
-               }
-               if (pctEl) {
+               if (pctEl)
                   pctEl.textContent =
                      totalDeaths > 0 && data.count > 0
                         ? Math.round((data.count / totalDeaths) * 100) + "%"
                         : "—";
-               }
             };
-
             setLhValues("lhFull", lhStats.full, count);
             setLhValues("lhPartial", lhStats.partial, count);
             setLhValues("lhZero", lhStats.zero, count);
@@ -4006,7 +4147,6 @@
                (k) =>
                   (results[k] = { longestWin: 0, longestLoss: 0, games: 0 }),
             );
-
             let w = 0,
                l = 0;
             state.flatGames.forEach(({ game }) => {
@@ -4021,7 +4161,6 @@
                   if (l > results.all.longestLoss) results.all.longestLoss = l;
                }
             });
-
             ["peaceful", "sheriff", "mafia", "don"].forEach((roleKey) => {
                const filtered = state.flatGames.filter(
                   ({ game }) => getRoleKey(game.role) === roleKey,
@@ -4068,14 +4207,13 @@
 
          function renderSeatTable() {
             const seats = {};
-            for (let i = 1; i <= 10; i++) {
+            for (let i = 1; i <= 10; i++)
                seats[i] = {
                   peaceful: { games: 0, wins: 0 },
                   sheriff: { games: 0, wins: 0 },
                   mafia: { games: 0, wins: 0 },
                   don: { games: 0, wins: 0 },
                };
-            }
             state.flatGames.forEach(({ game }) => {
                if (!Array.isArray(game.composition)) return;
                const me = game.composition.find((p) => p.isYou);
@@ -4087,10 +4225,8 @@
                seats[seat][k].games++;
                if (game.isWin) seats[seat][k].wins++;
             });
-
             const body = document.getElementById("seatStatsBody");
             let html = "";
-
             const grand = {
                peaceful: { games: 0, wins: 0 },
                sheriff: { games: 0, wins: 0 },
@@ -4098,7 +4234,6 @@
                don: { games: 0, wins: 0 },
                total: { games: 0, wins: 0 },
             };
-
             for (let i = 1; i <= 10; i++) {
                const s = seats[i];
                const cells = ["peaceful", "sheriff", "mafia", "don"]
@@ -4111,7 +4246,6 @@
                      return `<td>${r.games} <b style="${wrTextStyle(wr)}">(${wr}%)</b></td>`;
                   })
                   .join("");
-
                let totalGames = 0,
                   totalWins = 0;
                ["peaceful", "sheriff", "mafia", "don"].forEach((k) => {
@@ -4120,17 +4254,15 @@
                });
                grand.total.games += totalGames;
                grand.total.wins += totalWins;
-
                let overallCell;
-               if (totalGames === 0) {
+               if (totalGames === 0)
                   overallCell = `<td class="col-pair-total">—</td>`;
-               } else {
+               else {
                   const wr = Math.round((totalWins / totalGames) * 100);
                   overallCell = `<td class="col-pair-total">${totalGames} <b style="${wrTextStyle(wr)}">(${wr}%)</b></td>`;
                }
                html += `<tr><td style="font-weight:700;">${i}</td>${cells}${overallCell}</tr>`;
             }
-
             const totalCells = ["peaceful", "sheriff", "mafia", "don"]
                .map((k) => {
                   const r = grand[k];
@@ -4139,7 +4271,6 @@
                   return `<td><b>${r.games}</b> <b style="${wrTextStyle(wr)}">(${wr}%)</b></td>`;
                })
                .join("");
-
             const grandWr =
                grand.total.games > 0
                   ? Math.round((grand.total.wins / grand.total.games) * 100)
@@ -4148,7 +4279,6 @@
                grand.total.games === 0
                   ? `<td class="col-pair-total">—</td>`
                   : `<td class="col-pair-total"><b>${grand.total.games}</b> <b style="${wrTextStyle(grandWr)}">(${grandWr}%)</b></td>`;
-
             html += `<tr style="font-weight:800;background:var(--card-bg-subtle);"><td>Всего</td>${totalCells}${grandCell}</tr>`;
             body.innerHTML = html;
          }
@@ -4176,6 +4306,7 @@
          function applyVizFilters() {
             state.filters = readFilters();
             state.sortMode = document.getElementById("sortMode").value;
+            state.tournamentDisplayCount = 20;
             renderTournaments();
          }
 
@@ -4219,10 +4350,8 @@
             const me = Array.isArray(game.composition)
                ? game.composition.find((p) => p.isYou)
                : null;
-
             if (f.result === "win" && !game.isWin) return false;
             if (f.result === "loss" && game.isWin) return false;
-
             const hasRoleYes =
                f.peaceful === "yes" ||
                f.sheriff === "yes" ||
@@ -4243,7 +4372,6 @@
             if (f.sheriff === "no" && roleLower.includes("шериф")) return false;
             if (f.mafia === "no" && roleLower.includes("маф")) return false;
             if (f.don === "no" && roleLower.includes("дон")) return false;
-
             if (f.quality && f.quality !== "all") {
                if (!me || me.playType !== f.quality) return false;
             }
@@ -4280,9 +4408,9 @@
                   : null;
                return me && me.points !== undefined ? me.points : 0;
             };
-            if (mode === "result") {
+            if (mode === "result")
                arr.sort((a, b) => (b.isWin ? 1 : 0) - (a.isWin ? 1 : 0));
-            } else if (mode === "role") {
+            else if (mode === "role") {
                const order = {
                   peaceful: 1,
                   sheriff: 2,
@@ -4295,9 +4423,8 @@
                      (order[getRoleKey(a.role)] || 9) -
                      (order[getRoleKey(b.role)] || 9),
                );
-            } else if (mode === "points") {
+            } else if (mode === "points")
                arr.sort((a, b) => getMyPoints(b) - getMyPoints(a));
-            }
             return arr;
          }
 
@@ -4307,7 +4434,6 @@
                team.place !== undefined && team.teamsTotal !== undefined
                   ? `${team.place}/${team.teamsTotal}`
                   : team.place ?? "—";
-
             const members =
                team.members ||
                team.players ||
@@ -4349,24 +4475,16 @@
                      const placeStr =
                         m.place !== undefined ? ` · место #${m.place}` : "";
                      const fullNameStr = m.fullName ? ` (${m.fullName})` : "";
-                     return `<span class="team-member${isYou ? " is-you" : ""}" title="${name}${fullNameStr}${placeStr}">
-        ${name} <b>${ptsStr}</b>${pct}
-      </span>`;
+                     return `<span class="team-member${isYou ? " is-you" : ""}" title="${name}${fullNameStr}${placeStr}">${name} <b>${ptsStr}</b>${pct}</span>`;
                   })
                   .join("")}</div>`;
             }
-
-            return `<div class="tournament-team">
-    <div class="team-head">
-      <span class="team-name">👥 ${team.title || "Команда"}</span>
-      <span class="team-meta">
-        Место команды: <b>${teamPlace}</b>${team.sum !== undefined ? ` · Сумма: <b>${team.sum}</b>` : ""}
-      </span>
-    </div>
-    ${membersHtml}
-  </div>`;
+            return `<div class="tournament-team"><div class="team-head"><span class="team-name">👥 ${team.title || "Команда"}</span><span class="team-meta">Место команды: <b>${teamPlace}</b>${team.sum !== undefined ? ` · Сумма: <b>${team.sum}</b>` : ""}</span></div>${membersHtml}</div>`;
          }
 
+         // =====================================================================
+         // RENDER TOURNAMENTS
+         // =====================================================================
          function renderTournaments() {
             const container = document.getElementById("tournamentsContainer");
             container.innerHTML = "";
@@ -4386,13 +4504,11 @@
                     .filter(Boolean)
                : [];
             const isMultiSearch = searchTerms.length > 1;
-            let totalTournaments = 0,
-               totalGames = 0;
+            const filteredTournaments = [];
 
             state.rawData.forEach((tournament) => {
                if (!Array.isArray(tournament.games)) return;
                if (!tournamentPassesFilters(tournament, filters)) return;
-
                let games = tournament.games.filter((g) => {
                   if (!gamePassesFilters(g, filters)) return false;
                   if (searchTerms.length) {
@@ -4409,11 +4525,21 @@
                   return true;
                });
                if (games.length === 0) return;
-
                games = sortGamesInTournament(games, sortMode);
-               totalTournaments++;
-               totalGames += games.length;
+               filteredTournaments.push({ tournament, games });
+            });
 
+            state.filteredTournaments = filteredTournaments;
+            const totalGames = filteredTournaments.reduce(
+               (s, x) => s + x.games.length,
+               0,
+            );
+            state.totalFilteredGames = totalGames;
+            const totalTournaments = filteredTournaments.length;
+            const max = state.tournamentDisplayCount;
+            const toRender = filteredTournaments.slice(0, max);
+
+            toRender.forEach(({ tournament, games }) => {
                const details = document.createElement("details");
                details.className = "tournament-block";
                details.open = true;
@@ -4426,7 +4552,6 @@
                   : [];
                const hasFinalStage = !!tournament.hasFinalStage;
                const inFinal = !!tournament.inFinal;
-
                const finalStanding =
                   standings.find(
                      (s) =>
@@ -4441,7 +4566,6 @@
                   (finalStanding
                      ? standings.find((s) => s !== finalStanding)
                      : null);
-
                const standing = finalStanding || standings[0] || null;
                const rank = standing ? standing.rank : "—";
                const totalPoints = standing ? standing.total_points : "—";
@@ -4479,7 +4603,6 @@
                   ggRaw !== null && !isNaN(ggRaw)
                      ? `${ggRaw > 0 ? "+" : ""}${ggRaw}`
                      : "";
-
                const preFinalRank =
                   inFinal &&
                   preFinalStanding &&
@@ -4490,45 +4613,39 @@
                let quickHtml = "";
                if (hasFinalStage) {
                   if (inFinal) {
-                     if (preFinalRank !== null) {
+                     if (preFinalRank !== null)
                         quickHtml += `<span class="tq-item"><span class="tq-lbl">До финала</span><b>${preFinalRank}</b></span>`;
-                     }
                      quickHtml += `<span class="tq-item"><span class="tq-lbl">🏁 Финал</span><b>${rank}</b></span>`;
                   } else {
                      quickHtml += `<span class="tq-item"><span class="tq-lbl">🏁 Финал</span><b>не прошёл</b></span>`;
                      quickHtml += `<span class="tq-item"><span class="tq-lbl">Место</span><b>${rank}</b></span>`;
                   }
-               } else {
+               } else
                   quickHtml += `<span class="tq-item"><span class="tq-lbl">Место</span><b>${rank}</b></span>`;
-               }
                quickHtml += `<span class="tq-item"><span class="tq-lbl">Баллы</span><b>${totalPoints}</b></span>`;
-               if (gg) {
+               if (gg)
                   quickHtml += `<span class="tq-item"><span class="tq-lbl">GG</span><b>${gg}</b></span>`;
-               }
-               if (team) {
+               if (team)
                   quickHtml += `<span class="tq-item"><span class="tq-lbl">Команда</span><b>${teamPlace}</b></span>`;
-               }
                quickHtml += `<span class="tq-item"><span class="tq-lbl">Игр</span><b>${games.length}</b></span>`;
 
                const chips = [];
-               if (hasFinalStage) {
+               if (hasFinalStage)
                   chips.push(
                      inFinal
                         ? `<span class="meta-chip">🏁 <b>Прошёл в финал</b></span>`
                         : `<span class="meta-chip">🚫 <b>Не прошёл в финал</b></span>`,
                   );
-               }
                chips.push(
                   `<span class="meta-chip">⭐ Баллы: <b>${totalPoints}</b></span>`,
                );
                chips.push(
                   `<span class="meta-chip">🌟 Звёзды: <b>${star}</b></span>`,
                );
-               if (team) {
+               if (team)
                   chips.push(
                      `<span class="meta-chip">👥 Команда: <b>${team.title}</b> · место <b>${teamPlace}</b> · сумма <b>${team.sum}</b></span>`,
                   );
-               }
                if (dateInfo)
                   chips.push(`<span class="meta-chip">📅 ${dateInfo}</span>`);
                if (typeInfo)
@@ -4553,24 +4670,26 @@
       <summary>
         <span class="tournament-header-inner">
           <span class="tournament-title-group">
-            <a href="${tournamentUrl}" target="_blank" class="tournament-title"
-               title="${escapeHtml(tournamentFullName)}"
-               onclick="event.stopPropagation()">🏆 ${tournamentFullName} ↗</a><button class="copy-btn"
-               type="button" title="Скопировать: ${tournamentNameEsc}"
-               data-tournament-name="${tournamentNameEsc}"
-               onclick="event.preventDefault();event.stopPropagation();copyTournamentName(this.dataset.tournamentName,this);return false;">📋</button>
+            <a href="${tournamentUrl}" target="_blank" class="tournament-title" title="${escapeHtml(tournamentFullName)}" onclick="event.stopPropagation()">🏆 ${tournamentFullName} ↗</a>
+            <button class="copy-btn" type="button" title="Скопировать: ${tournamentNameEsc}" data-tournament-name="${tournamentNameEsc}" onclick="event.preventDefault();event.stopPropagation();copyTournamentName(this.dataset.tournamentName,this);return false;">📋</button>
+            <button class="copy-btn" type="button" title="Экспорт PNG" onclick="event.preventDefault();event.stopPropagation();exportTournamentToPng(this.closest('details'));return false;">📷</button>
           </span>
           <span class="tournament-quick">${quickHtml}</span>
         </span>
       </summary>
-      <div class="tournament-details-body">
-        <div class="tournament-meta-grid">${metaChips}</div>
-        ${teamHtml}
-      </div>
+      <div class="tournament-details-body"><div class="tournament-meta-grid">${metaChips}</div>${teamHtml}</div>
       <div class="games-grid">${gameCardsHtml}</div>
     `;
                container.appendChild(details);
             });
+
+            if (filteredTournaments.length > max) {
+               const remaining = filteredTournaments.length - max;
+               const btnWrap = document.createElement("div");
+               btnWrap.style.textAlign = "center";
+               btnWrap.innerHTML = `<button class="load-more-btn" onclick="loadMoreTournaments()">Показать ещё ${Math.min(20, remaining)} из ${remaining} ${pluralize(remaining, "турнира", "турниров", "турниров")}</button>`;
+               container.appendChild(btnWrap);
+            }
 
             const infoEl = document.getElementById("filterResultInfo");
             if (infoEl) {
@@ -4580,13 +4699,22 @@
                   const searchHint = searchTerms.length
                      ? ` · поиск: <b>${escapeHtml(searchTerms.join(" + "))}</b>`
                      : "";
-                  infoEl.innerHTML = `Найдено: <b>${totalGames}</b> ${pluralize(totalGames, "игра", "игры", "игр")} · <b>${totalTournaments}</b> ${pluralize(totalTournaments, "турнир", "турнира", "турниров")}${searchHint}`;
+                  const renderedInfo =
+                     totalTournaments > max
+                        ? ` · показано <b>${Math.min(max, totalTournaments)}</b>`
+                        : "";
+                  infoEl.innerHTML = `Найдено: <b>${totalGames}</b> ${pluralize(totalGames, "игра", "игры", "игр")} · <b>${totalTournaments}</b> ${pluralize(totalTournaments, "турнир", "турнира", "турниров")}${renderedInfo}${searchHint}`;
                }
             }
             if (totalGames === 0) {
                container.innerHTML =
                   '<p class="empty-state">По выбранным фильтрам игр не найдено.</p>';
             }
+         }
+
+         function loadMoreTournaments() {
+            state.tournamentDisplayCount += 20;
+            renderTournaments();
          }
 
          function renderGameCard(game, tournament) {
@@ -4597,16 +4725,13 @@
             const myRole = me ? me.role : game.role;
             const myRoleKey = getRoleKey(myRole);
             const winnerTitle = getWinnerName(game, myRoleKey);
-
             const resultBadge = isWin
                ? `<span class="badge" style="background:#d1fae5;color:#065f46;margin-left:auto;">✅ ${winnerTitle}</span>`
                : `<span class="badge" style="background:#fee2e2;color:#991b1b;margin-left:auto;">❌ ${winnerTitle}</span>`;
-
             const totalGamesInTournament = Array.isArray(tournament.games)
                ? tournament.games.length
                : null;
             const hasFinalStage = !!tournament.hasFinalStage;
-
             const copyText = buildGameCopyText(
                tournament.tournament,
                game.tableNumber,
@@ -4616,47 +4741,25 @@
                totalGamesInTournament,
                hasFinalStage,
             );
-
             const copyBtn = copyText
-               ? `<button class="copy-btn game-copy-btn" type="button"
-         title="Скопировать: ${escapeHtml(copyText)}"
-         data-copy-text="${escapeHtml(copyText)}"
-         onclick="event.preventDefault();event.stopPropagation();copyGameInfo(this.dataset.copyText,this);return false;">📋</button>`
+               ? `<button class="copy-btn game-copy-btn" type="button" title="Скопировать: ${escapeHtml(copyText)}" data-copy-text="${escapeHtml(copyText)}" onclick="event.preventDefault();event.stopPropagation();copyGameInfo(this.dataset.copyText,this);return false;">📋</button>`
                : "";
             const searchBtn = copyText
-               ? `<button class="copy-btn game-copy-btn" type="button"
-         title="Скопировать и найти в браузере: ${escapeHtml(copyText)}"
-         data-copy-text="${escapeHtml(copyText)}"
-         onclick="event.preventDefault();event.stopPropagation();searchGameInBrowser(this.dataset.copyText,this);return false;">🔍</button>`
+               ? `<button class="copy-btn game-copy-btn" type="button" title="Найти в браузере" data-copy-text="${escapeHtml(copyText)}" onclick="event.preventDefault();event.stopPropagation();searchGameInBrowser(this.dataset.copyText,this);return false;">🔍</button>`
                : "";
             const linkBtn = tournament.url
-               ? `<button class="copy-btn game-copy-btn" type="button"
-         title="Открыть турнир"
-         data-tourn-url="${escapeHtml(tournament.url)}"
-         data-game-num="${escapeHtml(String(game.gameNumber || ""))}"
-         onclick="event.preventDefault();event.stopPropagation();openGameInTournament(this.dataset.tournUrl, this.dataset.gameNum);return false;">🔗</button>`
+               ? `<button class="copy-btn game-copy-btn" type="button" title="Открыть турнир" data-tourn-url="${escapeHtml(tournament.url)}" data-game-num="${escapeHtml(String(game.gameNumber || ""))}" onclick="event.preventDefault();event.stopPropagation();openGameInTournament(this.dataset.tournUrl, this.dataset.gameNum);return false;">🔗</button>`
                : "";
-
             const judgeHtml = game.tableJudge
                ? `<div class="game-judge-centered">👨‍⚖️ Судья: ${escapeHtml(game.tableJudge)}</div>`
                : "";
-
             const gameInfoLeft = [game.gameNumber, game.tableNumber]
                .filter(Boolean)
                .join(' <span class="game-dot-separator"></span> ');
-
             return `<div class="game-card">
-    <div class="game-meta">
-      <span style="display:inline-flex;align-items:center;gap:.35rem;">${gameInfoLeft}</span>
-      <span style="display:inline-flex;align-items:center;gap:.35rem;flex-wrap:wrap;">
-        ${copyBtn}${searchBtn}${linkBtn}
-      </span>
-    </div>
+    <div class="game-meta"><span style="display:inline-flex;align-items:center;gap:.35rem;">${gameInfoLeft}</span><span style="display:inline-flex;align-items:center;gap:.35rem;flex-wrap:wrap;">${copyBtn}${searchBtn}${linkBtn}</span></div>
     ${judgeHtml}
-    <div style="display:flex;gap:.5rem;margin-bottom:.5rem;flex-wrap:wrap;align-items:center;">
-      <span class="badge ${getRoleBadgeClass(myRole)}">${myRole || "?"}</span>
-      ${resultBadge}
-    </div>
+    <div style="display:flex;gap:.5rem;margin-bottom:.5rem;flex-wrap:wrap;align-items:center;"><span class="badge ${getRoleBadgeClass(myRole)}">${myRole || "?"}</span>${resultBadge}</div>
     <div class="composition">${formatComposition(game.composition, game)}</div>
   </div>`;
          }
@@ -4673,45 +4776,29 @@
                   : getRoleClass(p.role);
                const youClass = isYou ? "is-you" : "";
                const playType = p.playType || "n";
-
                const isFk = playType === "lg" || p.isFirstKill;
                const lhStatus = isFk ? getPlayerLhStatus(p, game) : null;
                const lgClass =
                   !hidePlayInfo && isFk ? getLhClass(lhStatus) : "";
-
                const icon = hidePlayInfo ? "" : getPlayIcon(playType);
                const points = p.points !== undefined ? p.points : 0;
                const pointsStr = points > 0 ? `+${points}` : `${points}`;
-
                let titleText = `Роль: ${p.role}`;
-               if (isFk && lhStatus) {
-                  titleText += ` | ЛХ: ${lhStatus}`;
-               }
+               if (isFk && lhStatus) titleText += ` | ЛХ: ${lhStatus}`;
                const title = hideThis ? "" : `title="${titleText}"`;
                const pointsHtml = hidePlayInfo
                   ? ""
                   : `<span class="player-points">${pointsStr}</span>`;
-
                const isMvp =
                   !hideThis && game && isGivenPlayerMvp(game, p.name);
                const isLosingMvp =
                   !hideThis && game && isGivenPlayerLosingMvp(game, p);
-
                let mvpBadgeHtml = "";
-               if (isMvp) {
+               if (isMvp)
                   mvpBadgeHtml = `<span class="mvp-badge-inline" title="MVP игры">👑 MVP</span>`;
-               } else if (isLosingMvp) {
-                  mvpBadgeHtml = `<span class="losing-mvp-badge-inline" title="MVP проигравшей команды (≥0.5 баллов)">🥈 MVP</span>`;
-               }
-
-               html += `<li class="player-item">
-      <span class="player-tag ${roleClass} ${youClass} ${lgClass}" ${title}>
-        <span class="player-name-wrapper">
-          ${p.name}${mvpBadgeHtml}${icon ? `<span class="play-icon">${icon}</span>` : ""}
-        </span>
-        ${pointsHtml}
-      </span>
-    </li>`;
+               else if (isLosingMvp)
+                  mvpBadgeHtml = `<span class="losing-mvp-badge-inline" title="MVP проигравшей команды">🥈 MVP</span>`;
+               html += `<li class="player-item"><span class="player-tag ${roleClass} ${youClass} ${lgClass}" ${title}><span class="player-name-wrapper">${p.name}${mvpBadgeHtml}${icon ? `<span class="play-icon">${icon}</span>` : ""}</span>${pointsHtml}</span></li>`;
             });
             html += "</ol>";
             return html;
@@ -4725,9 +4812,8 @@
                !document
                   .getElementById("gameModal")
                   .classList.contains("hidden")
-            ) {
+            )
                applyGameFilter();
-            }
          }
 
          let searchDebounceTimer = null;
@@ -4735,13 +4821,14 @@
             clearTimeout(searchDebounceTimer);
             searchDebounceTimer = setTimeout(() => applyVizFilters(), 500);
          }
-
          let tableSearchDebounceTimer = null;
          function onTableSearchInput() {
             clearTimeout(tableSearchDebounceTimer);
-            tableSearchDebounceTimer = setTimeout(() => filterTable(), 300);
+            tableSearchDebounceTimer = setTimeout(() => {
+               state.tableDisplayCount = 50;
+               renderTable();
+            }, 300);
          }
-
          let judgeSearchDebounceTimer = null;
          function onJudgeSearchInput() {
             clearTimeout(judgeSearchDebounceTimer);
@@ -4750,7 +4837,6 @@
                300,
             );
          }
-
          let sheriffSearchDebounceTimer = null;
          function onSheriffSearchInput() {
             clearTimeout(sheriffSearchDebounceTimer);
@@ -4770,10 +4856,9 @@
                const me = game.composition.find((p) => p.isYou);
                if (!me) return;
                const meRed = isRed(me.role);
-
                game.composition.forEach((p) => {
                   if (p.name === me.name) return;
-                  if (!stats[p.name]) {
+                  if (!stats[p.name])
                      stats[p.name] = {
                         name: p.name,
                         total: 0,
@@ -4788,18 +4873,15 @@
                         winsPlayerBlackOtherRed: 0,
                         games: [],
                      };
-                  }
                   const s = stats[p.name];
                   s.total++;
                   s.totalPoints += p.points || 0;
                   const otherRed = isRed(p.role);
-
                   let matchType;
                   if (meRed && otherRed) matchType = "togetherRed";
                   else if (!meRed && !otherRed) matchType = "togetherBlack";
                   else if (meRed && !otherRed) matchType = "oppositeTargetRed";
                   else matchType = "oppositeTargetBlack";
-
                   s.games.push({
                      tournamentName: tournament.tournament,
                      tournamentUrl: tournament.url,
@@ -4820,7 +4902,6 @@
                         : null,
                      hasFinalStage: !!tournament.hasFinalStage,
                   });
-
                   if (matchType === "togetherRed") {
                      s.togetherRed++;
                      if (game.isWin) s.winsTogetherRed++;
@@ -4836,7 +4917,6 @@
                   }
                });
             });
-
             return Object.values(stats)
                .map((p) => ({
                   ...p,
@@ -4861,7 +4941,6 @@
 
          function renderAnalytics() {
             if (!state.flatGames.length) return;
-
             let totalGames = 0,
                totalWins = 0,
                totalPoints = 0;
@@ -4899,7 +4978,6 @@
                   bad: 0,
                },
             };
-
             state.flatGames.forEach(({ game }) => {
                const me = Array.isArray(game.composition)
                   ? game.composition.find((p) => p.isYou)
@@ -4919,7 +4997,6 @@
                   if (me.playType === "r") roleStats[k].bad++;
                }
             });
-
             renderPlayerNameLink(
                document.getElementById("anPlayerName"),
                state.targetPlayer,
@@ -4932,7 +5009,6 @@
                   : "0%";
             document.getElementById("anAvgPoints").textContent =
                totalGames > 0 ? (totalPoints / totalGames).toFixed(2) : "0.00";
-
             renderAnRoleStats(roleStats);
             renderHeatmap();
             renderTable();
@@ -4946,11 +5022,19 @@
                { key: "mafia", label: "Мафия", border: "border-mafia" },
                { key: "don", label: "Дон", border: "border-don" },
             ];
+            const totalAll = roles.reduce(
+               (sum, r) => sum + stats[r.key].games,
+               0,
+            );
             container.innerHTML = roles
                .map((r) => {
                   const d = stats[r.key];
                   const wr =
                      d.games > 0 ? ((d.wins / d.games) * 100).toFixed(1) : 0;
+                  const pct =
+                     totalAll > 0
+                        ? ((d.games / totalAll) * 100).toFixed(1)
+                        : "0.0";
                   const avgPts =
                      d.games > 0 ? (d.points / d.games).toFixed(2) : "0.00";
                   const badCount = d.bad || 0;
@@ -4960,13 +5044,12 @@
                         : wr <= 40 && d.games > 0
                           ? "text-danger"
                           : "text-neutral";
-                  const mvp = d.mvp || 0;
-                  const losingMvp = d.losingMvp || 0;
+                  const mvp = d.mvp || 0,
+                     losingMvp = d.losingMvp || 0;
                   return `<div class="role-stat-card ${r.border}">
-      <div class="role-stat-info"><h3>${r.label}</h3><p>${d.games} игр</p></div>
-      <div class="role-stat-values">
-        <div class="role-stat-wr ${cls}">${wr}%</div>
-        <div class="role-stat-pts">Ср: ${avgPts} · <span title="Обычный MVP">🌟</span> ${mvp} · <span title="MVP проигравшей команды (≥0.5 баллов и лучший среди своих)">🥈</span> ${losingMvp} · 🔻 ${badCount}</div>
+      <div class="role-stat-info"><h3>${r.label}</h3><p>${d.games} игр · ${pct}%</p></div>
+      <div class="role-stat-values"><div class="role-stat-wr ${cls}">${wr}%</div>
+        <div class="role-stat-pts">Ср: ${avgPts} · <span title="MVP">🌟</span> ${mvp} · <span title="MVP проигравших">🥈</span> ${losingMvp} · 🔻 ${badCount}</div>
       </div>
     </div>`;
                })
@@ -4977,7 +5060,6 @@
             if (!state.flatGames.length) return;
             const isDark = document.body.classList.contains("dark-mode");
             const textColor = isDark ? "#f8fafc" : "#0f172a";
-
             const counts = { peaceful: 0, sheriff: 0, mafia: 0, don: 0 };
             state.flatGames.forEach(({ game }) => {
                const me = Array.isArray(game.composition)
@@ -4987,7 +5069,6 @@
                const k = getRoleKey(me.role);
                if (counts[k] !== undefined) counts[k]++;
             });
-
             if (state.charts.roles) state.charts.roles.destroy();
             state.charts.roles = new Chart(
                document.getElementById("rolesChart"),
@@ -5028,13 +5109,55 @@
                            labels: {
                               color: textColor,
                               font: { family: "Inter", weight: 600 },
+                              generateLabels: (chart) => {
+                                 const data = chart.data;
+                                 const values = data.datasets[0].data;
+                                 const total = values.reduce(
+                                    (a, b) => a + b,
+                                    0,
+                                 );
+                                 return data.labels.map((label, i) => {
+                                    const val = values[i];
+                                    const pct =
+                                       total > 0
+                                          ? ((val / total) * 100).toFixed(1)
+                                          : "0.0";
+                                    return {
+                                       text: `${label}: ${val} игр · ${pct}%`,
+                                       fillStyle:
+                                          data.datasets[0].backgroundColor[i],
+                                       strokeStyle:
+                                          data.datasets[0].borderColor[i],
+                                       lineWidth: data.datasets[0].borderWidth,
+                                       fontColor: textColor,
+                                       index: i,
+                                    };
+                                 });
+                              },
+                           },
+                        },
+                        tooltip: {
+                           callbacks: {
+                              label: (item) => {
+                                 const values = item.dataset.data;
+                                 const total = values.reduce(
+                                    (a, b) => a + b,
+                                    0,
+                                 );
+                                 const pct =
+                                    total > 0
+                                       ? ((item.parsed / total) * 100).toFixed(
+                                            1,
+                                         )
+                                       : "0.0";
+                                 return `${item.label}: ${item.parsed} игр · ${pct}%`;
+                              },
                            },
                         },
                      },
                   },
                },
             );
-
             renderRadarChart();
             renderWinrateChart();
             renderEloChart();
@@ -5043,7 +5166,7 @@
          }
 
          function computeRadarMetrics(gamesList) {
-            if (!gamesList || gamesList.length === 0) {
+            if (!gamesList || gamesList.length === 0)
                return {
                   count: 0,
                   wr: 0,
@@ -5054,7 +5177,6 @@
                   firstKillRate: 0,
                   goodRate: 0,
                };
-            }
             const count = gamesList.length;
             let wins = 0,
                totalPoints = 0,
@@ -5062,7 +5184,6 @@
                losingMvpCount = 0,
                firstKillCount = 0,
                goodCount = 0;
-
             gamesList.forEach(({ game }) => {
                if (game.isWin) wins++;
                const me = Array.isArray(game.composition)
@@ -5076,7 +5197,6 @@
                if (isPlayerMvp(game)) mvpCount++;
                if (isLosingTeamMvp(game)) losingMvpCount++;
             });
-
             const losses = count - wins;
             const wr = (wins / count) * 100;
             const rawAvg = totalPoints / count;
@@ -5086,7 +5206,6 @@
                losses > 0 ? (losingMvpCount / losses) * 100 : 0;
             const firstKillRate = (firstKillCount / count) * 100;
             const goodRate = (goodCount / count) * 100;
-
             return {
                count,
                wr: Math.round(wr * 10) / 10,
@@ -5106,7 +5225,6 @@
             const gridColor = isDark
                ? "rgba(255, 255, 255, 0.12)"
                : "rgba(0, 0, 0, 0.08)";
-
             const selectedRole = document.getElementById("radarRoleSelect")
                ? document.getElementById("radarRoleSelect").value
                : "don";
@@ -5136,7 +5254,6 @@
                color: "#8b5cf6",
                bg: "rgba(139, 92, 246, 0.25)",
             };
-
             const allMetrics = computeRadarMetrics(state.flatGames);
             const roleGames = state.flatGames.filter(({ game }) => {
                const me = Array.isArray(game.composition)
@@ -5145,15 +5262,12 @@
                return me && getRoleKey(me.role) === selectedRole;
             });
             const roleMetrics = computeRadarMetrics(roleGames);
-
             if (state.charts.radar) {
                state.charts.radar.destroy();
                state.charts.radar = null;
             }
-
             const canvas = document.getElementById("radarChart");
             if (!canvas) return;
-
             const labels = [
                "Винрейт",
                "Средний балл",
@@ -5162,7 +5276,6 @@
                "Первый ушедший",
                "Хорошие игры",
             ];
-
             state.charts.radar = new Chart(canvas, {
                type: "radar",
                data: {
@@ -5238,7 +5351,7 @@
                               const m = item.dataset._metrics;
                               if (!m)
                                  return `${item.dataset.label}: ${item.formattedValue}`;
-                              const realValues = [
+                              const rv = [
                                  `${m.wr}%`,
                                  m.rawAvg.toFixed(2),
                                  `${m.mvpRate}%`,
@@ -5246,7 +5359,7 @@
                                  `${m.firstKillRate}%`,
                                  `${m.goodRate}%`,
                               ];
-                              return `${item.dataset.label}: ${realValues[item.dataIndex] ?? item.formattedValue}`;
+                              return `${item.dataset.label}: ${rv[item.dataIndex] ?? item.formattedValue}`;
                            },
                         },
                      },
@@ -5264,15 +5377,12 @@
                : "cumulative";
             const container = document.getElementById("eloChartContainer");
             if (!container) return;
-
             if (state.charts.elo) {
                state.charts.elo.destroy();
                state.charts.elo = null;
             }
-            if (!container.querySelector("canvas")) {
+            if (!container.querySelector("canvas"))
                container.innerHTML = '<canvas id="eloChart"></canvas>';
-            }
-
             const list = [...state.rawData].reverse();
             const eloPoints = [
                {
@@ -5285,7 +5395,6 @@
                },
             ];
             let cumulative = 1000;
-
             list.forEach((t) => {
                const standings = Array.isArray(t.standings) ? t.standings : [];
                const finalStanding =
@@ -5296,31 +5405,28 @@
                         !/отбор|квалиф/i.test(s.stage),
                   ) || null;
                const standing = finalStanding || standings[0] || null;
-
                let delta = null;
                if (
                   t.elo_delta !== undefined &&
                   t.elo_delta !== null &&
                   t.elo_delta !== ""
-               ) {
+               )
                   delta = parseFloat(t.elo_delta);
-               } else if (standing) {
+               else if (standing) {
                   if (
                      standing.elo_delta !== undefined &&
                      standing.elo_delta !== null &&
                      standing.elo_delta !== ""
-                  ) {
+                  )
                      delta = parseFloat(standing.elo_delta);
-                  } else if (
+                  else if (
                      standing.elo !== undefined &&
                      standing.elo !== null &&
                      standing.elo !== ""
-                  ) {
+                  )
                      delta = parseFloat(standing.elo);
-                  }
                }
                if (delta === null || isNaN(delta)) return;
-
                cumulative += delta;
                eloPoints.push({
                   shortName: extractTournamentName(t.tournament || "Турнир"),
@@ -5336,19 +5442,16 @@
                         : "—",
                });
             });
-
             if (eloPoints.length <= 1) {
                container.innerHTML =
                   '<p class="empty-state">Нет данных ELO.</p>';
                return;
             }
-
             const isCumulative = mode === "cumulative";
             const allPoints = isCumulative ? eloPoints : eloPoints.slice(1);
             const dataValues = allPoints.map((p) =>
                isCumulative ? p.cumulative : p.delta,
             );
-
             state.charts.elo = new Chart(document.getElementById("eloChart"), {
                type: isCumulative ? "line" : "bar",
                data: {
@@ -5408,17 +5511,14 @@
                            },
                            label: (item) => {
                               const p = allPoints[item.dataIndex];
-                              if (p.isInitial) {
+                              if (p.isInitial)
                                  return [`Текущий ELO: ${p.cumulative}`];
-                              }
-                              const lines = [];
-                              lines.push(`Место: ${p.rank}`);
-                              lines.push(
+                              const lines = [
+                                 `Место: ${p.rank}`,
                                  `Заработано ELO: ${p.delta > 0 ? "+" : ""}${p.delta}`,
-                              );
-                              if (isCumulative) {
+                              ];
+                              if (isCumulative)
                                  lines.push(`Текущий ELO: ${p.cumulative}`);
-                              }
                               return lines;
                            },
                         },
@@ -5435,7 +5535,6 @@
             const m = String(dateStr).match(/^(\d{4})/);
             return m ? parseInt(m[1], 10) : null;
          }
-
          function getTournamentGg(t) {
             if (t.gg !== undefined && t.gg !== null && t.gg !== "") {
                const n = parseFloat(t.gg);
@@ -5450,7 +5549,6 @@
             }
             return null;
          }
-
          function getTournamentRank(t) {
             const standings = Array.isArray(t.standings) ? t.standings : [];
             const finalStanding =
@@ -5467,7 +5565,6 @@
                ? standing.rank
                : null;
          }
-
          function collectGgData() {
             const list = [...state.rawData].reverse();
             return list
@@ -5479,7 +5576,6 @@
                }))
                .filter((x) => x.gg !== null && x.year !== null);
          }
-
          function updateGgYearSelect() {
             const yearSelect = document.getElementById("ggYearSelect");
             if (!yearSelect) return [];
@@ -5491,51 +5587,42 @@
             yearSelect.innerHTML = years
                .map((y) => `<option value="${y}">${y}</option>`)
                .join("");
-            if (current && years.includes(+current)) {
+            if (current && years.includes(+current))
                yearSelect.value = String(current);
-            } else if (years.length) {
+            else if (years.length)
                yearSelect.value = String(years[years.length - 1]);
-            }
             return years;
          }
-
          function onGgChartModeChange() {
             const mode = document.getElementById("ggChartMode").value;
             const yearSelect = document.getElementById("ggYearSelect");
-            if (yearSelect) {
+            if (yearSelect)
                yearSelect.style.display = mode === "tournaments" ? "" : "none";
-            }
             if (mode === "tournaments") updateGgYearSelect();
             renderGgChart();
          }
-
          function renderGgChart() {
             if (!state.rawData.length) return;
             const isDark = document.body.classList.contains("dark-mode");
             const textColor = isDark ? "#f8fafc" : "#0f172a";
             const container = document.getElementById("ggChartContainer");
             if (!container) return;
-
             if (state.charts.gg) {
                state.charts.gg.destroy();
                state.charts.gg = null;
             }
-            if (!container.querySelector("canvas")) {
+            if (!container.querySelector("canvas"))
                container.innerHTML = '<canvas id="ggChart"></canvas>';
-            }
-
             const mode = document.getElementById("ggChartMode").value;
-            const data = collectGgData(); // уже в хронологическом порядке (oldest first)
+            const data = collectGgData();
             if (!data.length) {
                container.innerHTML =
                   '<p class="empty-state">Нет данных GG.</p>';
                return;
             }
-
-            // ================== РЕЖИМ: ПО ГОДАМ ==================
             if (mode === "yearly") {
-               const byYear = {};
-               const yearTours = {};
+               const byYear = {},
+                  yearTours = {};
                data.forEach((x) => {
                   byYear[x.year] = (byYear[x.year] || 0) + x.gg;
                   if (!yearTours[x.year]) yearTours[x.year] = [];
@@ -5545,10 +5632,8 @@
                   .map(Number)
                   .sort((a, b) => a - b);
                const values = years.map((y) => Math.round(byYear[y] * 10) / 10);
-
-               // топ-12 суммы и отсортированные списки по каждому году
-               const top12Sums = [];
-               const yearToursByGg = {};
+               const top12Sums = [],
+                  yearToursByGg = {};
                years.forEach((y) => {
                   const sorted = [...yearTours[y]].sort((a, b) => b.gg - a.gg);
                   yearToursByGg[y] = sorted;
@@ -5558,23 +5643,19 @@
                      ) / 10,
                   );
                });
-
                const top12MarkerPlugin = {
                   id: "ggTop12Marker",
                   afterDatasetsDraw(chart) {
-                     const ctx = chart.ctx;
-                     const meta = chart.getDatasetMeta(0);
-                     const yScale = chart.scales.y;
+                     const ctx = chart.ctx,
+                        meta = chart.getDatasetMeta(0),
+                        yScale = chart.scales.y;
                      ctx.save();
                      meta.data.forEach((bar, i) => {
-                        const top12 = top12Sums[i];
-                        const total = values[i];
+                        const top12 = top12Sums[i],
+                           total = values[i];
                         if (top12 === undefined || top12 === null) return;
-
-                        const yLine = yScale.getPixelForValue(top12);
-                        const halfW = bar.width / 2;
-
-                        // пунктирная линия = сумма топ-12
+                        const yLine = yScale.getPixelForValue(top12),
+                           halfW = bar.width / 2;
                         ctx.strokeStyle = "#f59e0b";
                         ctx.lineWidth = 2.5;
                         ctx.setLineDash([5, 3]);
@@ -5583,8 +5664,6 @@
                         ctx.lineTo(bar.x + halfW, yLine);
                         ctx.stroke();
                         ctx.setLineDash([]);
-
-                        // подпись топ-12 (только если реально меньше общего)
                         const diff = total - top12;
                         if (Math.abs(diff) > 0.01) {
                            ctx.font = "700 10px Inter, sans-serif";
@@ -5597,8 +5676,6 @@
                               yLine,
                            );
                         }
-
-                        // общая сумма — сверху столбика
                         const yTop = yScale.getPixelForValue(total);
                         ctx.font = "700 12px Inter, sans-serif";
                         ctx.fillStyle = textColor;
@@ -5613,7 +5690,6 @@
                      ctx.restore();
                   },
                };
-
                state.charts.gg = new Chart(document.getElementById("ggChart"), {
                   type: "bar",
                   data: {
@@ -5651,7 +5727,6 @@
                                  const v = values[item.dataIndex];
                                  const t12 = top12Sums[item.dataIndex];
                                  const topTours = yearToursByGg[y].slice(0, 12);
-
                                  const lines = [
                                     `Всего GG: ${v > 0 ? "+" : ""}${v}`,
                                     `Топ-12 GG: ${t12 > 0 ? "+" : ""}${t12}`,
@@ -5663,18 +5738,18 @@
                                     );
                                     const ggStr =
                                        t.gg > 0 ? "+" + t.gg : String(t.gg);
-                                    lines.push(`${i + 1}. ${name}: ${ggStr}`);
-                                    if (i === 8 && topTours.length > 9) {
+                                    // ★ (порядковый номер / сколько всего в топ-листе)
+                                    lines.push(
+                                       `★ ${i + 1}/${topTours.length} · ${name}: ${ggStr}`,
+                                    );
+                                    if (i === 8 && topTours.length > 9)
                                        lines.push("━━━━━━━━━━━━━━━━");
-                                    }
                                  });
                                  if (tours.length > 12) {
                                     const rest =
                                        Math.round((v - t12) * 10) / 10;
                                     lines.push(
-                                       `Остальные ${tours.length - 12}: ${
-                                          rest > 0 ? "+" : ""
-                                       }${rest}`,
+                                       `Остальные ${tours.length - 12}: ${rest > 0 ? "+" : ""}${rest}`,
                                     );
                                  }
                                  return lines;
@@ -5705,35 +5780,30 @@
                });
                return;
             }
-
-            // ================== РЕЖИМ: ПО ТУРНИРАМ ЗА ГОД ==================
             const years = updateGgYearSelect();
             const yearSelect = document.getElementById("ggYearSelect");
             const selectedYear =
                yearSelect && yearSelect.value
                   ? parseInt(yearSelect.value, 10)
                   : years[years.length - 1];
-
-            // yearData уже в хронологическом порядке, т.к. data — это reverse(rawData)
             const yearData = data.filter((x) => x.year === selectedYear);
             if (!yearData.length) {
                container.innerHTML =
                   '<p class="empty-state">За выбранный год нет данных GG.</p>';
                return;
             }
-
-            // Сортируем копию по GG убыв., чтобы определить топ-12 (для подсветки)
             const sortedByGg = [...yearData].sort((a, b) => b.gg - a.gg);
-            const top12Set = new Set(sortedByGg.slice(0, 12));
-
-            // Отображаем в исходном (хронологическом) порядке
+            const topEntries = sortedByGg.slice(0, 12);
+            const topTotal = topEntries.length;
+            const topPosMap = new Map();
+            topEntries.forEach((x, i) => topPosMap.set(x, i + 1));
             const values = yearData.map((x) => x.gg);
             const ranks = yearData.map((x) => x.rank);
             const fullNames = yearData.map(
                (x) => x.tournament.tournament || "Турнир",
             );
-            const isTop12Arr = yearData.map((x) => top12Set.has(x));
-
+            const isTop12Arr = yearData.map((x) => topPosMap.has(x));
+            const topPosArr = yearData.map((x) => topPosMap.get(x) || null);
             state.charts.gg = new Chart(document.getElementById("ggChart"), {
                type: "bar",
                data: {
@@ -5778,11 +5848,12 @@
                               const v = values[idx];
                               const lines = [`GG: ${v > 0 ? "+" : ""}${v}`];
                               const r = ranks[idx];
-                              if (r !== null && r !== undefined && r !== "") {
+                              if (r !== null && r !== undefined && r !== "")
                                  lines.push(`Место: ${r}`);
+                              if (isTop12Arr[idx]) {
+                                 const pos = topPosArr[idx];
+                                 lines.push(`★ Топ-${pos}/${topTotal} за год`);
                               }
-                              if (isTop12Arr[idx])
-                                 lines.push("★ Топ-12 за год");
                               return lines;
                            },
                         },
@@ -5809,14 +5880,20 @@
                container.classList.toggle("rolling-mode", mode === "rolling");
             renderWinrateChart();
          }
-
          function resetWrZoom() {
             if (
                state.charts.wr &&
                typeof state.charts.wr.resetZoom === "function"
-            ) {
+            )
                state.charts.wr.resetZoom();
-            }
+         }
+
+         function gameMatchesRoleFilter(game, roleFilter) {
+            if (roleFilter === "all") return true;
+            const me = Array.isArray(game.composition)
+               ? game.composition.find((p) => p.isYou)
+               : null;
+            return me && getRoleKey(me.role) === roleFilter;
          }
 
          function renderWinrateChart() {
@@ -5824,20 +5901,25 @@
             const isDark = document.body.classList.contains("dark-mode");
             const textColor = isDark ? "#f8fafc" : "#0f172a";
             const mode = document.getElementById("wrChartMode").value;
+            const roleFilter =
+               document.getElementById("wrChartRoleFilter")?.value || "all";
             const windowSize = parseInt(
                document.getElementById("wrChartWindow").value,
                10,
             );
             const container = document.getElementById("wrChartContainer");
-
             if (state.charts.wr) {
                state.charts.wr.destroy();
                state.charts.wr = null;
             }
-            if (!container.querySelector("canvas")) {
+            if (!container.querySelector("canvas"))
                container.innerHTML = '<canvas id="wrChart"></canvas>';
-            }
             container.classList.toggle("rolling-mode", mode === "rolling");
+
+            const roleLabel =
+               roleFilter === "all"
+                  ? ""
+                  : ` (${{ peaceful: "Мирный", sheriff: "Шериф", mafia: "Мафия", don: "Дон" }[roleFilter] || roleFilter})`;
 
             if (mode === "tournament") {
                const tournaments = state.rawData
@@ -5845,7 +5927,8 @@
                      const my = (t.games || []).filter(
                         (g) =>
                            Array.isArray(g.composition) &&
-                           g.composition.some((p) => p.isYou),
+                           g.composition.some((p) => p.isYou) &&
+                           gameMatchesRoleFilter(g, roleFilter),
                      );
                      const wins = my.filter((g) => g.isWin).length;
                      return {
@@ -5857,20 +5940,18 @@
                   })
                   .filter((t) => t.games > 0)
                   .reverse();
-
                if (tournaments.length === 0) {
                   container.innerHTML =
                      '<p class="empty-state">Нет данных по турнирам.</p>';
                   return;
                }
-
                state.charts.wr = new Chart(document.getElementById("wrChart"), {
                   type: "bar",
                   data: {
                      labels: tournaments.map((_, i) => `#${i + 1}`),
                      datasets: [
                         {
-                           label: "Винрейт %",
+                           label: "Винрейт %" + roleLabel,
                            data: tournaments.map((t) => t.wr.toFixed(1)),
                            backgroundColor: tournaments.map((t) =>
                               t.wr >= 60
@@ -5933,14 +6014,15 @@
                return;
             }
 
-            const games = [...state.flatGames].reverse();
+            const games = [...state.flatGames]
+               .filter((g) => gameMatchesRoleFilter(g.game, roleFilter))
+               .reverse();
             const points = [];
             let datasetLabel;
             const isCumulative = windowSize === 0;
-
             const collectTournaments = (slice) => {
-               const names = [];
-               const seen = new Set();
+               const names = [],
+                  seen = new Set();
                slice.forEach((g) => {
                   const n = extractTournamentName(
                      g.tournament.tournament || "",
@@ -5952,7 +6034,6 @@
                });
                return names;
             };
-
             if (isCumulative) {
                for (let i = 0; i < games.length; i++) {
                   const slice = games.slice(0, i + 1);
@@ -5969,7 +6050,7 @@
                         : [],
                   });
                }
-               datasetLabel = "Кумулятивный винрейт %";
+               datasetLabel = "Кумулятивный винрейт %" + roleLabel;
             } else {
                if (games.length < windowSize) {
                   container.innerHTML = `<p class="empty-state">Недостаточно игр для окна ${windowSize} (всего ${games.length}).</p>`;
@@ -5985,9 +6066,8 @@
                      tournaments: collectTournaments(slice),
                   });
                }
-               datasetLabel = `Винрейт % (окно ${windowSize})`;
+               datasetLabel = `Винрейт % (окно ${windowSize})` + roleLabel;
             }
-
             state.charts.wr = new Chart(document.getElementById("wrChart"), {
                type: "line",
                data: {
@@ -6062,14 +6142,11 @@
                            pinch: { enabled: true },
                            mode: "x",
                         },
-                        limits: {
-                           x: { min: "original", max: "original" },
-                        },
+                        limits: { x: { min: "original", max: "original" } },
                      },
                   },
                },
             });
-
             const cvs = document.getElementById("wrChart");
             if (cvs) cvs.style.cursor = "grab";
          }
@@ -6079,7 +6156,6 @@
             const mode = document.getElementById("heatmapMode").value;
             const sortType = document.getElementById("heatmapSort").value;
             state.heatmapDisplayCount = 20;
-
             const filtered = state.partnerStats
                .filter((p) => {
                   if (mode === "all_together")
@@ -6143,7 +6219,6 @@
                      currentWR: games ? wins / games : 0,
                   };
                });
-
             filtered.sort((a, b) => {
                if (sortType === "games_desc")
                   return b.currentGames - a.currentGames;
@@ -6151,11 +6226,9 @@
                if (sortType === "wr_asc") return a.currentWR - b.currentWR;
                return 0;
             });
-
             state.sortedHeatmapData = filtered;
             updateHeatmapView();
          }
-
          function updateHeatmapView() {
             const container = document.getElementById("heatmapContainer");
             const btn = document.getElementById("loadMoreHeatmap");
@@ -6164,18 +6237,16 @@
                state.heatmapDisplayCount,
             );
             container.innerHTML = "";
-
             if (!visible.length) {
                container.innerHTML =
                   '<p class="empty-state">Нет игроков, удовлетворяющих условиям.</p>';
                btn.style.display = "none";
                return;
             }
-
             const isDark = document.body.classList.contains("dark-mode");
             visible.forEach((p) => {
                const wr = Math.round(p.currentWR * 100);
-               let hue = wr < 40 ? 0 : 110 + ((wr - 40) / 60) * 35;
+               const hue = wr < 40 ? 0 : 110 + ((wr - 40) / 60) * 35;
                const bg = isDark
                   ? `hsla(${hue}, 60%, 18%, 0.5)`
                   : `hsla(${hue}, 85%, 94%, 0.8)`;
@@ -6185,17 +6256,13 @@
                const border = isDark
                   ? `hsla(${hue}, 50%, 30%, 0.4)`
                   : `hsla(${hue}, 70%, 80%, 0.8)`;
-
                const cell = document.createElement("div");
                cell.className = "heatmap-cell";
                cell.style.background = bg;
                cell.style.color = text;
                cell.style.borderColor = border;
                cell.onclick = () => openModal(p.name);
-               cell.innerHTML = `
-      <div class="heatmap-name" title="${p.name}">${p.name}</div>
-      <div class="heatmap-wr">${wr}%</div>
-      <div class="heatmap-games">${p.currentGames} игр</div>`;
+               cell.innerHTML = `<div class="heatmap-name" title="${p.name}">${p.name}</div><div class="heatmap-wr">${wr}%</div><div class="heatmap-games">${p.currentGames} игр</div>`;
                container.appendChild(cell);
             });
             btn.style.display =
@@ -6203,26 +6270,34 @@
                   ? "none"
                   : "block";
          }
-
          function loadMoreHeatmap() {
             state.heatmapDisplayCount += 20;
             updateHeatmapView();
          }
 
+         // =====================================================================
+         // PARTNER TABLE
+         // =====================================================================
          function renderTable() {
             const tbody = document.getElementById("statsTableBody");
             tbody.innerHTML = "";
-
             const minGames = state.minPartnerGames || 1;
-            const filtered = state.displayedPartnerStats.filter(
+            const searchQuery = (
+               document.getElementById("tableSearch")?.value || ""
+            )
+               .toLowerCase()
+               .trim();
+            let filtered = state.displayedPartnerStats.filter(
                (p) => p.total >= minGames,
             );
-
+            if (searchQuery)
+               filtered = filtered.filter((p) =>
+                  p.name.toLowerCase().includes(searchQuery),
+               );
             if (!filtered.length) {
-               tbody.innerHTML = `<tr><td colspan="11" class="empty-state">Нет партнёров с минимум ${minGames} ${pluralize(minGames, "игрой", "играми", "играми")}</td></tr>`;
+               tbody.innerHTML = `<tr><td colspan="11" class="empty-state">Нет партнёров с минимум ${minGames} ${pluralize(minGames, "игрой", "играми", "играми")}${searchQuery ? ' и запросом "' + escapeHtml(searchQuery) + '"' : ""}</td></tr>`;
                return;
             }
-
             const maxes = {
                total: 1,
                togetherRed: 1,
@@ -6241,7 +6316,6 @@
                if (p.playerBlackOtherRed > maxes.playerBlackOtherRed)
                   maxes.playerBlackOtherRed = p.playerBlackOtherRed;
             });
-
             const gamesTd = (n, maxN, playerName, matchType, title) => {
                if (n === 0)
                   return '<td style="color:var(--text-muted);text-align:center;">0</td>';
@@ -6249,11 +6323,8 @@
                const alpha = (0.06 + intensity * 0.26).toFixed(2);
                const escapedName = playerName.replace(/'/g, "\\'");
                const escapedTitle = (title || "").replace(/'/g, "\\'");
-               return `<td style="text-align:center;">
-      <span class="clickable-num" style="background:rgba(59,130,246,${alpha});" onclick="openModal('${escapedName}', '${matchType || ""}', '${escapedTitle}')">${n}</span>
-    </td>`;
+               return `<td style="text-align:center;"><span class="clickable-num" style="background:rgba(59,130,246,${alpha});" onclick="openModal('${escapedName}', '${matchType || ""}', '${escapedTitle}')">${n}</span></td>`;
             };
-
             const wrTd = (n, wr, wins) => {
                if (n === 0)
                   return '<td style="color:var(--text-muted);text-align:center;">—</td>';
@@ -6267,15 +6338,10 @@
                      : pctNum <= 40
                        ? "winrate-bad"
                        : "winrate-mid";
-               return `<td title="${wins} побед / ${n} игр">
-      <div class="mini-wr-cell">
-        <span class="${wrCls}">${pct}%</span>
-        <div class="mini-wr-bar"><div class="mini-wr-fill ${barCls}" style="width:${pct}%"></div></div>
-      </div>
-    </td>`;
+               return `<td title="${wins} побед / ${n} игр"><div class="mini-wr-cell"><span class="${wrCls}">${pct}%</span><div class="mini-wr-bar"><div class="mini-wr-fill ${barCls}" style="width:${pct}%"></div></div></div></td>`;
             };
-
-            filtered.forEach((p) => {
+            const displayData = filtered.slice(0, state.tableDisplayCount);
+            displayData.forEach((p) => {
                const tr = document.createElement("tr");
                const avg = p.avgPoints.toFixed(2);
                const cls =
@@ -6285,9 +6351,7 @@
                        ? "text-danger"
                        : "text-neutral";
                tr.innerHTML = `
-      <td style="font-weight:600;text-align:left;">
-        <span class="player-name-clickable" onclick="openModal('${p.name.replace(/'/g, "\\'")}')">${p.name}</span>
-      </td>
+      <td style="font-weight:600;text-align:left;"><span class="player-name-clickable" onclick="openModal('${p.name.replace(/'/g, "\\'")}')">${p.name}</span></td>
       ${gamesTd(p.total, maxes.total, p.name, null, "Все игры")}
       <td style="text-align:center;font-weight:700;" class="${cls}">${p.avgPoints > 0 ? "+" : ""}${avg}</td>
       ${gamesTd(p.togetherRed, maxes.togetherRed, p.name, "togetherRed", "🟥 Вместе (Красные)")}${wrTd(p.togetherRed, p.wrTogetherRed, p.winsTogetherRed)}
@@ -6297,21 +6361,21 @@
     `;
                tbody.appendChild(tr);
             });
+            if (filtered.length > state.tableDisplayCount) {
+               const remaining = filtered.length - state.tableDisplayCount;
+               const tr = document.createElement("tr");
+               tr.innerHTML = `<td colspan="11" style="text-align:center;padding:0.75rem;border-right:none;"><button class="load-more-btn" style="margin:0;" onclick="loadMoreTableRows()">Показать ещё ${Math.min(50, remaining)} из ${remaining}</button></td>`;
+               tbody.appendChild(tr);
+            }
          }
-
+         function loadMoreTableRows() {
+            state.tableDisplayCount += 50;
+            renderTable();
+         }
          function filterTable() {
-            const filter = document
-               .getElementById("tableSearch")
-               .value.toLowerCase();
-            document.querySelectorAll("#statsTableBody tr").forEach((tr) => {
-               const td = tr.getElementsByTagName("td")[0];
-               if (!td) return;
-               tr.style.display = td.textContent.toLowerCase().includes(filter)
-                  ? ""
-                  : "none";
-            });
+            state.tableDisplayCount = 50;
+            renderTable();
          }
-
          function sortTable(colIdx) {
             const config = [
                { key: "name", type: "string" },
@@ -6329,7 +6393,6 @@
             const cfg = config[colIdx];
             state.sortDirection[colIdx] = !state.sortDirection[colIdx];
             const isAsc = state.sortDirection[colIdx];
-
             document
                .querySelectorAll("#statsTable th[data-col]")
                .forEach((th) => {
@@ -6337,7 +6400,6 @@
                   if (+th.getAttribute("data-col") === colIdx)
                      th.classList.add(isAsc ? "sort-asc" : "sort-desc");
                });
-
             state.displayedPartnerStats.sort((a, b) => {
                let va = a[cfg.key],
                   vb = b[cfg.key];
@@ -6350,9 +6412,7 @@
                return 0;
             });
             renderTable();
-            filterTable();
          }
-
          function exportToCSV() {
             const headers = [
                "Игрок",
@@ -6398,7 +6458,6 @@
          // =====================================================================
          function computeSheriffStats(flatGames) {
             const stats = {};
-
             const CATEGORIES = [
                "peacefulPlusSheriff",
                "sheriffPlusPeaceful",
@@ -6407,7 +6466,6 @@
                "donVsSheriff",
                "mafiaVsSheriff",
             ];
-
             function ensure(name) {
                if (!stats[name]) {
                   stats[name] = {
@@ -6426,12 +6484,10 @@
                }
                return stats[name];
             }
-
             flatGames.forEach(({ game, tournament }) => {
                if (!Array.isArray(game.composition)) return;
                const me = game.composition.find((p) => p.isYou);
                if (!me) return;
-
                const myRoleKey = getRoleKey(me.role);
                const item = {
                   tournamentName: tournament.tournament,
@@ -6452,7 +6508,6 @@
                      : null,
                   hasFinalStage: !!tournament.hasFinalStage,
                };
-
                const sheriff = game.composition.find(
                   (p) => !p.isYou && getRoleKey(p.role) === "sheriff",
                );
@@ -6460,30 +6515,25 @@
                   const s = ensure(sheriff.name);
                   s.sheriffGames++;
                   s.sheriffGamesList.push(item);
-
                   let catKey = null;
                   if (myRoleKey === "peaceful") catKey = "peacefulPlusSheriff";
                   else if (myRoleKey === "don") catKey = "donVsSheriff";
                   else if (myRoleKey === "mafia") catKey = "mafiaVsSheriff";
-
                   if (catKey) {
                      s.categories[catKey].games++;
                      if (game.isWin) s.categories[catKey].wins++;
                      s.categories[catKey].list.push(item);
                   }
                }
-
                if (myRoleKey === "sheriff") {
                   game.composition.forEach((p) => {
                      if (p.isYou) return;
                      const otherRole = getRoleKey(p.role);
                      let catKey = null;
-
                      if (otherRole === "peaceful")
                         catKey = "sheriffPlusPeaceful";
                      else if (otherRole === "mafia") catKey = "sheriffVsMafia";
                      else if (otherRole === "don") catKey = "sheriffVsDon";
-
                      if (catKey) {
                         const s = ensure(p.name);
                         s.categories[catKey].games++;
@@ -6493,7 +6543,6 @@
                   });
                }
             });
-
             return Object.values(stats)
                .filter((s) => s.sheriffGames > 0)
                .map((s) => {
@@ -6505,12 +6554,11 @@
                         wr: item.games > 0 ? item.wins / item.games : null,
                      };
                   });
-
                   const makePair = (k1, k2) => {
                      const g1 = cats[k1],
                         g2 = cats[k2];
-                     const games = g1.games + g2.games;
-                     const wins = g1.wins + g2.wins;
+                     const games = g1.games + g2.games,
+                        wins = g1.wins + g2.wins;
                      return {
                         games,
                         wins,
@@ -6518,7 +6566,6 @@
                         list: [...g1.list, ...g2.list],
                      };
                   };
-
                   const pairs = {
                      group1: makePair(
                         "peacefulPlusSheriff",
@@ -6527,19 +6574,13 @@
                      group2: makePair("sheriffVsMafia", "sheriffVsDon"),
                      group3: makePair("donVsSheriff", "mafiaVsSheriff"),
                   };
-
-                  return {
-                     ...s,
-                     categories: cats,
-                     pairs,
-                  };
+                  return { ...s, categories: cats, pairs };
                })
                .sort((a, b) => b.sheriffGames - a.sheriffGames);
          }
-
          function getSheriffSortValue(s, col) {
-            const p = s.pairs;
-            const c = s.categories;
+            const p = s.pairs,
+               c = s.categories;
             switch (col) {
                case 0:
                   return (s.name || "").toLowerCase();
@@ -6585,18 +6626,15 @@
                   return 0;
             }
          }
-
          function sortSheriffs(col) {
             if (!state.sheriffStats || !state.sheriffStats.length) return;
-            if (state.sheriffSort && state.sheriffSort.col === col) {
+            if (state.sheriffSort && state.sheriffSort.col === col)
                state.sheriffSort.dir *= -1;
-            } else {
-               state.sheriffSort = { col, dir: -1 };
-            }
+            else state.sheriffSort = { col, dir: -1 };
             const dir = state.sheriffSort.dir;
             state.sheriffStats.sort((a, b) => {
-               const va = getSheriffSortValue(a, col);
-               const vb = getSheriffSortValue(b, col);
+               const va = getSheriffSortValue(a, col),
+                  vb = getSheriffSortValue(b, col);
                if (typeof va === "string")
                   return dir === 1
                      ? va.localeCompare(vb)
@@ -6608,7 +6646,6 @@
             updateSheriffSortIndicators();
             renderSheriffRows();
          }
-
          function updateSheriffSortIndicators() {
             document
                .querySelectorAll("#sheriffTable th[data-col]")
@@ -6617,14 +6654,12 @@
                   if (
                      state.sheriffSort &&
                      +th.dataset.col === state.sheriffSort.col
-                  ) {
+                  )
                      th.classList.add(
                         state.sheriffSort.dir === 1 ? "sort-asc" : "sort-desc",
                      );
-                  }
                });
          }
-
          function onSheriffMinGamesChange() {
             const v = parseInt(
                document.getElementById("sheriffMinGames").value,
@@ -6633,11 +6668,9 @@
             state.minSheriffGames = !v || v < 1 ? 1 : v;
             renderSheriffRows();
          }
-
          function filterSheriffsTable() {
             renderSheriffRows();
          }
-
          function renderSheriffRows() {
             const tbody = document.getElementById("sheriffStatsBody");
             if (!state.sheriffStats || !state.sheriffStats.length) {
@@ -6645,32 +6678,27 @@
                   '<tr><td colspan="20" class="empty-state">Нет данных по шерифам</td></tr>';
                return;
             }
-
             const searchInput = (
                document.getElementById("sheriffSearch")?.value || ""
             )
                .trim()
                .toLowerCase();
             const minGames = state.minSheriffGames || 1;
-
             const filtered = state.sheriffStats.filter((s) => {
                if (s.sheriffGames < minGames) return false;
                if (searchInput && !s.name.toLowerCase().includes(searchInput))
                   return false;
                return true;
             });
-
             if (!filtered.length) {
                tbody.innerHTML =
                   '<tr><td colspan="20" class="empty-state">Нет игроков под заданные условия фильтра</td></tr>';
                return;
             }
-
             const renderCellPair = (name, catKey, data, label, isTotal) => {
                const totalClass = isTotal ? " col-pair-total" : "";
-               if (!data || !data.games) {
+               if (!data || !data.games)
                   return `<td class="${totalClass}">—</td><td class="${totalClass}"><span class="text-neutral">—</span></td>`;
-               }
                const escaped = name.replace(/'/g, "\\'");
                const pct = Math.round((data.wr ?? 0) * 100);
                const wrCls =
@@ -6681,54 +6709,23 @@
                      : pct <= 40
                        ? "winrate-bad"
                        : "winrate-mid";
-
-               return `
-      <td class="${totalClass}">
-        <span class="cell-clickable${isTotal ? " total-badge" : ""}" onclick="openSheriffCategoryModal('${escaped}', '${catKey}', '${label}')">
-          ${data.games}
-        </span>
-      </td>
-      <td class="${totalClass}">
-        <div class="mini-wr-cell">
-          <span class="${wrCls}">${pct}%</span>
-          <div class="mini-wr-bar"><div class="mini-wr-fill ${barCls}" style="width:${pct}%"></div></div>
-        </div>
-      </td>
-    `;
+               return `<td class="${totalClass}"><span class="cell-clickable${isTotal ? " total-badge" : ""}" onclick="openSheriffCategoryModal('${escaped}', '${catKey}', '${label}')">${data.games}</span></td><td class="${totalClass}"><div class="mini-wr-cell"><span class="${wrCls}">${pct}%</span><div class="mini-wr-bar"><div class="mini-wr-fill ${barCls}" style="width:${pct}%"></div></div></div></td>`;
             };
-
             tbody.innerHTML = filtered
                .map((s) => {
-                  const p = s.pairs;
-                  const c = s.categories;
+                  const p = s.pairs,
+                     c = s.categories;
                   const escapedName = s.name.replace(/'/g, "\\'");
-
-                  return `
-      <tr>
-        <td style="font-weight:600;text-align:left;">
-          <span class="player-name-clickable" onclick="openModal('${escapedName}')">${s.name}</span>
-        </td>
-        <td style="font-weight:700;">
-          <span class="cell-clickable" onclick="openSheriffCategoryModal('${escapedName}', 'sheriffGames', 'Все игры шерифом')">${s.sheriffGames}</span>
-        </td>
-
-        ${renderCellPair(s.name, "peacefulPlusSheriff", c.peacefulPlusSheriff, "Я мирный + шериф", false)}
-        ${renderCellPair(s.name, "sheriffPlusPeaceful", c.sheriffPlusPeaceful, "Я шериф + мирный", false)}
-        ${renderCellPair(s.name, "pair_group1", p.group1, "Мирный + Шериф (Итого)", true)}
-
-        ${renderCellPair(s.name, "sheriffVsMafia", c.sheriffVsMafia, "Я шериф vs мафия", false)}
-        ${renderCellPair(s.name, "sheriffVsDon", c.sheriffVsDon, "Я шериф vs дон", false)}
-        ${renderCellPair(s.name, "pair_group2", p.group2, "Я шериф vs Чёрные (Итого)", true)}
-
-        ${renderCellPair(s.name, "donVsSheriff", c.donVsSheriff, "Я дон vs шериф", false)}
-        ${renderCellPair(s.name, "mafiaVsSheriff", c.mafiaVsSheriff, "Я мафия vs шериф", false)}
-        ${renderCellPair(s.name, "pair_group3", p.group3, "Я чёрный vs Шериф (Итого)", true)}
-      </tr>
-    `;
+                  return `<tr>
+        <td style="font-weight:600;text-align:left;"><span class="player-name-clickable" onclick="openModal('${escapedName}')">${s.name}</span></td>
+        <td style="font-weight:700;"><span class="cell-clickable" onclick="openSheriffCategoryModal('${escapedName}', 'sheriffGames', 'Все игры шерифом')">${s.sheriffGames}</span></td>
+        ${renderCellPair(s.name, "peacefulPlusSheriff", c.peacefulPlusSheriff, "Я мирный + шериф", false)}${renderCellPair(s.name, "sheriffPlusPeaceful", c.sheriffPlusPeaceful, "Я шериф + мирный", false)}${renderCellPair(s.name, "pair_group1", p.group1, "Мирный + Шериф (Итого)", true)}
+        ${renderCellPair(s.name, "sheriffVsMafia", c.sheriffVsMafia, "Я шериф vs мафия", false)}${renderCellPair(s.name, "sheriffVsDon", c.sheriffVsDon, "Я шериф vs дон", false)}${renderCellPair(s.name, "pair_group2", p.group2, "Я шериф vs Чёрные (Итого)", true)}
+        ${renderCellPair(s.name, "donVsSheriff", c.donVsSheriff, "Я дон vs шериф", false)}${renderCellPair(s.name, "mafiaVsSheriff", c.mafiaVsSheriff, "Я мафия vs шериф", false)}${renderCellPair(s.name, "pair_group3", p.group3, "Я чёрный vs Шериф (Итого)", true)}
+      </tr>`;
                })
                .join("");
          }
-
          function renderSheriffs() {
             const tbody = document.getElementById("sheriffStatsBody");
             if (!tbody) return;
@@ -6738,19 +6735,17 @@
                state.sheriffStats = [];
                return;
             }
-
             const filtered = filterFlatGamesByDate(
                state.flatGames,
                state.sheriffDateFrom,
                state.sheriffDateTo,
             );
             state.sheriffStats = computeSheriffStats(filtered);
-
             if (state.sheriffSort && state.sheriffSort.col !== null) {
                const { col, dir } = state.sheriffSort;
                state.sheriffStats.sort((a, b) => {
-                  const va = getSheriffSortValue(a, col);
-                  const vb = getSheriffSortValue(b, col);
+                  const va = getSheriffSortValue(a, col),
+                     vb = getSheriffSortValue(b, col);
                   if (typeof va === "string")
                      return dir === 1
                         ? va.localeCompare(vb)
@@ -6763,48 +6758,34 @@
             updateSheriffSortIndicators();
             renderSheriffRows();
          }
-
          function openSheriffCategoryModal(playerName, categoryKey, title) {
             const s = state.sheriffStats.find(
                (item) => item.name === playerName,
             );
             if (!s) return;
-
             let games;
-            if (categoryKey === "sheriffGames") {
-               games = s.sheriffGamesList;
-            } else if (categoryKey.startsWith("pair_")) {
+            if (categoryKey === "sheriffGames") games = s.sheriffGamesList;
+            else if (categoryKey.startsWith("pair_")) {
                const key = categoryKey.slice(5);
                games = s.pairs && s.pairs[key] ? s.pairs[key].list : [];
-            } else {
+            } else
                games = s.categories[categoryKey]
                   ? s.categories[categoryKey].list
                   : [];
-            }
-
             if (!games || !games.length) return;
-
             state.currentModalGames = games;
             document.getElementById("modalPlayerName").textContent =
                `🕵️ ${playerName} — ${title} (${games.length})`;
-
             const listContainer = document.getElementById("modalGamesList");
             listContainer.innerHTML = `
     <div style="margin-bottom:1.25rem;display:flex;gap:.6rem;align-items:center;flex-wrap:wrap;">
       <label style="font-weight:700;font-size:.8rem;color:var(--text-secondary);text-transform:uppercase;">Фильтры:</label>
       <input type="date" id="dateFromFilter" class="filter-select" onchange="applyGameFilter()">
       <input type="date" id="dateToFilter" class="filter-select" onchange="applyGameFilter()">
-      <select id="typeFilter" class="filter-select" style="display:none;">
-        <option value="all">Все типы</option>
-      </select>
-      <select id="resultFilter" class="filter-select" onchange="applyGameFilter()">
-        <option value="all">Все результаты</option>
-        <option value="win">✅ Победы</option>
-        <option value="loss">❌ Поражения</option>
-      </select>
+      <select id="typeFilter" class="filter-select" style="display:none;"><option value="all">Все типы</option></select>
+      <select id="resultFilter" class="filter-select" onchange="applyGameFilter()"><option value="all">Все результаты</option><option value="win">✅ Победы</option><option value="loss">❌ Поражения</option></select>
     </div>
     <div id="modalGamesContainer"></div>`;
-
             applyGameFilter();
             document.getElementById("gameModal").classList.remove("hidden");
             document.body.style.overflow = "hidden";
@@ -6817,7 +6798,7 @@
             const judges = {};
             flatGames.forEach(({ game, tournament }) => {
                const judge = game.tableJudge || "—";
-               if (!judges[judge]) {
+               if (!judges[judge])
                   judges[judge] = {
                      name: judge,
                      total: 0,
@@ -6831,14 +6812,12 @@
                         don: { games: 0, wins: 0, points: 0, list: [] },
                      },
                   };
-               }
                const me = Array.isArray(game.composition)
                   ? game.composition.find((p) => p.isYou)
                   : null;
                if (!me) return;
                const k = getRoleKey(me.role);
                if (!judges[judge].roles[k]) return;
-
                const item = {
                   tournamentName: tournament.tournament,
                   tournamentUrl: tournament.url,
@@ -6858,21 +6837,18 @@
                      : null,
                   hasFinalStage: !!tournament.hasFinalStage,
                };
-
                const j = judges[judge];
                const points = me.points || 0;
                j.total++;
                j.totalPoints += points;
                if (game.isWin) j.totalWins++;
                j.gamesList.push(item);
-
                const r = j.roles[k];
                r.games++;
                r.points += points;
                if (game.isWin) r.wins++;
                r.list.push(item);
             });
-
             return Object.values(judges)
                .map((j) => {
                   const roleStats = {};
@@ -6897,7 +6873,6 @@
                })
                .sort((a, b) => b.total - a.total);
          }
-
          function getJudgeSortValue(j, col) {
             const rs = j.roleStats;
             switch (col) {
@@ -6939,18 +6914,15 @@
                   return 0;
             }
          }
-
          function sortJudges(col) {
             if (!state.judgeStats || !state.judgeStats.length) return;
-            if (state.judgeSort && state.judgeSort.col === col) {
+            if (state.judgeSort && state.judgeSort.col === col)
                state.judgeSort.dir *= -1;
-            } else {
-               state.judgeSort = { col, dir: -1 };
-            }
+            else state.judgeSort = { col, dir: -1 };
             const dir = state.judgeSort.dir;
             state.judgeStats.sort((a, b) => {
-               const va = getJudgeSortValue(a, col);
-               const vb = getJudgeSortValue(b, col);
+               const va = getJudgeSortValue(a, col),
+                  vb = getJudgeSortValue(b, col);
                if (typeof va === "string")
                   return dir === 1
                      ? va.localeCompare(vb)
@@ -6962,7 +6934,6 @@
             updateJudgeSortIndicators();
             renderJudgeRows();
          }
-
          function updateJudgeSortIndicators() {
             document
                .querySelectorAll("#judgeTable th[data-col]")
@@ -6971,14 +6942,12 @@
                   if (
                      state.judgeSort &&
                      +th.dataset.col === state.judgeSort.col
-                  ) {
+                  )
                      th.classList.add(
                         state.judgeSort.dir === 1 ? "sort-asc" : "sort-desc",
                      );
-                  }
                });
          }
-
          function onJudgeMinGamesChange() {
             const v = parseInt(
                document.getElementById("judgeMinGames").value,
@@ -6987,7 +6956,6 @@
             state.minJudgeGames = !v || v < 1 ? 1 : v;
             renderJudgeRows();
          }
-
          function filterJudgesTable() {
             const query = (document.getElementById("judgeSearch")?.value || "")
                .trim()
@@ -6997,7 +6965,6 @@
                tr.style.display = text.includes(query) ? "" : "none";
             });
          }
-
          function avgSpan(avg) {
             if (avg === null || avg === undefined)
                return '<span class="text-neutral">—</span>';
@@ -7009,7 +6976,6 @@
                     : "text-neutral";
             return `<span class="${cls}">${avg > 0 ? "+" : ""}${avg.toFixed(2)}</span>`;
          }
-
          function renderJudgeRows() {
             const tbody = document.getElementById("judgeStatsBody");
             if (!state.judgeStats || !state.judgeStats.length) {
@@ -7017,17 +6983,14 @@
                   '<tr><td colspan="17" class="empty-state">Нет данных по судьям</td></tr>';
                return;
             }
-
             const minGames = state.minJudgeGames || 1;
             const filtered = state.judgeStats.filter(
                (j) => j.total >= minGames,
             );
-
             if (!filtered.length) {
                tbody.innerHTML = `<tr><td colspan="17" class="empty-state">Нет судей с минимум ${minGames} ${pluralize(minGames, "игрой", "играми", "играми")}</td></tr>`;
                return;
             }
-
             const maxes = {
                total: 1,
                peaceful: 1,
@@ -7042,7 +7005,6 @@
                   if (g > maxes[k]) maxes[k] = g;
                });
             });
-
             const gamesInner = (n, maxN, judgeName, category, title) => {
                if (!n) return '<span class="text-neutral">—</span>';
                const intensity = Math.min(1, n / Math.max(maxN, 10));
@@ -7051,7 +7013,6 @@
                const escapedTitle = title.replace(/'/g, "\\'");
                return `<span class="clickable-num" style="background:rgba(59,130,246,${alpha});" onclick="openJudgeGamesModal('${escapedName}','${category}','${escapedTitle}')">${n}</span>`;
             };
-
             const wrInner = (wr, wins, n) => {
                if (wr === null || wr === undefined)
                   return '<span class="text-neutral">—</span>';
@@ -7065,21 +7026,13 @@
                      : pctNum <= 40
                        ? "winrate-bad"
                        : "winrate-mid";
-               return `<div class="mini-wr-cell" title="${wins} побед / ${n} игр">
-      <span class="${wrCls}">${pct}%</span>
-      <div class="mini-wr-bar"><div class="mini-wr-fill ${barCls}" style="width:${pct}%"></div></div>
-    </div>`;
+               return `<div class="mini-wr-cell" title="${wins} побед / ${n} игр"><span class="${wrCls}">${pct}%</span><div class="mini-wr-bar"><div class="mini-wr-fill ${barCls}" style="width:${pct}%"></div></div></div>`;
             };
-
             tbody.innerHTML = filtered
                .map((j) => {
                   const roleCells = (r, roleKey, roleLabel) =>
-                     `<td>${gamesInner(r.games, maxes[roleKey], j.name, roleKey, roleLabel)}</td>` +
-                     `<td>${wrInner(r.wr, r.wins, r.games)}</td>` +
-                     `<td>${avgSpan(r.avgPoints)}</td>`;
-
-                  return `
-      <tr>
+                     `<td>${gamesInner(r.games, maxes[roleKey], j.name, roleKey, roleLabel)}</td><td>${wrInner(r.wr, r.wins, r.games)}</td><td>${avgSpan(r.avgPoints)}</td>`;
+                  return `<tr>
         <td style="font-weight:600;text-align:left;">🧑‍⚖️ ${j.name}</td>
         <td style="font-weight:700;">${gamesInner(j.total, maxes.total, j.name, "total", "Все игры")}</td>
         ${roleCells(j.roleStats.peaceful, "peaceful", "Мирный")}
@@ -7089,13 +7042,11 @@
         <td class="col-pair-total" style="font-weight:700;">${gamesInner(j.total, maxes.total, j.name, "total", "Общий итог")}</td>
         <td class="col-pair-total">${wrInner(j.overallWr, j.totalWins, j.total)}</td>
         <td class="col-pair-total">${avgSpan(j.overallAvgPoints)}</td>
-      </tr>
-    `;
+      </tr>`;
                })
                .join("");
             filterJudgesTable();
          }
-
          function renderJudges() {
             const tbody = document.getElementById("judgeStatsBody");
             if (!tbody) return;
@@ -7105,19 +7056,17 @@
                state.judgeStats = [];
                return;
             }
-
             const filtered = filterFlatGamesByDate(
                state.flatGames,
                state.judgeDateFrom,
                state.judgeDateTo,
             );
             state.judgeStats = computeJudgeStats(filtered);
-
             if (state.judgeSort && state.judgeSort.col !== null) {
                const { col, dir } = state.judgeSort;
                state.judgeStats.sort((a, b) => {
-                  const va = getJudgeSortValue(a, col);
-                  const vb = getJudgeSortValue(b, col);
+                  const va = getJudgeSortValue(a, col),
+                     vb = getJudgeSortValue(b, col);
                   if (typeof va === "string")
                      return dir === 1
                         ? va.localeCompare(vb)
@@ -7130,44 +7079,30 @@
             updateJudgeSortIndicators();
             renderJudgeRows();
          }
-
          function openJudgeGamesModal(judgeName, category, title) {
             const j = state.judgeStats.find((item) => item.name === judgeName);
             if (!j) return;
-
             let games;
-            if (category === "total") {
-               games = j.gamesList || [];
-            } else {
+            if (category === "total") games = j.gamesList || [];
+            else
                games =
                   j.roleStats[category] && j.roleStats[category].list
                      ? j.roleStats[category].list
                      : [];
-            }
-
             if (!games || !games.length) return;
-
             state.currentModalGames = games;
             document.getElementById("modalPlayerName").textContent =
                `🧑‍⚖️ ${judgeName} — ${title} (${games.length})`;
-
             const listContainer = document.getElementById("modalGamesList");
             listContainer.innerHTML = `
     <div style="margin-bottom:1.25rem;display:flex;gap:.6rem;align-items:center;flex-wrap:wrap;">
       <label style="font-weight:700;font-size:.8rem;color:var(--text-secondary);text-transform:uppercase;">Фильтры:</label>
       <input type="date" id="dateFromFilter" class="filter-select" onchange="applyGameFilter()">
       <input type="date" id="dateToFilter" class="filter-select" onchange="applyGameFilter()">
-      <select id="typeFilter" class="filter-select" style="display:none;">
-        <option value="all">Все типы</option>
-      </select>
-      <select id="resultFilter" class="filter-select" onchange="applyGameFilter()">
-        <option value="all">Все результаты</option>
-        <option value="win">✅ Победы</option>
-        <option value="loss">❌ Поражения</option>
-      </select>
+      <select id="typeFilter" class="filter-select" style="display:none;"><option value="all">Все типы</option></select>
+      <select id="resultFilter" class="filter-select" onchange="applyGameFilter()"><option value="all">Все результаты</option><option value="win">✅ Победы</option><option value="loss">❌ Поражения</option></select>
     </div>
     <div id="modalGamesContainer"></div>`;
-
             applyGameFilter();
             document.getElementById("gameModal").classList.remove("hidden");
             document.body.style.overflow = "hidden";
@@ -7181,14 +7116,11 @@
                state.displayedPartnerStats.find((p) => p.name === playerName) ||
                state.partnerStats.find((p) => p.name === playerName);
             if (!player || !player.games) return;
-
             state.currentModalGames = player.games;
-
             const modalTitle = title
                ? `${title} — ${playerName}`
                : `🎮 Игры с: ${playerName} (всего ${player.total})`;
             document.getElementById("modalPlayerName").textContent = modalTitle;
-
             const listContainer = document.getElementById("modalGamesList");
             const typeFilterValue = matchType || "all";
             listContainer.innerHTML = `
@@ -7203,14 +7135,9 @@
         <option value="oppositeTargetRed" ${typeFilterValue === "oppositeTargetRed" ? "selected" : ""}>Я 🟥 vs ⬛</option>
         <option value="oppositeTargetBlack" ${typeFilterValue === "oppositeTargetBlack" ? "selected" : ""}>Я ⬛ vs 🟥</option>
       </select>
-      <select id="resultFilter" class="filter-select" onchange="applyGameFilter()">
-        <option value="all">Все результаты</option>
-        <option value="win">✅ Победы</option>
-        <option value="loss">❌ Поражения</option>
-      </select>
+      <select id="resultFilter" class="filter-select" onchange="applyGameFilter()"><option value="all">Все результаты</option><option value="win">✅ Победы</option><option value="loss">❌ Поражения</option></select>
     </div>
     <div id="modalGamesContainer"></div>`;
-
             applyGameFilter();
             document.getElementById("gameModal").classList.remove("hidden");
             document.body.style.overflow = "hidden";
@@ -7221,7 +7148,6 @@
             const resultEl = document.getElementById("resultFilter");
             const fromEl = document.getElementById("dateFromFilter");
             const toEl = document.getElementById("dateToFilter");
-
             const filters = {
                dateFrom: fromEl ? fromEl.value : "",
                dateTo: toEl ? toEl.value : "",
@@ -7230,7 +7156,6 @@
             };
             const container = document.getElementById("modalGamesContainer");
             let games = state.currentModalGames;
-
             if (filters.dateFrom || filters.dateTo) {
                games = games.filter((g) => {
                   const ds = g.dateEnd || g.dateStart;
@@ -7246,21 +7171,17 @@
                   return true;
                });
             }
-            if (filters.type && filters.type !== "all") {
+            if (filters.type && filters.type !== "all")
                games = games.filter((g) => g.matchType === filters.type);
-            }
-            if (filters.result && filters.result !== "all") {
+            if (filters.result && filters.result !== "all")
                games = games.filter((g) =>
                   filters.result === "win" ? !!g.isWin : !g.isWin,
                );
-            }
-
             if (!games.length) {
                container.innerHTML =
                   '<p class="empty-state">Игр с такими фильтрами не найдено.</p>';
                return;
             }
-
             container.innerHTML = games
                .map((g) => {
                   const compHtml =
@@ -7275,14 +7196,12 @@
                               : getRoleClass(p.role);
                            const youClass = isYou ? "is-you" : "";
                            const playType = p.playType || "n";
-
                            const isFk = playType === "lg" || p.isFirstKill;
                            const lhStatus = isFk
                               ? getPlayerLhStatus(p, g)
                               : null;
                            const lgClass =
                               !hidePlayInfo && isFk ? getLhClass(lhStatus) : "";
-
                            const icon = hidePlayInfo
                               ? ""
                               : getPlayIcon(playType);
@@ -7297,53 +7216,37 @@
                            const pointsHtml = hidePlayInfo
                               ? ""
                               : `<span class="player-points ${ptsCls}">${ptsStr}</span>`;
-
                            const isMvp =
                               !hideThis && isGivenPlayerMvp(g, p.name);
                            const isLosingMvp =
                               !hideThis && isGivenPlayerLosingMvp(g, p);
-
                            let mvpBadgeHtml = "";
-                           if (isMvp) {
+                           if (isMvp)
                               mvpBadgeHtml = `<span class="mvp-badge-inline" title="MVP игры">👑 MVP</span>`;
-                           } else if (isLosingMvp) {
-                              mvpBadgeHtml = `<span class="losing-mvp-badge-inline" title="MVP проигравшей команды (≥0.5 баллов)">🥈 MVP</span>`;
-                           }
-
+                           else if (isLosingMvp)
+                              mvpBadgeHtml = `<span class="losing-mvp-badge-inline" title="MVP проигравшей команды">🥈 MVP</span>`;
                            let titleText = `${p.name}${isYou ? " (Вы)" : ""}`;
-                           if (isFk && lhStatus) {
+                           if (isFk && lhStatus)
                               titleText += ` | ЛХ: ${lhStatus}`;
-                           }
-
-                           return `<div class="composition-player ${roleClass} ${youClass} ${lgClass}">
-        <div class="player-info" style="display:flex;align-items:center;gap:.4rem;flex:1;min-width:0;">
-          <span class="player-num">${i + 1}.</span>
-          <span class="player-name-text" title="${titleText}">${p.name}${isYou ? " (Вы)" : ""}${mvpBadgeHtml}${icon ? " " + icon : ""}</span>
-        </div>
-        ${pointsHtml}
-      </div>`;
+                           return `<div class="composition-player ${roleClass} ${youClass} ${lgClass}"><div class="player-info" style="display:flex;align-items:center;gap:.4rem;flex:1;min-width:0;"><span class="player-num">${i + 1}.</span><span class="player-name-text" title="${titleText}">${p.name}${isYou ? " (Вы)" : ""}${mvpBadgeHtml}${icon ? " " + icon : ""}</span></div>${pointsHtml}</div>`;
                         })
                         .join("") +
                      "</div>";
-
                   const me = Array.isArray(g.composition)
                      ? g.composition.find((p) => p.isYou)
                      : null;
                   const myRole = me ? me.role : g.role;
                   const myRoleKey = getRoleKey(myRole);
                   const winnerTitle = getWinnerName(g, myRoleKey);
-
                   const winnerBadge = g.isWin
                      ? `<span class="badge" style="background:#d1fae5;color:#065f46;">✅ ${winnerTitle}</span>`
                      : `<span class="badge" style="background:#fee2e2;color:#991b1b;">❌ ${winnerTitle}</span>`;
                   const myRoleBadge = myRole
                      ? `<span class="badge ${getRoleBadgeClass(myRole)}">${myRole}</span>`
                      : "";
-
                   const dateStr = g.dateStart
                      ? `<span style="font-size:.8rem;color:var(--text-secondary);margin-right:.5rem;">📅 ${g.dateStart}</span>`
                      : "";
-
                   const copyText = buildGameCopyText(
                      g.tournamentName,
                      g.tableNumber,
@@ -7353,35 +7256,21 @@
                      g.totalGames,
                      g.hasFinalStage,
                   );
-
                   const copyBtn = copyText
-                     ? `<button class="copy-btn game-copy-btn" type="button"
-           title="Скопировать: ${escapeHtml(copyText)}"
-           data-copy-text="${escapeHtml(copyText)}"
-           onclick="event.preventDefault();event.stopPropagation();copyGameInfo(this.dataset.copyText,this);return false;">📋</button>`
+                     ? `<button class="copy-btn game-copy-btn" type="button" title="Скопировать" data-copy-text="${escapeHtml(copyText)}" onclick="event.preventDefault();event.stopPropagation();copyGameInfo(this.dataset.copyText,this);return false;">📋</button>`
                      : "";
                   const searchBtn = copyText
-                     ? `<button class="copy-btn game-copy-btn" type="button"
-           title="Скопировать и найти: ${escapeHtml(copyText)}"
-           data-copy-text="${escapeHtml(copyText)}"
-           onclick="event.preventDefault();event.stopPropagation();searchGameInBrowser(this.dataset.copyText,this);return false;">🔍</button>`
+                     ? `<button class="copy-btn game-copy-btn" type="button" title="Найти" data-copy-text="${escapeHtml(copyText)}" onclick="event.preventDefault();event.stopPropagation();searchGameInBrowser(this.dataset.copyText,this);return false;">🔍</button>`
                      : "";
                   const linkBtn = g.tournamentUrl
-                     ? `<button class="copy-btn game-copy-btn" type="button"
-           title="Открыть турнир"
-           data-tourn-url="${escapeHtml(g.tournamentUrl)}"
-           data-game-num="${escapeHtml(String(game.gameNumber || ""))}"
-           onclick="event.preventDefault();event.stopPropagation();openGameInTournament(this.dataset.tournUrl, this.dataset.gameNum);return false;">🔗</button>`
+                     ? `<button class="copy-btn game-copy-btn" type="button" title="Открыть турнир" data-tourn-url="${escapeHtml(g.tournamentUrl)}" data-game-num="${escapeHtml(String(g.gameNumber || ""))}" onclick="event.preventDefault();event.stopPropagation();openGameInTournament(this.dataset.tournUrl, this.dataset.gameNum);return false;">🔗</button>`
                      : "";
-
                   const judgeHtml = g.tableJudge
-                     ? `<div class="game-judge-centered">👨‍⚖️ Судья: ${escapeHtml(game.tableJudge || g.tableJudge)}</div>`
+                     ? `<div class="game-judge-centered">👨‍⚖️ Судья: ${escapeHtml(g.tableJudge)}</div>`
                      : "";
-
                   const gameInfoLeft = [g.gameNumber, g.tableNumber]
                      .filter(Boolean)
                      .join(' <span class="game-dot-separator"></span> ');
-
                   return `<div class="modal-game-card">
       <div class="modal-game-header">
         <div style="display:flex;align-items:center;flex-wrap:wrap;gap:.4rem;">
@@ -7390,10 +7279,7 @@
           <span style="font-weight:600;color:var(--text-secondary);font-size:.8rem;display:inline-flex;align-items:center;gap:.35rem;">${gameInfoLeft}</span>
           ${copyBtn}${searchBtn}${linkBtn}
         </div>
-        <div class="modal-result-badges">
-          ${myRoleBadge}
-          ${winnerBadge}
-        </div>
+        <div class="modal-result-badges">${myRoleBadge}${winnerBadge}</div>
       </div>
       ${judgeHtml}
       ${compHtml}
@@ -7406,8 +7292,45 @@
             document.getElementById("gameModal").classList.add("hidden");
             document.body.style.overflow = "";
          }
+
+         // =====================================================================
+         // KEYBOARD SHORTCUTS
+         // =====================================================================
+         function isTypingTarget(e) {
+            const el = e.target;
+            if (!el) return false;
+            const tag = (el.tagName || "").toLowerCase();
+            if (tag === "input" || tag === "textarea" || tag === "select")
+               return true;
+            if (el.isContentEditable) return true;
+            return false;
+         }
+
          document.addEventListener("keydown", (e) => {
-            if (e.key === "Escape") closeModal();
+            if (e.key === "Escape") {
+               closeModal();
+               return;
+            }
+            if (isTypingTarget(e)) return;
+            if (e.ctrlKey || e.metaKey || e.altKey) {
+               if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "e") {
+                  e.preventDefault();
+                  if (state.currentTab === "analytics") exportToCSV();
+               }
+               return;
+            }
+            const tabsNav = document.getElementById("tabsNav");
+            if (!tabsNav || tabsNav.classList.contains("hidden")) return;
+            const tabs = ["viz", "analytics", "sheriffs", "judges"];
+            const idx = parseInt(e.key, 10) - 1;
+            if (
+               idx >= 0 &&
+               idx < tabs.length &&
+               ["1", "2", "3", "4"].includes(e.key)
+            ) {
+               e.preventDefault();
+               switchTab(tabs[idx]);
+            }
          });
 
          // =====================================================================
@@ -7421,15 +7344,14 @@
             renderSheriffs();
          }
          function clearSheriffDateFilter() {
-            const from = document.getElementById("sheriffDateFrom");
-            const to = document.getElementById("sheriffDateTo");
+            const from = document.getElementById("sheriffDateFrom"),
+               to = document.getElementById("sheriffDateTo");
             if (from) from.value = "";
             if (to) to.value = "";
             state.sheriffDateFrom = "";
             state.sheriffDateTo = "";
             renderSheriffs();
          }
-
          function applyJudgeDateFilter() {
             state.judgeDateFrom =
                document.getElementById("judgeDateFrom")?.value || "";
@@ -7438,24 +7360,23 @@
             renderJudges();
          }
          function clearJudgeDateFilter() {
-            const from = document.getElementById("judgeDateFrom");
-            const to = document.getElementById("judgeDateTo");
+            const from = document.getElementById("judgeDateFrom"),
+               to = document.getElementById("judgeDateTo");
             if (from) from.value = "";
             if (to) to.value = "";
             state.judgeDateFrom = "";
             state.judgeDateTo = "";
             renderJudges();
          }
-
          function applyAnalyticsDateFilter() {
             if (!state.flatGames.length) return;
             state.analyticsDateFrom =
                document.getElementById("tableDateFrom")?.value || "";
             state.analyticsDateTo =
                document.getElementById("tableDateTo")?.value || "";
-            if (!state.analyticsDateFrom && !state.analyticsDateTo) {
+            if (!state.analyticsDateFrom && !state.analyticsDateTo)
                state.displayedPartnerStats = [...state.partnerStats];
-            } else {
+            else {
                const filtered = filterFlatGamesByDate(
                   state.flatGames,
                   state.analyticsDateFrom,
@@ -7463,29 +7384,28 @@
                );
                state.displayedPartnerStats = computePartnerStats(filtered);
             }
+            state.tableDisplayCount = 50;
             renderTable();
-            filterTable();
          }
          function clearAnalyticsDateFilter() {
-            const from = document.getElementById("tableDateFrom");
-            const to = document.getElementById("tableDateTo");
+            const from = document.getElementById("tableDateFrom"),
+               to = document.getElementById("tableDateTo");
             if (from) from.value = "";
             if (to) to.value = "";
             state.analyticsDateFrom = "";
             state.analyticsDateTo = "";
             state.displayedPartnerStats = [...state.partnerStats];
+            state.tableDisplayCount = 50;
             renderTable();
-            filterTable();
          }
-
          function onPartnerMinGamesChange() {
             const v = parseInt(
                document.getElementById("tableMinGames").value,
                10,
             );
             state.minPartnerGames = !v || v < 1 ? 1 : v;
+            state.tableDisplayCount = 50;
             renderTable();
-            filterTable();
          }
 
          // =====================================================================
