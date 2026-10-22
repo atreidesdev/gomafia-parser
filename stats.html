@@ -5642,7 +5642,8 @@
                   afterDatasetsDraw(chart) {
                      const ctx = chart.ctx,
                         meta = chart.getDatasetMeta(0),
-                        yScale = chart.scales.y;
+                        yScale = chart.scales.y,
+                        chartArea = chart.chartArea;
                      ctx.save();
                      meta.data.forEach((bar, i) => {
                         const top12 = top12Sums[i],
@@ -5650,6 +5651,8 @@
                         if (top12 === undefined || top12 === null) return;
                         const yLine = yScale.getPixelForValue(top12),
                            halfW = bar.width / 2;
+
+                        // пунктирная линия = сумма топ-12
                         ctx.strokeStyle = "#f59e0b";
                         ctx.lineWidth = 2.5;
                         ctx.setLineDash([5, 3]);
@@ -5658,18 +5661,31 @@
                         ctx.lineTo(bar.x + halfW, yLine);
                         ctx.stroke();
                         ctx.setLineDash([]);
+
+                        // подпись топ-12 (только если реально меньше общего)
                         const diff = total - top12;
                         if (Math.abs(diff) > 0.01) {
                            ctx.font = "700 10px Inter, sans-serif";
                            ctx.fillStyle = "#d97706";
-                           ctx.textAlign = "left";
-                           ctx.textBaseline = "middle";
-                           ctx.fillText(
-                              "★12: " + (top12 > 0 ? "+" : "") + top12,
-                              bar.x + halfW + 4,
-                              yLine,
-                           );
+                           const label =
+                              "★12: " + (top12 > 0 ? "+" : "") + top12;
+                           const textWidth = ctx.measureText(label).width;
+                           const rightX = bar.x + halfW + 4;
+                           const wouldOverflow =
+                              rightX + textWidth > chartArea.right - 2;
+                           if (wouldOverflow) {
+                              // если справа места нет — рисуем слева от столбика
+                              ctx.textAlign = "right";
+                              ctx.textBaseline = "middle";
+                              ctx.fillText(label, bar.x - halfW - 4, yLine);
+                           } else {
+                              ctx.textAlign = "left";
+                              ctx.textBaseline = "middle";
+                              ctx.fillText(label, rightX, yLine);
+                           }
                         }
+
+                        // общая сумма — сверху столбика
                         const yTop = yScale.getPixelForValue(total);
                         ctx.font = "700 12px Inter, sans-serif";
                         ctx.fillStyle = textColor;
@@ -5702,13 +5718,16 @@
                            ),
                            borderWidth: 1.5,
                            borderRadius: 6,
+                           maxBarThickness: 42,
+                           categoryPercentage: 0.7,
+                           barPercentage: 0.85,
                         },
                      ],
                   },
                   options: {
                      responsive: true,
                      maintainAspectRatio: false,
-                     layout: { padding: { top: 22 } },
+                     layout: { padding: { top: 22, right: 55, left: 15 } },
                      plugins: {
                         legend: { display: false },
                         tooltip: {
