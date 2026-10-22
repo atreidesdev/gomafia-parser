@@ -2360,7 +2360,6 @@
                 return `color:hsl(${hue},75%,var(--wr-light));font-weight:700;`;
             }
 
-            // Обычный MVP игры — "я" в массиве game.mvp
             function isPlayerMvp(game) {
                 if (!Array.isArray(game.mvp)) return false;
                 const me = Array.isArray(game.composition) ? game.composition.find((p) => p.isYou) : null;
@@ -2368,7 +2367,6 @@
                 return game.mvp.some((m) => m.name === me.name);
             }
 
-            // MVP проигравшей команды
             function isLosingTeamMvp(game) {
                 const me = Array.isArray(game.composition) ? game.composition.find((p) => p.isYou) : null;
                 if (!me) return false;
@@ -2485,19 +2483,122 @@
                 }
             }
 
-            function buildGameCopyText(tournamentName, tableNumber) {
+            // ---------- Дата / номер игры для копирования ----------
+            function extractGameNumber(value) {
+                if (value === null || value === undefined) return null;
+                const m = String(value).match(/\d+/);
+                return m ? parseInt(m[0], 10) : null;
+            }
+
+            function parseDateOnly(value) {
+                if (!value) return null;
+                const s = String(value).trim();
+
+                const iso = s.match(/^(\d{4})-(\d{2})-(\d{2})/);
+                if (iso) {
+                    return new Date(Date.UTC(+iso[1], +iso[2] - 1, +iso[3]));
+                }
+
+                const d = new Date(s);
+                if (isNaN(d.getTime())) return null;
+                return new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+            }
+
+            function formatDateShort(d) {
+                if (!d) return "";
+                const dd = String(d.getUTCDate()).padStart(2, "0");
+                const mm = String(d.getUTCMonth() + 1).padStart(2, "0");
+                return `${dd}.${mm}`;
+            }
+
+            /**
+             * Определяет дату игры по номеру игры и диапазону турнира.
+             * Раскладки (по кол-ву дней турнира и общему кол-ву игр):
+             *   1 день            — все игры в день 1
+             *   2 дня, 15+ игр    — 1–7 → д1; 8–N → д2 (в т.ч. финальные 12–16 второго дня)
+             *   2 дня, 10 игр     — 1–5 → д1; 6–10 → д2
+             *   2 дня, иначе      — пополам
+             *   3 дня, 25 игр + финал — 1–7 / 8–15 / 16–25
+             *   3 дня, 25 игр без финала — 1–8 / 9–17 / 18–25
+             *   3 дня, иначе      — равномерно
+             *   >3 дней           — равномерно
+             */
+            function getGameDate(gameNumber, dateStart, dateEnd, totalGames, hasFinalStage) {
+                const num = extractGameNumber(gameNumber);
+                const start = parseDateOnly(dateStart);
+                if (!start) return "";
+                if (!num) return formatDateShort(start);
+
+                const end = parseDateOnly(dateEnd) || start;
+                const days = Math.max(1, Math.floor((end - start) / 86400000) + 1);
+                const total = totalGames || num;
+
+                // dayStarts[i] — номер игры, с которой начинается день i (0-based)
+                let dayStarts = [1];
+
+                if (days === 1) {
+                    dayStarts = [1];
+                } else if (days === 2) {
+                    if (total >= 15) {
+                        dayStarts = [1, 8]; // 7 + 8/9
+                    } else if (total === 10) {
+                        dayStarts = [1, 6]; // 5 + 5
+                    } else {
+                        const half = Math.ceil(total / 2);
+                        dayStarts = [1, half + 1];
+                    }
+                } else if (days === 3) {
+                    if (total === 25) {
+                        dayStarts = hasFinalStage
+                            ? [1, 8, 16] // 7 + 8 + 10
+                            : [1, 9, 18]; // 8 + 9 + 8
+                    } else {
+                        const per = Math.ceil(total / 3);
+                        dayStarts = [1, per + 1, 2 * per + 1];
+                    }
+                } else {
+                    const per = Math.ceil(total / days);
+                    dayStarts = Array.from({ length: days }, (_, i) => i * per + 1);
+                }
+
+                let dayIndex = 0;
+                for (let i = dayStarts.length - 1; i >= 0; i--) {
+                    if (num >= dayStarts[i]) {
+                        dayIndex = i;
+                        break;
+                    }
+                }
+
+                const d = new Date(start);
+                d.setUTCDate(d.getUTCDate() + dayIndex);
+                return formatDateShort(d);
+            }
+
+            function buildGameCopyText(
+                tournamentName,
+                tableNumber,
+                gameNumber,
+                dateStart,
+                dateEnd,
+                totalGames,
+                hasFinalStage
+            ) {
                 const raw = String(tournamentName || "").trim();
                 const commaIdx = raw.indexOf(",");
                 const t = (commaIdx === -1 ? raw : raw.slice(0, commaIdx)).trim();
 
                 let table = String(tableNumber || "").trim();
-                if (!table) return t;
-                if (/стол/i.test(table)) {
-                    table = table.replace(/^стол\s*/i, "СТОЛ ");
-                } else {
-                    table = "СТОЛ " + table;
+                if (table) {
+                    if (/стол/i.test(table)) {
+                        table = table.replace(/^стол\s*/i, "СТОЛ ");
+                    } else {
+                        table = "СТОЛ " + table;
+                    }
                 }
-                return t ? `${t}, ${table}` : table;
+
+                const dateStr = getGameDate(gameNumber, dateStart, dateEnd, totalGames, hasFinalStage);
+
+                return [t, table, dateStr].filter(Boolean).join(", ");
             }
 
             function copyGameInfo(text, btn) {
@@ -2519,6 +2620,22 @@
                 } else {
                     fallbackCopy(text, done);
                 }
+            }
+
+            // Переход на страницу турнира с текстовым фрагментом для поиска тура
+            // (тур = номер игры)
+            function openGameInTournament(url, gameNumber) {
+                if (!url) return;
+
+                const base = String(url).split("#")[0].split("?")[0];
+                const num = extractGameNumber(gameNumber);
+
+                // тур = номер игры
+                const tourNum = num || null;
+
+                const fragment = tourNum ? `#:~:text=${encodeURIComponent("Тур " + tourNum)}` : "";
+
+                window.open(base + "?tab=games" + fragment, "_blank", "noopener,noreferrer");
             }
 
             // =====================================================================
@@ -3274,12 +3391,30 @@
                     ? `<span class="badge" style="background:#fef3c7;color:#92400e;" title="MVP проигравшей команды (≥0.5 баллов)">🥈 MVP проигравших</span>`
                     : "";
 
-                const copyText = buildGameCopyText(tournament.tournament, game.tableNumber);
+                const totalGamesInTournament = Array.isArray(tournament.games) ? tournament.games.length : null;
+                const hasFinalStage = !!tournament.hasFinalStage;
+
+                const copyText = buildGameCopyText(
+                    tournament.tournament,
+                    game.tableNumber,
+                    game.gameNumber,
+                    tournament.dateStart,
+                    tournament.dateEnd,
+                    totalGamesInTournament,
+                    hasFinalStage
+                );
                 const copyBtn = copyText
                     ? `<button class="copy-btn game-copy-btn" type="button"
          title="Скопировать: ${escapeHtml(copyText)}"
          data-copy-text="${escapeHtml(copyText)}"
          onclick="event.preventDefault();event.stopPropagation();copyGameInfo(this.dataset.copyText,this);return false;">📋</button>`
+                    : "";
+                const linkBtn = tournament.url
+                    ? `<button class="copy-btn game-copy-btn" type="button"
+         title="Открыть турнир"
+         data-tourn-url="${escapeHtml(tournament.url)}"
+         data-game-num="${escapeHtml(String(game.gameNumber || ""))}"
+         onclick="event.preventDefault();event.stopPropagation();openGameInTournament(this.dataset.tournUrl, this.dataset.gameNum);return false;">🔗</button>`
                     : "";
 
                 return `<div class="game-card">
@@ -3287,7 +3422,7 @@
       <span>${game.gameNumber || ""}</span>
       <span style="display:inline-flex;align-items:center;gap:.4rem;flex-wrap:wrap;">
         <span>${game.tableNumber || ""}${judge ? " · " + judge : ""}</span>
-        ${copyBtn}
+        ${copyBtn}${linkBtn}
       </span>
     </div>
     ${mvpHtml}
@@ -3415,6 +3550,8 @@
                             isWin: game.isWin,
                             composition: game.composition,
                             matchType,
+                            totalGames: Array.isArray(tournament.games) ? tournament.games.length : null,
+                            hasFinalStage: !!tournament.hasFinalStage,
                         });
 
                         if (matchType === "togetherRed") {
@@ -4423,6 +4560,8 @@
                         role: game.role || me.role,
                         isWin: game.isWin,
                         composition: game.composition,
+                        totalGames: Array.isArray(tournament.games) ? tournament.games.length : null,
+                        hasFinalStage: !!tournament.hasFinalStage,
                     };
 
                     const sheriff = game.composition.find((p) => !p.isYou && getRoleKey(p.role) === "sheriff");
@@ -4777,6 +4916,8 @@
                         role: game.role || me.role,
                         isWin: game.isWin,
                         composition: game.composition,
+                        totalGames: Array.isArray(tournament.games) ? tournament.games.length : null,
+                        hasFinalStage: !!tournament.hasFinalStage,
                     };
 
                     const j = judges[judge];
@@ -5177,12 +5318,27 @@
                             ? `<span style="font-size:.8rem;color:var(--text-secondary);margin-right:.5rem;">📅 ${g.dateStart}</span>`
                             : "";
 
-                        const copyText = buildGameCopyText(g.tournamentName, g.tableNumber);
+                        const copyText = buildGameCopyText(
+                            g.tournamentName,
+                            g.tableNumber,
+                            g.gameNumber,
+                            g.dateStart,
+                            g.dateEnd,
+                            g.totalGames,
+                            g.hasFinalStage
+                        );
                         const copyBtn = copyText
                             ? `<button class="copy-btn game-copy-btn" type="button"
            title="Скопировать: ${escapeHtml(copyText)}"
            data-copy-text="${escapeHtml(copyText)}"
            onclick="event.preventDefault();event.stopPropagation();copyGameInfo(this.dataset.copyText,this);return false;">📋</button>`
+                            : "";
+                        const linkBtn = g.tournamentUrl
+                            ? `<button class="copy-btn game-copy-btn" type="button"
+           title="Открыть турнир"
+           data-tourn-url="${escapeHtml(g.tournamentUrl)}"
+           data-game-num="${escapeHtml(String(g.gameNumber || ""))}"
+           onclick="event.preventDefault();event.stopPropagation();openGameInTournament(this.dataset.tournUrl, this.dataset.gameNum);return false;">🔗</button>`
                             : "";
 
                         return `<div class="modal-game-card">
@@ -5191,7 +5347,7 @@
           <a href="${g.tournamentUrl || "#"}" target="_blank" class="modal-tournament-link">${g.tournamentName} ↗</a>
           ${dateStr}
           <span style="font-weight:600;color:var(--text-secondary);font-size:.8rem;">${[g.gameNumber, g.tableNumber].filter(Boolean).join(", ")}</span>
-          ${copyBtn}
+          ${copyBtn}${linkBtn}
         </div>
         <div class="modal-result-badges">
           ${myRoleBadge}
