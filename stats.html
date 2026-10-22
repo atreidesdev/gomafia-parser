@@ -5104,57 +5104,27 @@
                      responsive: true,
                      maintainAspectRatio: false,
                      plugins: {
-                        legend: {
-                           position: "bottom",
-                           labels: {
-                              color: textColor,
-                              font: { family: "Inter", weight: 600 },
-                              generateLabels: (chart) => {
-                                 const data = chart.data;
-                                 const values = data.datasets[0].data;
-                                 const total = values.reduce(
-                                    (a, b) => a + b,
-                                    0,
-                                 );
-                                 return data.labels.map((label, i) => {
-                                    const val = values[i];
-                                    const pct =
-                                       total > 0
-                                          ? ((val / total) * 100).toFixed(1)
-                                          : "0.0";
-                                    return {
-                                       text: `${label}: ${val} игр · ${pct}%`,
-                                       fillStyle:
-                                          data.datasets[0].backgroundColor[i],
-                                       strokeStyle:
-                                          data.datasets[0].borderColor[i],
-                                       lineWidth: data.datasets[0].borderWidth,
-                                       fontColor: textColor,
-                                       index: i,
-                                    };
-                                 });
-                              },
-                           },
-                        },
-                        tooltip: {
-                           callbacks: {
-                              label: (item) => {
-                                 const values = item.dataset.data;
-                                 const total = values.reduce(
-                                    (a, b) => a + b,
-                                    0,
-                                 );
-                                 const pct =
-                                    total > 0
-                                       ? ((item.parsed / total) * 100).toFixed(
-                                            1,
-                                         )
-                                       : "0.0";
-                                 return `${item.label}: ${item.parsed} игр · ${pct}%`;
-                              },
-                           },
-                        },
-                     },
+   legend: {
+      position: "bottom",
+      labels: {
+         color: textColor,
+         font: { family: "Inter", weight: 600 },
+      },
+   },
+   tooltip: {
+      callbacks: {
+         label: (item) => {
+            const values = item.dataset.data;
+            const total = values.reduce((a, b) => a + b, 0);
+            const pct =
+               total > 0
+                  ? ((item.parsed / total) * 100).toFixed(1)
+                  : "0.0";
+            return `${item.label}: ${item.parsed} игр · ${pct}%`;
+         },
+      },
+   },
+},
                   },
                },
             );
