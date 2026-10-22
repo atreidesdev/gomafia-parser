@@ -2553,8 +2553,12 @@
                         class="filter-select"
                         onchange="onGgChartModeChange()"
                      >
-                        <option value="yearly" selected>По годам (сумма)</option>
-                        <option value="tournaments">По турнирам за выбранный год</option>
+                        <option value="yearly" selected>
+                           По годам (сумма)
+                        </option>
+                        <option value="tournaments">
+                           По турнирам за выбранный год
+                        </option>
                      </select>
                      <select
                         id="ggYearSelect"
@@ -5325,7 +5329,9 @@
                   delta: Math.round(delta * 10) / 10,
                   cumulative: Math.round(cumulative * 10) / 10,
                   rank:
-                     standing && standing.rank !== undefined && standing.rank !== null
+                     standing &&
+                     standing.rank !== undefined &&
+                     standing.rank !== null
                         ? standing.rank
                         : "—",
                });
@@ -5445,6 +5451,23 @@
             return null;
          }
 
+         function getTournamentRank(t) {
+            const standings = Array.isArray(t.standings) ? t.standings : [];
+            const finalStanding =
+               standings.find(
+                  (s) =>
+                     s.stage &&
+                     /итог|финал/i.test(s.stage) &&
+                     !/отбор|квалиф/i.test(s.stage),
+               ) || null;
+            const standing = finalStanding || standings[0] || null;
+            return standing &&
+               standing.rank !== undefined &&
+               standing.rank !== null
+               ? standing.rank
+               : null;
+         }
+
          function collectGgData() {
             const list = [...state.rawData].reverse();
             return list
@@ -5452,6 +5475,7 @@
                   tournament: t,
                   year: getTournamentYear(t),
                   gg: getTournamentGg(t),
+                  rank: getTournamentRank(t),
                }))
                .filter((x) => x.gg !== null && x.year !== null);
          }
@@ -5479,8 +5503,7 @@
             const mode = document.getElementById("ggChartMode").value;
             const yearSelect = document.getElementById("ggYearSelect");
             if (yearSelect) {
-               yearSelect.style.display =
-                  mode === "tournaments" ? "" : "none";
+               yearSelect.style.display = mode === "tournaments" ? "" : "none";
             }
             if (mode === "tournaments") updateGgYearSelect();
             renderGgChart();
@@ -5502,128 +5525,107 @@
             }
 
             const mode = document.getElementById("ggChartMode").value;
-            const data = collectGgData();
+            const data = collectGgData(); // уже в хронологическом порядке (oldest first)
             if (!data.length) {
                container.innerHTML =
                   '<p class="empty-state">Нет данных GG.</p>';
                return;
             }
 
+            // ================== РЕЖИМ: ПО ГОДАМ ==================
             if (mode === "yearly") {
                const byYear = {};
+               const yearTours = {};
                data.forEach((x) => {
                   byYear[x.year] = (byYear[x.year] || 0) + x.gg;
+                  if (!yearTours[x.year]) yearTours[x.year] = [];
+                  yearTours[x.year].push(x);
                });
                const years = Object.keys(byYear)
                   .map(Number)
                   .sort((a, b) => a - b);
-               const values = years.map(
-                  (y) => Math.round(byYear[y] * 10) / 10,
-               );
+               const values = years.map((y) => Math.round(byYear[y] * 10) / 10);
 
-               state.charts.gg = new Chart(
-                  document.getElementById("ggChart"),
-                  {
-                     type: "bar",
-                     data: {
-                        labels: years.map(String),
-                        datasets: [
-                           {
-                              label: "Сумма GG за год",
-                              data: values,
-                              backgroundColor: values.map((v) =>
-                                 v >= 0
-                                    ? "rgba(16,185,129,.75)"
-                                    : "rgba(239,68,68,.75)",
-                              ),
-                              borderColor: values.map((v) =>
-                                 v >= 0 ? "#10b981" : "#ef4444",
-                              ),
-                              borderWidth: 1.5,
-                              borderRadius: 6,
-                           },
-                        ],
-                     },
-                     options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                           legend: { display: false },
-                           tooltip: {
-                              callbacks: {
-                                 title: (items) =>
-                                    `Год: ${years[items[0].dataIndex]}`,
-                                 label: (item) => {
-                                    const y = years[item.dataIndex];
-                                    const tours = data.filter(
-                                       (x) => x.year === y,
-                                    );
-                                    const v = values[item.dataIndex];
-                                    return [
-                                       `GG: ${v > 0 ? "+" : ""}${v}`,
-                                       `Турниров: ${tours.length}`,
-                                    ];
-                                 },
-                              },
-                           },
-                        },
-                        scales: {
-                           y: {
-                              beginAtZero: false,
-                              ticks: {
-                                 color: textColor,
-                                 font: { family: "Inter" },
-                              },
-                              grid: {
-                                 color: isDark ? "#1e293b" : "#f1f5f9",
-                              },
-                           },
-                           x: {
-                              ticks: {
-                                 color: textColor,
-                                 font: { family: "Inter" },
-                              },
-                              grid: { display: false },
-                           },
-                        },
-                     },
+               // топ-12 суммы и отсортированные списки по каждому году
+               const top12Sums = [];
+               const yearToursByGg = {};
+               years.forEach((y) => {
+                  const sorted = [...yearTours[y]].sort((a, b) => b.gg - a.gg);
+                  yearToursByGg[y] = sorted;
+                  top12Sums.push(
+                     Math.round(
+                        sorted.slice(0, 12).reduce((s, v) => s + v.gg, 0) * 10,
+                     ) / 10,
+                  );
+               });
+
+               const top12MarkerPlugin = {
+                  id: "ggTop12Marker",
+                  afterDatasetsDraw(chart) {
+                     const ctx = chart.ctx;
+                     const meta = chart.getDatasetMeta(0);
+                     const yScale = chart.scales.y;
+                     ctx.save();
+                     meta.data.forEach((bar, i) => {
+                        const top12 = top12Sums[i];
+                        const total = values[i];
+                        if (top12 === undefined || top12 === null) return;
+
+                        const yLine = yScale.getPixelForValue(top12);
+                        const halfW = bar.width / 2;
+
+                        // пунктирная линия = сумма топ-12
+                        ctx.strokeStyle = "#f59e0b";
+                        ctx.lineWidth = 2.5;
+                        ctx.setLineDash([5, 3]);
+                        ctx.beginPath();
+                        ctx.moveTo(bar.x - halfW, yLine);
+                        ctx.lineTo(bar.x + halfW, yLine);
+                        ctx.stroke();
+                        ctx.setLineDash([]);
+
+                        // подпись топ-12 (только если реально меньше общего)
+                        const diff = total - top12;
+                        if (Math.abs(diff) > 0.01) {
+                           ctx.font = "700 10px Inter, sans-serif";
+                           ctx.fillStyle = "#d97706";
+                           ctx.textAlign = "left";
+                           ctx.textBaseline = "middle";
+                           ctx.fillText(
+                              "★12: " + (top12 > 0 ? "+" : "") + top12,
+                              bar.x + halfW + 4,
+                              yLine,
+                           );
+                        }
+
+                        // общая сумма — сверху столбика
+                        const yTop = yScale.getPixelForValue(total);
+                        ctx.font = "700 12px Inter, sans-serif";
+                        ctx.fillStyle = textColor;
+                        ctx.textAlign = "center";
+                        ctx.textBaseline = "bottom";
+                        ctx.fillText(
+                           (total > 0 ? "+" : "") + total,
+                           bar.x,
+                           yTop - 4,
+                        );
+                     });
+                     ctx.restore();
                   },
-               );
-               return;
-            }
+               };
 
-            // mode === "tournaments"
-            const years = updateGgYearSelect();
-            const yearSelect = document.getElementById("ggYearSelect");
-            const selectedYear =
-               yearSelect && yearSelect.value
-                  ? parseInt(yearSelect.value, 10)
-                  : years[years.length - 1];
-            const yearData = data.filter((x) => x.year === selectedYear);
-            if (!yearData.length) {
-               container.innerHTML =
-                  '<p class="empty-state">За выбранный год нет данных GG.</p>';
-               return;
-            }
-            const values = yearData.map((x) => x.gg);
-            const fullNames = yearData.map(
-               (x) => x.tournament.tournament || "Турнир",
-            );
-
-            state.charts.gg = new Chart(
-               document.getElementById("ggChart"),
-               {
+               state.charts.gg = new Chart(document.getElementById("ggChart"), {
                   type: "bar",
                   data: {
-                     labels: yearData.map((_, i) => `#${i + 1}`),
+                     labels: years.map(String),
                      datasets: [
                         {
-                           label: `GG за ${selectedYear}`,
+                           label: "Сумма GG за год",
                            data: values,
                            backgroundColor: values.map((v) =>
                               v >= 0
-                                 ? "rgba(16,185,129,.75)"
-                                 : "rgba(239,68,68,.75)",
+                                 ? "rgba(16,185,129,.65)"
+                                 : "rgba(239,68,68,.65)",
                            ),
                            borderColor: values.map((v) =>
                               v >= 0 ? "#10b981" : "#ef4444",
@@ -5636,15 +5638,46 @@
                   options: {
                      responsive: true,
                      maintainAspectRatio: false,
+                     layout: { padding: { top: 22 } },
                      plugins: {
                         legend: { display: false },
                         tooltip: {
                            callbacks: {
                               title: (items) =>
-                                 fullNames[items[0].dataIndex] || "",
+                                 `Год: ${years[items[0].dataIndex]}`,
                               label: (item) => {
+                                 const y = years[item.dataIndex];
+                                 const tours = yearTours[y];
                                  const v = values[item.dataIndex];
-                                 return `GG: ${v > 0 ? "+" : ""}${v}`;
+                                 const t12 = top12Sums[item.dataIndex];
+                                 const topTours = yearToursByGg[y].slice(0, 12);
+
+                                 const lines = [
+                                    `Всего GG: ${v > 0 ? "+" : ""}${v}`,
+                                    `Топ-12 GG: ${t12 > 0 ? "+" : ""}${t12}`,
+                                    `Турниров: ${tours.length}`,
+                                 ];
+                                 topTours.forEach((t, i) => {
+                                    const name = extractTournamentName(
+                                       t.tournament.tournament || "Турнир",
+                                    );
+                                    const ggStr =
+                                       t.gg > 0 ? "+" + t.gg : String(t.gg);
+                                    lines.push(`${i + 1}. ${name}: ${ggStr}`);
+                                    if (i === 8 && topTours.length > 9) {
+                                       lines.push("━━━━━━━━━━━━━━━━");
+                                    }
+                                 });
+                                 if (tours.length > 12) {
+                                    const rest =
+                                       Math.round((v - t12) * 10) / 10;
+                                    lines.push(
+                                       `Остальные ${tours.length - 12}: ${
+                                          rest > 0 ? "+" : ""
+                                       }${rest}`,
+                                    );
+                                 }
+                                 return lines;
                               },
                            },
                         },
@@ -5652,19 +5685,119 @@
                      scales: {
                         y: {
                            beginAtZero: false,
+                           grace: "10%",
                            ticks: {
                               color: textColor,
                               font: { family: "Inter" },
                            },
-                           grid: {
-                              color: isDark ? "#1e293b" : "#f1f5f9",
-                           },
+                           grid: { color: isDark ? "#1e293b" : "#f1f5f9" },
                         },
-                        x: { display: false },
+                        x: {
+                           ticks: {
+                              color: textColor,
+                              font: { family: "Inter" },
+                           },
+                           grid: { display: false },
+                        },
                      },
                   },
-               },
+                  plugins: [top12MarkerPlugin],
+               });
+               return;
+            }
+
+            // ================== РЕЖИМ: ПО ТУРНИРАМ ЗА ГОД ==================
+            const years = updateGgYearSelect();
+            const yearSelect = document.getElementById("ggYearSelect");
+            const selectedYear =
+               yearSelect && yearSelect.value
+                  ? parseInt(yearSelect.value, 10)
+                  : years[years.length - 1];
+
+            // yearData уже в хронологическом порядке, т.к. data — это reverse(rawData)
+            const yearData = data.filter((x) => x.year === selectedYear);
+            if (!yearData.length) {
+               container.innerHTML =
+                  '<p class="empty-state">За выбранный год нет данных GG.</p>';
+               return;
+            }
+
+            // Сортируем копию по GG убыв., чтобы определить топ-12 (для подсветки)
+            const sortedByGg = [...yearData].sort((a, b) => b.gg - a.gg);
+            const top12Set = new Set(sortedByGg.slice(0, 12));
+
+            // Отображаем в исходном (хронологическом) порядке
+            const values = yearData.map((x) => x.gg);
+            const ranks = yearData.map((x) => x.rank);
+            const fullNames = yearData.map(
+               (x) => x.tournament.tournament || "Турнир",
             );
+            const isTop12Arr = yearData.map((x) => top12Set.has(x));
+
+            state.charts.gg = new Chart(document.getElementById("ggChart"), {
+               type: "bar",
+               data: {
+                  labels: yearData.map((_, i) => `#${i + 1}`),
+                  datasets: [
+                     {
+                        label: `GG за ${selectedYear}`,
+                        data: values,
+                        backgroundColor: values.map((v, i) => {
+                           const top = isTop12Arr[i];
+                           if (v >= 0)
+                              return top
+                                 ? "rgba(245,158,11,.9)"
+                                 : "rgba(16,185,129,.3)";
+                           return top
+                              ? "rgba(239,68,68,.9)"
+                              : "rgba(239,68,68,.28)";
+                        }),
+                        borderColor: values.map((v, i) => {
+                           const top = isTop12Arr[i];
+                           if (v >= 0) return top ? "#d97706" : "#10b981";
+                           return top ? "#dc2626" : "#f87171";
+                        }),
+                        borderWidth: values.map((_, i) =>
+                           isTop12Arr[i] ? 2.5 : 1,
+                        ),
+                        borderRadius: 6,
+                     },
+                  ],
+               },
+               options: {
+                  responsive: true,
+                  maintainAspectRatio: false,
+                  plugins: {
+                     legend: { display: false },
+                     tooltip: {
+                        callbacks: {
+                           title: (items) =>
+                              fullNames[items[0].dataIndex] || "",
+                           label: (item) => {
+                              const idx = item.dataIndex;
+                              const v = values[idx];
+                              const lines = [`GG: ${v > 0 ? "+" : ""}${v}`];
+                              const r = ranks[idx];
+                              if (r !== null && r !== undefined && r !== "") {
+                                 lines.push(`Место: ${r}`);
+                              }
+                              if (isTop12Arr[idx])
+                                 lines.push("★ Топ-12 за год");
+                              return lines;
+                           },
+                        },
+                     },
+                  },
+                  scales: {
+                     y: {
+                        beginAtZero: false,
+                        ticks: { color: textColor, font: { family: "Inter" } },
+                        grid: { color: isDark ? "#1e293b" : "#f1f5f9" },
+                     },
+                     x: { display: false },
+                  },
+               },
+            });
          }
 
          function onWrChartModeChange() {
