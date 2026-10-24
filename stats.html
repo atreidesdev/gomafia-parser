@@ -1793,7 +1793,6 @@
             transform: translateY(-1px);
          }
 
-         /* NEW: chart image download button */
          .chart-export-btn {
             background: var(--card-bg);
             border: 1px solid var(--border-color);
@@ -1824,9 +1823,6 @@
             cursor: wait;
          }
 
-         /* ============================================================
-            CUSTOM TOOLTIP (заменяет стандартные title)
-            ============================================================ */
          .tq-item.has-tooltip {
             cursor: help;
          }
@@ -1901,6 +1897,21 @@
             color: var(--text-muted);
             font-style: italic;
             font-size: 0.8rem;
+         }
+
+         .section-desc {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+            line-height: 1.5;
+         }
+         .section-desc code {
+            background: var(--card-bg-subtle);
+            padding: 0.05rem 0.35rem;
+            border-radius: 4px;
+            font-family: inherit;
+            font-weight: 700;
+            color: var(--text-primary);
          }
       </style>
    </head>
@@ -2774,6 +2785,117 @@
                   <canvas id="ggChart"></canvas>
                </div>
             </div>
+
+            <!-- ===== СЕРИИ (победы / поражения) ===== -->
+            <div class="section">
+               <div class="section-title">
+                  <span>🎢 Влияние серий на винрейт</span>
+               </div>
+               <div class="section-desc">
+                  Винрейт в игре в зависимости от текущей серии побед или
+                  поражений. Серии показываются, пока ситуация встречалась хотя
+                  бы
+                  <b>10 раз</b>.
+                  <br />
+                  <span style="font-size: 0.78rem; color: var(--text-muted)">
+                     <code>п.п.</code> — <b>процентные пункты</b>: разница между
+                     двумя процентами. Например, если винрейт был 60% и стал
+                     55%, это <b>−5 п.п.</b> (а не −5%).
+                  </span>
+               </div>
+               <div class="charts-split-container">
+                  <div>
+                     <div
+                        style="
+                           font-weight: 700;
+                           text-align: center;
+                           margin-bottom: 0.5rem;
+                        "
+                     >
+                        📉 После серии поражений
+                     </div>
+                     <div
+                        id="lossStreakInsight"
+                        class="filter-result-info"
+                     ></div>
+                     <div
+                        class="chart-container"
+                        style="height: 340px; position: relative"
+                     >
+                        <canvas id="lossStreakChart"></canvas>
+                     </div>
+                  </div>
+                  <div>
+                     <div
+                        style="
+                           font-weight: 700;
+                           text-align: center;
+                           margin-bottom: 0.5rem;
+                        "
+                     >
+                        📈 После серии побед
+                     </div>
+                     <div
+                        id="winStreakInsight"
+                        class="filter-result-info"
+                     ></div>
+                     <div
+                        class="chart-container"
+                        style="height: 340px; position: relative"
+                     >
+                        <canvas id="winStreakChart"></canvas>
+                     </div>
+                  </div>
+               </div>
+            </div>
+
+            <!-- ===== УСТАЛОСТЬ ===== -->
+            <div class="section">
+               <div class="section-title">
+                  <span>⏱️ Винрейт по номеру игры в турнире</span>
+               </div>
+               <div class="section-desc">
+                  Винрейт в зависимости от порядкового номера игры внутри
+                  турнира (1 — первая игра турнира).
+               </div>
+               <div id="fatigueInsight" class="filter-result-info"></div>
+               <div
+                  class="chart-container"
+                  style="height: 360px; position: relative"
+               >
+                  <canvas id="fatigueChart"></canvas>
+               </div>
+            </div>
+
+            <!-- ===== РАСПРЕДЕЛЕНИЕ MVP ===== -->
+            <div class="section">
+               <div class="section-title">💪 Распределение наград MVP</div>
+               <div class="section-desc">
+                  Сколько раз игрок получал MVP или MVP проигравших, и какую
+                  долю это составляет от общего числа игр и побед.
+               </div>
+               <div class="stats-grid" id="carryFactorGrid"></div>
+            </div>
+
+            <!-- ===== ОТБОР vs ФИНАЛ ===== -->
+            <div class="section">
+               <div class="section-title">
+                  🔥 Эффективность в отборе и финале
+               </div>
+               <div class="section-desc">
+                  Сравнение винрейта и среднего балла в отборе и финале.
+                  <b>Учитываются только турниры, где есть финальная стадия</b>
+                  и где игрок сыграл хотя бы одну игру.
+                  <br />
+                  <span style="font-size: 0.78rem; color: var(--text-muted)">
+                     <code>п.п.</code> — <b>процентные пункты</b>: разница между
+                     двумя процентами. Например, 53.7% → 53.3% =
+                     <b>−0.4 п.п.</b>
+                  </span>
+               </div>
+               <div class="stats-grid" id="clutchFactorGrid"></div>
+            </div>
+
             <div class="section">
                <div class="section-title">🔥 Тепловая карта взаимодействий</div>
                <div
@@ -3377,7 +3499,16 @@
             sortMode: "date",
             hideRoles: false,
             currentTab: "viz",
-            charts: { roles: null, wr: null, radar: null, elo: null, gg: null },
+            charts: {
+               roles: null,
+               wr: null,
+               radar: null,
+               elo: null,
+               gg: null,
+               lossStreak: null,
+               winStreak: null,
+               fatigue: null,
+            },
             sortDirection: {},
             heatmapDisplayCount: 20,
             sortedHeatmapData: [],
@@ -3824,7 +3955,6 @@
             }
          }
 
-         // === NEW: export any chart as PNG ===
          async function exportChartAsPng(chartKey, filename) {
             const chart = state.charts[chartKey];
             if (!chart || !chart.canvas) {
@@ -3841,7 +3971,6 @@
                   .slice(0, 40) || "player";
             const safeName = `${filename}_${safePlayer}`;
 
-            // Temporarily disable button if possible
             const btn = document.querySelector(
                `.chart-export-btn[onclick*="'${chartKey}'"]`,
             );
@@ -3854,7 +3983,6 @@
             try {
                let dataUrl;
                if (typeof html2canvas === "function") {
-                  // Give flexbox a moment to render
                   await new Promise((r) => setTimeout(r, 30));
                   const captured = await html2canvas(container, {
                      backgroundColor: bg,
@@ -3865,7 +3993,6 @@
                   });
                   dataUrl = captured.toDataURL("image/png");
                } else {
-                  // Fallback (transparent background)
                   dataUrl = chart.toBase64Image();
                }
                const a = document.createElement("a");
@@ -4708,7 +4835,6 @@
                      ? preFinalStanding.rank
                      : null;
 
-               // === Победы / Доп / Минус по ВСЕМ играм турнира (не зависит от фильтров) ===
                const allTourGames = Array.isArray(tournament.games)
                   ? tournament.games
                   : [];
@@ -4717,11 +4843,35 @@
                   extraSum = 0,
                   minusSum = 0;
                const roleAgg = {
-                  peaceful: { label: "Мирный", wins: 0, losses: 0, extra: 0, minus: 0 },
-                  sheriff:  { label: "Шериф",  wins: 0, losses: 0, extra: 0, minus: 0 },
-                  mafia:    { label: "Мафия",  wins: 0, losses: 0, extra: 0, minus: 0 },
-                  don:      { label: "Дон",    wins: 0, losses: 0, extra: 0, minus: 0 },
-                  other:    { label: "Другое", wins: 0, losses: 0, extra: 0, minus: 0 },
+                  peaceful: {
+                     label: "Мирный",
+                     wins: 0,
+                     losses: 0,
+                     extra: 0,
+                     minus: 0,
+                  },
+                  sheriff: {
+                     label: "Шериф",
+                     wins: 0,
+                     losses: 0,
+                     extra: 0,
+                     minus: 0,
+                  },
+                  mafia: {
+                     label: "Мафия",
+                     wins: 0,
+                     losses: 0,
+                     extra: 0,
+                     minus: 0,
+                  },
+                  don: { label: "Дон", wins: 0, losses: 0, extra: 0, minus: 0 },
+                  other: {
+                     label: "Другое",
+                     wins: 0,
+                     losses: 0,
+                     extra: 0,
+                     minus: 0,
+                  },
                };
                allTourGames.forEach((g) => {
                   const me = Array.isArray(g.composition)
@@ -4749,15 +4899,19 @@
                      }
                   }
                });
-               const fmtPts = (v) =>
-                  (Math.round(v * 100) / 100).toString();
+               const fmtPts = (v) => (Math.round(v * 100) / 100).toString();
                const extraColor =
                   extraSum > 0.001 ? "var(--success)" : "var(--text-muted)";
                const minusColor =
                   minusSum > 0.001 ? "var(--danger)" : "var(--text-muted)";
-               const roleOrder = ["peaceful", "sheriff", "mafia", "don", "other"];
+               const roleOrder = [
+                  "peaceful",
+                  "sheriff",
+                  "mafia",
+                  "don",
+                  "other",
+               ];
 
-               // --- HTML-контент тултипов по ролям ---
                let winsTooltipHtml = "";
                roleOrder.forEach((k) => {
                   const r = roleAgg[k];
@@ -4798,7 +4952,6 @@
                } else
                   quickHtml += `<span class="tq-item"><span class="tq-lbl">Место</span><b>${rank}</b></span>`;
                quickHtml += `<span class="tq-item"><span class="tq-lbl">Баллы</span><b>${totalPoints}</b></span>`;
-               // === Победы / Доп / Минус — с кастомным тултипом ===
                quickHtml += `<span class="tq-item has-tooltip" data-tooltip-title="Победы / Все игры турнира (без учёта фильтров)"><span class="tq-lbl">Победы</span><b>${winsCount}/${gamesWithMe}</b><div class="tq-tooltip-body">${winsTooltipHtml}</div></span>`;
                quickHtml += `<span class="tq-item has-tooltip" data-tooltip-title="Сумма доп. баллов сверх базы (1 за победу, 0 за поражение)"><span class="tq-lbl">Доп</span><b style="color:${extraColor}">${extraSum > 0.001 ? "+" + fmtPts(extraSum) : "0"}</b><div class="tq-tooltip-body">${extraTooltipHtml}</div></span>`;
                quickHtml += `<span class="tq-item has-tooltip" data-tooltip-title="Сумма штрафных баллов ниже базы"><span class="tq-lbl">Минус</span><b style="color:${minusColor}">${minusSum > 0.001 ? "-" + fmtPts(minusSum) : "0"}</b><div class="tq-tooltip-body">${minusTooltipHtml}</div></span>`;
@@ -5316,6 +5469,11 @@
             renderEloChart();
             updateGgYearSelect();
             renderGgChart();
+            renderLossStreakChart();
+            renderWinStreakChart();
+            renderFatigueChart();
+            renderCarryFactor();
+            renderClutchFactor();
          }
 
          function computeRadarMetrics(gamesList) {
@@ -5811,7 +5969,6 @@
                         const yLine = yScale.getPixelForValue(top12),
                            halfW = bar.width / 2;
 
-                        // пунктирная линия = сумма топ-12
                         ctx.strokeStyle = "#f59e0b";
                         ctx.lineWidth = 2.5;
                         ctx.setLineDash([5, 3]);
@@ -5821,7 +5978,6 @@
                         ctx.stroke();
                         ctx.setLineDash([]);
 
-                        // подпись топ-12 (только если реально меньше общего)
                         const diff = total - top12;
                         if (Math.abs(diff) > 0.01) {
                            ctx.font = "700 10px Inter, sans-serif";
@@ -5833,7 +5989,6 @@
                            const wouldOverflow =
                               rightX + textWidth > chartArea.right - 2;
                            if (wouldOverflow) {
-                              // если справа места нет — рисуем слева от столбика
                               ctx.textAlign = "right";
                               ctx.textBaseline = "middle";
                               ctx.fillText(label, bar.x - halfW - 4, yLine);
@@ -5844,7 +5999,6 @@
                            }
                         }
 
-                        // общая сумма — сверху столбика
                         const yTop = yScale.getPixelForValue(total);
                         ctx.font = "700 12px Inter, sans-serif";
                         ctx.fillStyle = textColor;
@@ -5910,7 +6064,6 @@
                                     );
                                     const ggStr =
                                        t.gg > 0 ? "+" + t.gg : String(t.gg);
-                                    // ★ (порядковый номер / сколько всего в топ-листе)
                                     lines.push(
                                        `★ ${i + 1}/${topTours.length} · ${name}: ${ggStr}`,
                                     );
@@ -6043,6 +6196,548 @@
             });
          }
 
+         // =====================================================================
+         // STREAKS (loss / win) — WINRATE BY STREAK LENGTH
+         // =====================================================================
+         function computeStreakStats(kind) {
+            const games = [...state.flatGames].reverse();
+            const buckets = {};
+            let streak = 0;
+            games.forEach(({ game }) => {
+               const me = Array.isArray(game.composition)
+                  ? game.composition.find((p) => p.isYou)
+                  : null;
+               if (!me) return;
+               const key = streak;
+               if (!buckets[key]) buckets[key] = { games: 0, wins: 0 };
+               buckets[key].games++;
+               if (game.isWin) buckets[key].wins++;
+               if (kind === "loss") streak = game.isWin ? 0 : streak + 1;
+               else streak = game.isWin ? streak + 1 : 0;
+            });
+            return buckets;
+         }
+
+         function getMaxDisplayableStreak(buckets, minCount = 10) {
+            let max = 0;
+            for (let k = 0; k < 500; k++) {
+               if (buckets[k] && buckets[k].games >= minCount) max = k;
+               else break;
+            }
+            return max;
+         }
+
+         function renderStreakChart(
+            chartKey,
+            canvasId,
+            insightId,
+            kind,
+            minCount = 10,
+         ) {
+            const canvas = document.getElementById(canvasId);
+            if (!canvas) return;
+            const isDark = document.body.classList.contains("dark-mode");
+            const textColor = isDark ? "#f8fafc" : "#0f172a";
+
+            if (state.charts[chartKey]) {
+               state.charts[chartKey].destroy();
+               state.charts[chartKey] = null;
+            }
+
+            const buckets = computeStreakStats(kind);
+            const maxShown = getMaxDisplayableStreak(buckets, minCount);
+            const keys = [];
+            for (let k = 0; k <= maxShown; k++) keys.push(k);
+
+            const word = kind === "loss" ? "пор." : "поб.";
+            const zeroLabel =
+               kind === "loss" ? "Без серии пор." : "Без серии поб.";
+
+            const labels = keys.map((k) =>
+               k === 0 ? zeroLabel : `После ${k} ${word}`,
+            );
+            const values = keys.map((k) => {
+               const b = buckets[k];
+               return b && b.games > 0 ? (b.wins / b.games) * 100 : null;
+            });
+            const counts = keys.map((k) => (buckets[k] ? buckets[k].games : 0));
+
+            state.charts[chartKey] = new Chart(canvas, {
+               type: "bar",
+               data: {
+                  labels,
+                  datasets: [
+                     {
+                        label: "Винрейт %",
+                        data: values,
+                        backgroundColor: values.map((v) =>
+                           v === null
+                              ? "rgba(148,163,184,.25)"
+                              : v >= 60
+                                ? "rgba(16,185,129,.75)"
+                                : v <= 40
+                                  ? "rgba(239,68,68,.75)"
+                                  : "rgba(245,158,11,.75)",
+                        ),
+                        borderColor: values.map((v) =>
+                           v === null
+                              ? "#94a3b8"
+                              : v >= 60
+                                ? "#10b981"
+                                : v <= 40
+                                  ? "#ef4444"
+                                  : "#f59e0b",
+                        ),
+                        borderWidth: 1.5,
+                        borderRadius: 6,
+                     },
+                  ],
+               },
+               options: {
+                  responsive: true,
+                  maintainAspectRatio: false,
+                  layout: { padding: { top: 18 } },
+                  plugins: {
+                     legend: { display: false },
+                     tooltip: {
+                        callbacks: {
+                           title: (items) => labels[items[0].dataIndex],
+                           label: (item) => {
+                              const v = values[item.dataIndex];
+                              const g = counts[item.dataIndex];
+                              if (v === null) return "Нет данных";
+                              return [`Винрейт: ${v.toFixed(1)}%`, `Игр: ${g}`];
+                           },
+                        },
+                     },
+                  },
+                  scales: {
+                     y: {
+                        beginAtZero: true,
+                        max: 110,
+                        ticks: {
+                           stepSize: 20,
+                           color: textColor,
+                           font: { family: "Inter" },
+                           callback: (value) => (value > 100 ? "" : value),
+                        },
+                        grid: {
+                           color: (ctx) =>
+                              ctx.tick.value > 100
+                                 ? "transparent"
+                                 : isDark
+                                   ? "#1e293b"
+                                   : "#f1f5f9",
+                        },
+                     },
+                     x: {
+                        ticks: { color: textColor, font: { size: 10 } },
+                        grid: { display: false },
+                     },
+                  },
+               },
+            });
+
+            const info = document.getElementById(insightId);
+            if (!info) return;
+            const base = values[0];
+            const after2 = values[2];
+            const after3 = values[3];
+            let text = "";
+
+            if (kind === "loss") {
+               if (base !== null && after2 !== null) {
+                  const d = after2 - base;
+                  if (d <= -5)
+                     text = `📉 <b>Тильт</b>: после 2 поражений винрейт падает на ${Math.abs(d).toFixed(1)} п.п.`;
+                  else if (d >= 5)
+                     text = `🔥 <b>Восстановление</b>: после 2 поражений винрейт растёт на ${d.toFixed(1)} п.п.`;
+                  else text = `⚖️ Винрейт стабилен после серии поражений.`;
+               }
+               if (after3 !== null && base !== null) {
+                  const d3 = after3 - base;
+                  text += ` · после 3 пор.: ${d3 >= 0 ? "+" : ""}${d3.toFixed(1)} п.п. к базе`;
+               }
+               if (maxShown > 0) {
+                  text += ` · показаны серии до ${maxShown} (≥${minCount} игр)`;
+               }
+            } else {
+               if (base !== null && after2 !== null) {
+                  const d = after2 - base;
+                  if (d >= 5)
+                     text = `🔥 <b>Разгон</b>: после 2 побед винрейт растёт на ${d.toFixed(1)} п.п.`;
+                  else if (d <= -5)
+                     text = `📉 <b>Откат</b>: после 2 побед винрейт падает на ${Math.abs(d).toFixed(1)} п.п.`;
+                  else text = `⚖️ Винрейт стабилен после серии побед.`;
+               }
+               if (after3 !== null && base !== null) {
+                  const d3 = after3 - base;
+                  text += ` · после 3 поб.: ${d3 >= 0 ? "+" : ""}${d3.toFixed(1)} п.п. к базе`;
+               }
+               if (maxShown > 0) {
+                  text += ` · показаны серии до ${maxShown} (≥${minCount} игр)`;
+               }
+            }
+            info.innerHTML = text;
+         }
+
+         function renderLossStreakChart() {
+            renderStreakChart(
+               "lossStreak",
+               "lossStreakChart",
+               "lossStreakInsight",
+               "loss",
+               10,
+            );
+         }
+
+         function renderWinStreakChart() {
+            renderStreakChart(
+               "winStreak",
+               "winStreakChart",
+               "winStreakInsight",
+               "win",
+               10,
+            );
+         }
+
+         // =====================================================================
+         // SESSION FATIGUE
+         // =====================================================================
+         function computeSessionFatigue() {
+            const positions = {};
+            state.rawData.forEach((t) => {
+               const games = Array.isArray(t.games) ? t.games : [];
+               games.forEach((g, idx) => {
+                  const me = Array.isArray(g.composition)
+                     ? g.composition.find((p) => p.isYou)
+                     : null;
+                  if (!me) return;
+                  const pos = idx + 1;
+                  if (!positions[pos])
+                     positions[pos] = { games: 0, wins: 0, points: 0 };
+                  positions[pos].games++;
+                  if (g.isWin) positions[pos].wins++;
+                  positions[pos].points += me.points || 0;
+               });
+            });
+            return positions;
+         }
+
+         function renderFatigueChart() {
+            const container = document.getElementById("fatigueChart");
+            if (!container) return;
+            const isDark = document.body.classList.contains("dark-mode");
+            const textColor = isDark ? "#f8fafc" : "#0f172a";
+
+            if (state.charts.fatigue) {
+               state.charts.fatigue.destroy();
+               state.charts.fatigue = null;
+            }
+
+            const positions = computeSessionFatigue();
+            const maxPos = Math.max(
+               ...Object.keys(positions).map((n) => parseInt(n, 10)),
+               0,
+            );
+            const labels = [];
+            const values = [];
+            const counts = [];
+            for (let i = 1; i <= maxPos; i++) {
+               labels.push("#" + i);
+               const d = positions[i];
+               values.push(d ? (d.wins / d.games) * 100 : null);
+               counts.push(d ? d.games : 0);
+            }
+
+            state.charts.fatigue = new Chart(container, {
+               type: "line",
+               data: {
+                  labels,
+                  datasets: [
+                     {
+                        label: "Винрейт %",
+                        data: values,
+                        borderColor: "#3b82f6",
+                        backgroundColor: "rgba(59,130,246,.12)",
+                        fill: true,
+                        tension: 0.3,
+                        pointRadius: 4,
+                        pointHoverRadius: 7,
+                        borderWidth: 2,
+                     },
+                  ],
+               },
+               options: {
+                  responsive: true,
+                  maintainAspectRatio: false,
+                  interaction: { mode: "index", intersect: false },
+                  layout: { padding: { top: 8, right: 8 } },
+                  plugins: {
+                     legend: { display: false },
+                     tooltip: {
+                        callbacks: {
+                           title: (items) =>
+                              `Игра #${items[0].dataIndex + 1} в турнире`,
+                           label: (item) => {
+                              const v = values[item.dataIndex];
+                              const g = counts[item.dataIndex];
+                              if (v === null) return "Нет данных";
+                              return [`Винрейт: ${v.toFixed(1)}%`, `Игр: ${g}`];
+                           },
+                        },
+                     },
+                  },
+                  scales: {
+                     y: {
+                        beginAtZero: true,
+                        max: 110,
+                        ticks: {
+                           stepSize: 20,
+                           color: textColor,
+                           font: { family: "Inter" },
+                           callback: (value) => (value > 100 ? "" : value),
+                        },
+                        grid: {
+                           color: (ctx) =>
+                              ctx.tick.value > 100
+                                 ? "transparent"
+                                 : isDark
+                                   ? "#1e293b"
+                                   : "#f1f5f9",
+                        },
+                     },
+                     x: {
+                        ticks: { color: textColor },
+                        grid: { display: false },
+                     },
+                  },
+               },
+            });
+
+            const info = document.getElementById("fatigueInsight");
+            if (info) {
+               let peak = null;
+               for (let i = 1; i <= maxPos; i++) {
+                  const d = positions[i];
+                  if (!d || d.games < 3) continue;
+                  const wr = (d.wins / d.games) * 100;
+                  if (!peak || wr > peak.wr)
+                     peak = { pos: i, wr, games: d.games };
+               }
+               if (peak) {
+                  info.innerHTML = `🎯 Пик эффективности: <b>игра #${peak.pos}</b> в турнире — <b>${peak.wr.toFixed(1)}%</b> винрейта (${peak.games} игр)`;
+               } else {
+                  info.textContent =
+                     "Недостаточно данных для определения пика (нужно ≥3 игр на позицию).";
+               }
+            }
+         }
+
+         // =====================================================================
+         // CARRY FACTOR (MVP vs. team play) — COUNTS + SHARE OF TOTAL
+         // =====================================================================
+         function renderCarryFactor() {
+            const grid = document.getElementById("carryFactorGrid");
+            if (!grid) return;
+
+            let mvpGames = 0,
+               mvpWins = 0;
+            let normalGames = 0,
+               normalWins = 0;
+            let losingMvpGames = 0;
+            let totalGames = 0,
+               totalLosses = 0;
+
+            state.flatGames.forEach(({ game }) => {
+               const me = Array.isArray(game.composition)
+                  ? game.composition.find((p) => p.isYou)
+                  : null;
+               if (!me) return;
+               totalGames++;
+               if (!game.isWin) totalLosses++;
+               const isMvp = isPlayerMvp(game);
+               const isLosingMvp = isLosingTeamMvp(game);
+               if (isMvp) {
+                  mvpGames++;
+                  if (game.isWin) mvpWins++;
+               } else if (isLosingMvp) {
+                  losingMvpGames++;
+               } else {
+                  normalGames++;
+                  if (game.isWin) normalWins++;
+               }
+            });
+
+            if (totalGames === 0) {
+               grid.innerHTML = '<p class="empty-state">Нет данных по MVP.</p>';
+               return;
+            }
+
+            const totalWins = mvpWins + normalWins;
+
+            const pct = (n, d) => (d > 0 ? ((n / d) * 100).toFixed(1) : "0.0");
+
+            const card = (emoji, label, count, sub, color) => `
+               <div class="stat-card">
+                  <div class="stat-value" style="color:${color};font-size:1.9rem;">${count}</div>
+                  <div class="stat-label">${emoji} ${label}</div>
+                  <div style="font-size:0.75rem;color:var(--text-secondary);margin-top:0.6rem;line-height:1.5;">${sub}</div>
+               </div>`;
+
+            grid.innerHTML =
+               card(
+                  "👑",
+                  "MVP игры",
+                  `${mvpGames}`,
+                  `<b>${pct(mvpGames, totalGames)}%</b> от ${totalGames} игр<br>побед в них: <b>${mvpWins}</b>`,
+                  "var(--success)",
+               ) +
+               card(
+                  "🤝",
+                  "Обычные игры (не MVP)",
+                  `${normalGames}`,
+                  `<b>${pct(normalGames, totalGames)}%</b> от ${totalGames} игр<br>побед в них: <b>${normalWins}</b>`,
+                  "var(--accent)",
+               ) +
+               card(
+                  "💪",
+                  "MVP проигравших",
+                  `${losingMvpGames}`,
+                  `<b>${pct(losingMvpGames, totalGames)}%</b> от ${totalGames} игр<br><b>${pct(losingMvpGames, totalLosses)}%</b> от ${totalLosses} поражений`,
+                  "var(--danger)",
+               ) +
+               card(
+                  "🎯",
+                  "MVP в победах",
+                  `${mvpWins}`,
+                  `<b>${pct(mvpWins, totalWins)}%</b> от ${totalWins} побед`,
+                  "var(--warning)",
+               );
+         }
+
+         // =====================================================================
+         // CLUTCH FACTOR (отбор vs финал) — СТРОГО только турниры с финалом
+         // =====================================================================
+         function computeClutchStats() {
+            const qual = { games: 0, wins: 0, points: 0 };
+            const final = { games: 0, wins: 0, points: 0 };
+            const tournamentsUsed = [];
+
+            state.rawData.forEach((t) => {
+               if (!t.hasFinalStage) return;
+               const games = Array.isArray(t.games) ? t.games : [];
+               if (!games.length) return;
+
+               let tQual = 0,
+                  tFinal = 0;
+
+               games.forEach((g) => {
+                  const me = Array.isArray(g.composition)
+                     ? g.composition.find((p) => p.isYou)
+                     : null;
+                  if (!me) return;
+
+                  // Стадия берётся из scraper.js (scheme.number_of_games_final)
+                  if (g.round === "Финал") {
+                     final.games++;
+                     if (g.isWin) final.wins++;
+                     final.points += me.points || 0;
+                     tFinal++;
+                  } else {
+                     // 'Отбор' и 'Полуфинал' считаем отбором
+                     qual.games++;
+                     if (g.isWin) qual.wins++;
+                     qual.points += me.points || 0;
+                     tQual++;
+                  }
+               });
+
+               if (tQual + tFinal > 0) {
+                  tournamentsUsed.push({
+                     name: extractTournamentName(t.tournament || ""),
+                     qual: tQual,
+                     final: tFinal,
+                     playedFinal: tFinal > 0, // ⬅️ новый флаг
+                  });
+               }
+            });
+
+            return { qual, final, tournamentsUsed };
+         }
+         function renderClutchFactor() {
+            const grid = document.getElementById("clutchFactorGrid");
+            if (!grid) return;
+            const { qual, final, tournamentsUsed } = computeClutchStats();
+
+            if (qual.games === 0 && final.games === 0) {
+               grid.innerHTML =
+                  '<p class="empty-state">Нет данных о финалах. Нужны турниры с финальной стадией.</p>';
+               return;
+            }
+
+            const qualWR = qual.games ? (qual.wins / qual.games) * 100 : 0;
+            const finalWR = final.games ? (final.wins / final.games) * 100 : 0;
+            const qualAvg = qual.games ? qual.points / qual.games : 0;
+            const finalAvg = final.games ? final.points / final.games : 0;
+            const wrDelta = finalWR - qualWR;
+            const avgDelta = finalAvg - qualAvg;
+
+            const tournamentsCount = tournamentsUsed.length;
+            const inFinalCount = tournamentsUsed.filter(
+               (t) => t.playedFinal,
+            ).length;
+
+            const fmtDelta = (d, suffix = "") => {
+               const sign = d > 0 ? "+" : "";
+               const color =
+                  d === 0
+                     ? "var(--text-muted)"
+                     : d > 0
+                       ? "var(--success)"
+                       : "var(--danger)";
+               return `<span style="color:${color};">${sign}${d.toFixed(1)}${suffix}</span>`;
+            };
+
+            const card = (emoji, label, value, sub) => `
+      <div class="stat-card">
+         <div class="stat-value" style="font-size:1.6rem;">${value}</div>
+         <div class="stat-label">${emoji} ${label}</div>
+         <div style="font-size:0.75rem;color:var(--text-secondary);margin-top:0.6rem;line-height:1.5;">${sub}</div>
+      </div>`;
+
+            grid.innerHTML =
+               card(
+                  "📋",
+                  "Отбор",
+                  `${qual.games} игр`,
+                  `Винрейт: <b>${qualWR.toFixed(1)}%</b><br>Ср. балл: <b>${qualAvg.toFixed(2)}</b>`,
+               ) +
+               card(
+                  "🏆",
+                  "Финал",
+                  `${final.games} игр`,
+                  `Винрейт: <b>${finalWR.toFixed(1)}%</b><br>Ср. балл: <b>${finalAvg.toFixed(2)}</b>`,
+               ) +
+               card(
+                  "📊",
+                  "Δ Винрейт (п.п.)",
+                  fmtDelta(wrDelta),
+                  `${qualWR.toFixed(1)}% → ${finalWR.toFixed(1)}%<br><span style="font-size:0.7rem;color:var(--text-muted);">разница в процентных пунктах</span>`,
+               ) +
+               card(
+                  "⭐",
+                  "Δ Ср. балл",
+                  fmtDelta(avgDelta),
+                  `${qualAvg.toFixed(2)} → ${finalAvg.toFixed(2)}`,
+               ) +
+               card(
+                  "🗂",
+                  "Турниров с финалом",
+                  `${tournamentsCount}`,
+                  `из них <b>${inFinalCount}</b> в финале<br><span style="font-size:0.7rem;color:var(--text-muted);">${qual.games + final.games} игр суммарно</span>`,
+               );
+         }
          function onWrChartModeChange() {
             const mode = document.getElementById("wrChartMode").value;
             const container = document.getElementById("wrChartContainer");
@@ -6172,12 +6867,21 @@
                      scales: {
                         y: {
                            beginAtZero: true,
-                           max: 100,
+                           max: 110,
                            ticks: {
+                              stepSize: 20,
                               color: textColor,
                               font: { family: "Inter" },
+                              callback: (value) => (value > 100 ? "" : value),
                            },
-                           grid: { color: isDark ? "#1e293b" : "#f1f5f9" },
+                           grid: {
+                              color: (ctx) =>
+                                 ctx.tick.value > 100
+                                    ? "transparent"
+                                    : isDark
+                                      ? "#1e293b"
+                                      : "#f1f5f9",
+                           },
                         },
                         x: { display: false },
                      },
@@ -6263,12 +6967,25 @@
                   maintainAspectRatio: false,
                   animation: false,
                   interaction: { mode: "index", intersect: false },
+                  layout: { padding: { top: 8 } },
                   scales: {
                      y: {
                         beginAtZero: true,
-                        max: 100,
-                        ticks: { color: textColor, font: { family: "Inter" } },
-                        grid: { color: isDark ? "#1e293b" : "#f1f5f9" },
+                        max: 110,
+                        ticks: {
+                           stepSize: 20,
+                           color: textColor,
+                           font: { family: "Inter" },
+                           callback: (value) => (value > 100 ? "" : value),
+                        },
+                        grid: {
+                           color: (ctx) =>
+                              ctx.tick.value > 100
+                                 ? "transparent"
+                                 : isDark
+                                   ? "#1e293b"
+                                   : "#f1f5f9",
+                        },
                      },
                      x: { display: false },
                   },
