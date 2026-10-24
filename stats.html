@@ -1823,6 +1823,85 @@
             opacity: 0.6;
             cursor: wait;
          }
+
+         /* ============================================================
+            CUSTOM TOOLTIP (заменяет стандартные title)
+            ============================================================ */
+         .tq-item.has-tooltip {
+            cursor: help;
+         }
+         .tq-item.has-tooltip > .tq-tooltip-body {
+            display: none;
+         }
+         .custom-tooltip {
+            position: fixed;
+            z-index: 9999;
+            top: 0;
+            left: 0;
+            background: var(--card-bg);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 0.7rem 0.9rem;
+            box-shadow: var(--shadow-lg);
+            font-size: 0.82rem;
+            font-weight: 500;
+            line-height: 1.45;
+            max-width: 340px;
+            pointer-events: none;
+            opacity: 0;
+            transform: translateY(4px);
+            transition:
+               opacity 0.14s ease,
+               transform 0.14s ease;
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+         }
+         .custom-tooltip.visible {
+            opacity: 1;
+            transform: translateY(0);
+         }
+         .custom-tooltip-title {
+            font-weight: 800;
+            font-size: 0.68rem;
+            text-transform: uppercase;
+            color: var(--text-secondary);
+            letter-spacing: 0.06em;
+            margin-bottom: 0.5rem;
+            padding-bottom: 0.4rem;
+            border-bottom: 1px dashed var(--border-color);
+         }
+         .custom-tooltip-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1.25rem;
+            padding: 0.13rem 0;
+            font-size: 0.82rem;
+            font-variant-numeric: tabular-nums;
+         }
+         .custom-tooltip-row .tt-role {
+            color: var(--text-secondary);
+            font-weight: 600;
+            white-space: nowrap;
+         }
+         .custom-tooltip-row .tt-val {
+            font-weight: 700;
+            color: var(--text-primary);
+            white-space: nowrap;
+            text-align: right;
+         }
+         .custom-tooltip-row .tt-val.tt-positive {
+            color: var(--success);
+         }
+         .custom-tooltip-row .tt-val.tt-negative {
+            color: var(--danger);
+         }
+         .custom-tooltip-empty {
+            color: var(--text-muted);
+            font-style: italic;
+            font-size: 0.8rem;
+         }
       </style>
    </head>
    <body>
@@ -4629,6 +4708,83 @@
                      ? preFinalStanding.rank
                      : null;
 
+               // === Победы / Доп / Минус по ВСЕМ играм турнира (не зависит от фильтров) ===
+               const allTourGames = Array.isArray(tournament.games)
+                  ? tournament.games
+                  : [];
+               let winsCount = 0,
+                  gamesWithMe = 0,
+                  extraSum = 0,
+                  minusSum = 0;
+               const roleAgg = {
+                  peaceful: { label: "Мирный", wins: 0, losses: 0, extra: 0, minus: 0 },
+                  sheriff:  { label: "Шериф",  wins: 0, losses: 0, extra: 0, minus: 0 },
+                  mafia:    { label: "Мафия",  wins: 0, losses: 0, extra: 0, minus: 0 },
+                  don:      { label: "Дон",    wins: 0, losses: 0, extra: 0, minus: 0 },
+                  other:    { label: "Другое", wins: 0, losses: 0, extra: 0, minus: 0 },
+               };
+               allTourGames.forEach((g) => {
+                  const me = Array.isArray(g.composition)
+                     ? g.composition.find((p) => p.isYou)
+                     : null;
+                  if (!me) return;
+                  gamesWithMe++;
+                  const rk = getRoleKey(me.role);
+                  const bucket = roleAgg[rk] || roleAgg.other;
+                  if (g.isWin) {
+                     winsCount++;
+                     bucket.wins++;
+                  } else {
+                     bucket.losses++;
+                  }
+                  if (typeof me.points === "number") {
+                     const baseline = g.isWin ? 1 : 0;
+                     const diff = me.points - baseline;
+                     if (diff > 0) {
+                        extraSum += diff;
+                        bucket.extra += diff;
+                     } else if (diff < 0) {
+                        minusSum -= diff;
+                        bucket.minus -= diff;
+                     }
+                  }
+               });
+               const fmtPts = (v) =>
+                  (Math.round(v * 100) / 100).toString();
+               const extraColor =
+                  extraSum > 0.001 ? "var(--success)" : "var(--text-muted)";
+               const minusColor =
+                  minusSum > 0.001 ? "var(--danger)" : "var(--text-muted)";
+               const roleOrder = ["peaceful", "sheriff", "mafia", "don", "other"];
+
+               // --- HTML-контент тултипов по ролям ---
+               let winsTooltipHtml = "";
+               roleOrder.forEach((k) => {
+                  const r = roleAgg[k];
+                  if (r.wins + r.losses === 0) return;
+                  winsTooltipHtml += `<div class="custom-tooltip-row"><span class="tt-role">${r.label}</span><span class="tt-val">${r.wins} побед / ${r.losses} поражений</span></div>`;
+               });
+               if (!winsTooltipHtml)
+                  winsTooltipHtml = `<div class="custom-tooltip-empty">Нет игр</div>`;
+
+               let extraTooltipHtml = "";
+               roleOrder.forEach((k) => {
+                  const r = roleAgg[k];
+                  if (r.extra <= 0.001) return;
+                  extraTooltipHtml += `<div class="custom-tooltip-row"><span class="tt-role">${r.label}</span><span class="tt-val tt-positive">+${fmtPts(r.extra)}</span></div>`;
+               });
+               if (!extraTooltipHtml)
+                  extraTooltipHtml = `<div class="custom-tooltip-empty">Нет</div>`;
+
+               let minusTooltipHtml = "";
+               roleOrder.forEach((k) => {
+                  const r = roleAgg[k];
+                  if (r.minus <= 0.001) return;
+                  minusTooltipHtml += `<div class="custom-tooltip-row"><span class="tt-role">${r.label}</span><span class="tt-val tt-negative">-${fmtPts(r.minus)}</span></div>`;
+               });
+               if (!minusTooltipHtml)
+                  minusTooltipHtml = `<div class="custom-tooltip-empty">Нет</div>`;
+
                let quickHtml = "";
                if (hasFinalStage) {
                   if (inFinal) {
@@ -4642,12 +4798,15 @@
                } else
                   quickHtml += `<span class="tq-item"><span class="tq-lbl">Место</span><b>${rank}</b></span>`;
                quickHtml += `<span class="tq-item"><span class="tq-lbl">Баллы</span><b>${totalPoints}</b></span>`;
+               // === Победы / Доп / Минус — с кастомным тултипом ===
+               quickHtml += `<span class="tq-item has-tooltip" data-tooltip-title="Победы / Все игры турнира (без учёта фильтров)"><span class="tq-lbl">Победы</span><b>${winsCount}/${gamesWithMe}</b><div class="tq-tooltip-body">${winsTooltipHtml}</div></span>`;
+               quickHtml += `<span class="tq-item has-tooltip" data-tooltip-title="Сумма доп. баллов сверх базы (1 за победу, 0 за поражение)"><span class="tq-lbl">Доп</span><b style="color:${extraColor}">${extraSum > 0.001 ? "+" + fmtPts(extraSum) : "0"}</b><div class="tq-tooltip-body">${extraTooltipHtml}</div></span>`;
+               quickHtml += `<span class="tq-item has-tooltip" data-tooltip-title="Сумма штрафных баллов ниже базы"><span class="tq-lbl">Минус</span><b style="color:${minusColor}">${minusSum > 0.001 ? "-" + fmtPts(minusSum) : "0"}</b><div class="tq-tooltip-body">${minusTooltipHtml}</div></span>`;
                if (gg)
                   quickHtml += `<span class="tq-item"><span class="tq-lbl">GG</span><b>${gg}</b></span>`;
                if (team)
                   quickHtml += `<span class="tq-item"><span class="tq-lbl">Команда</span><b>${teamPlace}</b></span>`;
-               quickHtml += `<span class="tq-item"><span class="tq-lbl">Игр</span><b>${games.length}</b></span>`;
-
+               quickHtml += `<span class="tq-item"><span class="tq-lbl">Игр</span><b>${gamesWithMe}</b></span>`;
                const chips = [];
                if (hasFinalStage)
                   chips.push(
@@ -7420,6 +7579,94 @@
             state.tableDisplayCount = 50;
             renderTable();
          }
+
+         // =====================================================================
+         // CUSTOM TOOLTIP
+         // =====================================================================
+         (function initCustomTooltip() {
+            const tooltip = document.createElement("div");
+            tooltip.className = "custom-tooltip";
+            tooltip.id = "customTooltip";
+            document.body.appendChild(tooltip);
+
+            let hideTimer = null;
+            let currentTarget = null;
+
+            function buildContent(el) {
+               const title = el.getAttribute("data-tooltip-title") || "";
+               const body = el.querySelector(".tq-tooltip-body");
+               let html = "";
+               if (title)
+                  html += `<div class="custom-tooltip-title">${title}</div>`;
+               if (body) html += body.innerHTML;
+               return html;
+            }
+
+            function position(e) {
+               const rect = tooltip.getBoundingClientRect();
+               const offset = 14;
+               let x = e.clientX + offset;
+               let y = e.clientY + offset;
+               if (x + rect.width > window.innerWidth - 8)
+                  x = e.clientX - rect.width - offset;
+               if (y + rect.height > window.innerHeight - 8)
+                  y = e.clientY - rect.height - offset;
+               x = Math.max(8, x);
+               y = Math.max(8, y);
+               tooltip.style.left = x + "px";
+               tooltip.style.top = y + "px";
+            }
+
+            function show(el, e) {
+               clearTimeout(hideTimer);
+               const html = buildContent(el);
+               if (!html) return;
+               tooltip.innerHTML = html;
+               tooltip.classList.add("visible");
+               currentTarget = el;
+               position(e);
+            }
+
+            function hide() {
+               tooltip.classList.remove("visible");
+               currentTarget = null;
+            }
+
+            function scheduleHide() {
+               clearTimeout(hideTimer);
+               hideTimer = setTimeout(hide, 40);
+            }
+
+            document.addEventListener("mouseover", (e) => {
+               const el = e.target.closest(".tq-item.has-tooltip");
+               if (!el) return;
+               const from = e.relatedTarget;
+               if (from && el.contains(from)) return;
+               show(el, e);
+            });
+            document.addEventListener("mouseout", (e) => {
+               const el = e.target.closest(".tq-item.has-tooltip");
+               if (!el) return;
+               const to = e.relatedTarget;
+               if (to && el.contains(to)) return;
+               scheduleHide();
+            });
+            document.addEventListener("mousemove", (e) => {
+               if (!tooltip.classList.contains("visible")) return;
+               if (!currentTarget || !currentTarget.isConnected) {
+                  hide();
+                  return;
+               }
+               position(e);
+            });
+            document.addEventListener(
+               "scroll",
+               () => {
+                  if (tooltip.classList.contains("visible")) hide();
+               },
+               true,
+            );
+         })();
 
          // =====================================================================
          // THEME
