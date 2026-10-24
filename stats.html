@@ -451,6 +451,74 @@
             margin-top: 0.3rem;
             color: var(--text-secondary);
          }
+         #anRoleStatsGrid .role-stat-card {
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+            justify-content: flex-start;
+            gap: 0.6rem;
+            padding: 1.25rem 1.3rem;
+         }
+
+         .role-card-head {
+            display: flex;
+            align-items: baseline;
+            justify-content: space-between;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+         }
+         .role-card-head h3 {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin: 0;
+            line-height: 1.2;
+         }
+         .role-card-meta {
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            white-space: nowrap;
+         }
+         .role-card-wr {
+            font-size: 2rem;
+            font-weight: 800;
+            line-height: 1.1;
+            letter-spacing: -0.02em;
+         }
+         .role-card-stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0.4rem;
+            padding-top: 0.7rem;
+            margin-top: auto;
+            border-top: 1px dashed var(--border-color);
+         }
+         .rc-stat {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            gap: 0.15rem;
+            min-width: 0;
+         }
+         .rc-lbl {
+            font-size: 0.65rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            letter-spacing: 0.03em;
+            text-transform: uppercase;
+            white-space: nowrap;
+            line-height: 1.1;
+         }
+         .rc-val {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            line-height: 1.1;
+            font-variant-numeric: tabular-nums;
+         }
 
          .border-red {
             border-left-color: #ef4444 !important;
@@ -5357,6 +5425,7 @@
                (sum, r) => sum + stats[r.key].games,
                0,
             );
+
             container.innerHTML = roles
                .map((r) => {
                   const d = stats[r.key];
@@ -5375,14 +5444,34 @@
                         : wr <= 40 && d.games > 0
                           ? "text-danger"
                           : "text-neutral";
-                  const mvp = d.mvp || 0,
-                     losingMvp = d.losingMvp || 0;
+                  const mvp = d.mvp || 0;
+                  const losingMvp = d.losingMvp || 0;
+
                   return `<div class="role-stat-card ${r.border}">
-      <div class="role-stat-info"><h3>${r.label}</h3><p>${d.games} игр · ${pct}%</p></div>
-      <div class="role-stat-values"><div class="role-stat-wr ${cls}">${wr}%</div>
-        <div class="role-stat-pts">Ср: ${avgPts} · <span title="MVP">🌟</span> ${mvp} · <span title="MVP проигравших">🥈</span> ${losingMvp} · 🔻 ${badCount}</div>
-      </div>
-    </div>`;
+  <div class="role-card-head">
+    <h3>${r.label}</h3>
+    <span class="role-card-meta">${d.games} игр · ${pct}%</span>
+  </div>
+  <div class="role-card-wr ${cls}">${wr}%</div>
+  <div class="role-card-stats">
+    <div class="rc-stat" title="Средний балл">
+      <span class="rc-lbl">Ср</span>
+      <span class="rc-val">${avgPts}</span>
+    </div>
+    <div class="rc-stat" title="MVP игры">
+      <span class="rc-lbl">🌟</span>
+      <span class="rc-val">${mvp}</span>
+    </div>
+    <div class="rc-stat" title="MVP проигравших">
+      <span class="rc-lbl">🥈</span>
+      <span class="rc-val">${losingMvp}</span>
+    </div>
+    <div class="rc-stat" title="Плохие игры (🔻)">
+      <span class="rc-lbl">🔻</span>
+      <span class="rc-val">${badCount}</span>
+    </div>
+  </div>
+</div>`;
                })
                .join("");
          }
