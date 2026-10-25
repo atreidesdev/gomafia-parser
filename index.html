@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Mafia Tournaments Hub</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<style>
+:root {
+  --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --bg-color: #f1f5f9;
+  --card-bg: #ffffff;
+  --card-bg-subtle: #f8fafc;
+  --border-color: #e2e8f0;
+  --border-subtle: #edf2f7;
+  --text-primary: #0f172a;
+  --text-secondary: #64748b;
+  --text-muted: #94a3b8;
+  --accent: #3b82f6;
+  --accent-hover: #2563eb;
+  --accent-soft: rgba(59,130,246,.1);
+  --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / .06);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / .08);
+  --shadow-lg: 0 12px 24px -4px rgb(0 0 0 / .1);
+  --radius-sm: .5rem; --radius-md: .75rem; --radius-lg: 1rem; --radius-xl: 1.25rem;
+}
+
+body.dark-mode {
+  --bg-color: #090d16;
+  --card-bg: #121826;
+  --card-bg-subtle: #141c2e;
+  --border-color: #26334d;
+  --border-subtle: #1e293b;
+  --text-primary: #f8fafc;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
+  --accent-soft: rgba(59,130,246,.22);
+  --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / .5);
+  --shadow-md: 0 6px 12px -2px rgb(0 0 0 / .6);
+  --shadow-lg: 0 16px 32px -4px rgb(0 0 0 / .75);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: var(--font-sans);
+  background: var(--bg-color);
+  color: var(--text-primary);
+  line-height: 1.5;
+  padding: 3rem 1.5rem;
+  transition: background-color .3s, color .3s;
+  -webkit-font-smoothing: antialiased;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+}
+
+.container { max-width: 1100px; width: 100%; margin: 0 auto; }
+
+/* Навигационный хаб */
+.nav-hub-container {
+  display: flex;
+  justify-content: center;
+  align-items: stretch; /* Растягивает карточки по высоте для идеального выравнивания */
+  gap: 1.5rem;
+  margin: 0 auto;
+  flex-wrap: wrap;
+}
+
+.nav-hub-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-xl);
+  padding: 2rem;
+  flex: 1 1 360px;
+  max-width: 520px;
+  text-decoration: none;
+  color: var(--text-primary);
+  box-shadow: var(--shadow-md);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between; /* Распределяет контент по вертикали */
+  position: relative;
+  overflow: hidden;
+}
+
+.nav-hub-card::after {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 4px;
+  background: transparent;
+  transition: background 0.3s ease;
+}
+
+.nav-hub-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+  border-color: var(--accent);
+}
+
+.nav-hub-card:hover::after,
+.nav-hub-card.active::after {
+  background: var(--accent);
+}
+
+.nav-hub-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.nav-hub-icon {
+  font-size: 2.2rem;
+  width: 56px;
+  height: 56px;
+  background: var(--accent-soft);
+  border-radius: var(--radius-lg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.nav-hub-titles {
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* Центрирование заголовков по вертикали относительно иконки */
+}
+
+.nav-hub-titles h2 {
+  font-size: 1.25rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--text-primary);
+  margin-bottom: 0.15rem;
+}
+
+.nav-hub-titles span {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.nav-hub-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin-bottom: 1.75rem;
+  flex-grow: 1; /* Занимает доступное пространство, выравнивая футер по низу */
+}
+
+.nav-hub-footer {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--accent);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  transition: gap 0.2s ease;
+}
+
+.nav-hub-card:hover .nav-hub-footer {
+  gap: 0.6rem;
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="nav-hub-container">
+    <a href="tournament-viewer.html" class="nav-hub-card">
+      <div class="nav-hub-header">
+        <div class="nav-hub-icon">🏆</div>
+        <div class="nav-hub-titles">
+          <h2>Просмотр турниров</h2>
+          <span>База партий и фильтры</span>
+        </div>
+      </div>
+      <div class="nav-hub-body">
+        <p>Изучайте каждый сыгранный стол, фильтруйте матчи по игрокам, раундам и уровню ELO.</p>
+        <p>Отмечайте интересные игры в избранное, ведите учёт просмотренных партий и скрывайте роли для тренировки логики.</p>
+      </div>
+      <div class="nav-hub-footer">Перейти к просмотру →</div>
+    </a>
+
+    <a href="stats.html" class="nav-hub-card">
+      <div class="nav-hub-header">
+        <div class="nav-hub-icon">📊</div>
+        <div class="nav-hub-titles">
+          <h2>Статистика и аналитика</h2>
+          <span>Глубокий разбор показателей</span>
+        </div>
+      </div>
+      <div class="nav-hub-body">
+        <p>Анализируйте личный винрейт по ролям, динамику ELO, тепловые карты синергии с партнёрами и влияние судей.</p>
+        <p>Изучайте детальную статистику противостояний с шерифами и графики эффективности выступлений.</p>
+      </div>
+      <div class="nav-hub-footer">Открыть аналитику →</div>
+    </a>
+  </div>
+</div>
+
+</body>
+</html>

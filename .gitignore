@@ -1,2 +1,5 @@
 node_modules/
 results/
+elo-cache.json
+missing-elo-players.txt
+tournaments-db.json

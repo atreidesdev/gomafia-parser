@@ -1981,6 +1981,91 @@
             font-weight: 700;
             color: var(--text-primary);
          }
+
+         /* ========== WATCHED GAMES ========== */
+         .watched-btn {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            border-radius: var(--radius-md);
+            padding: 0.28rem 0.55rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            box-shadow: var(--shadow-sm);
+            white-space: nowrap;
+            line-height: 1.2;
+         }
+         .watched-btn:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+            transform: translateY(-1px);
+         }
+         .watched-btn.is-watched {
+            background: var(--success-soft);
+            border-color: var(--success);
+            color: var(--success);
+         }
+         .watched-btn.is-watched:hover {
+            background: var(--danger-soft);
+            border-color: var(--danger);
+            color: var(--danger);
+         }
+         .watched-btn .watch-icon {
+            font-size: 0.85rem;
+            line-height: 1;
+         }
+.game-card-watched-row,
+.modal-game-card-watched-row {
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   margin-top: 0.85rem;
+   padding-top: 0.75rem;
+   border-top: 1px dashed var(--border-color);
+}
+         .game-card.watched {
+            opacity: 0.55;
+            border-color: var(--success);
+            background: linear-gradient(
+               90deg,
+               rgba(16, 185, 129, 0.06) 0%,
+               var(--card-bg) 55%
+            );
+         }
+         .game-card.watched:hover {
+            opacity: 1;
+         }
+         body.dark-mode .game-card.watched {
+            background: linear-gradient(
+               90deg,
+               rgba(16, 185, 129, 0.12) 0%,
+               var(--card-bg) 55%
+            );
+         }
+         .modal-game-card.watched {
+            opacity: 0.55;
+            border-color: var(--success);
+            background: linear-gradient(
+               90deg,
+               rgba(16, 185, 129, 0.06) 0%,
+               var(--card-bg-subtle) 55%
+            );
+         }
+         .modal-game-card.watched:hover {
+            opacity: 1;
+         }
+         body.dark-mode .modal-game-card.watched {
+            background: linear-gradient(
+               90deg,
+               rgba(16, 185, 129, 0.12) 0%,
+               var(--card-bg-subtle) 55%
+            );
+         }
       </style>
    </head>
    <body>
@@ -2465,6 +2550,18 @@
                      <option value="not_in_final">❌ Не прошёл в финал</option>
                   </select>
                </div>
+               <div class="filter-group">
+                  <label class="filter-label">Просмотрено</label
+                  ><select
+                     id="filterWatched"
+                     class="filter-select"
+                     onchange="applyVizFilters()"
+                  >
+                     <option value="all">Все игры</option>
+                     <option value="yes">✅ Просмотрено</option>
+                     <option value="no">☐ Не просмотрено</option>
+                  </select>
+               </div>
             </div>
 
             <div class="legend">
@@ -2630,6 +2727,13 @@
                      onchange="toggleHideRoles()"
                   />Скрыть чужие роли</label
                >
+               <button
+                  class="chart-export-btn"
+                  onclick="clearAllWatched()"
+                  title="Снять все отметки о просмотренных играх"
+               >
+                  🧹 Сбросить просмотры
+               </button>
             </div>
 
             <div id="filterResultInfo" class="filter-result-info"></div>
@@ -3567,6 +3671,7 @@
             sortMode: "date",
             hideRoles: false,
             currentTab: "viz",
+            watchedGames: {},
             charts: {
                roles: null,
                wr: null,
@@ -3832,6 +3937,100 @@
             const m = String(value).match(/\d+/);
             return m ? parseInt(m[0], 10) : null;
          }
+
+         // =====================================================================
+         // WATCHED GAMES (localStorage)
+         // =====================================================================
+         function getWatchedStorageKey() {
+            const scope = state.playerId || state.targetPlayer || "unknown";
+            return `mafia-watched-v1-${scope}`;
+         }
+         function loadWatchedGames() {
+            try {
+               const raw = localStorage.getItem(getWatchedStorageKey());
+               return raw ? JSON.parse(raw) : {};
+            } catch (e) {
+               console.warn("Failed to load watched games", e);
+               return {};
+            }
+         }
+         function saveWatchedGames(map) {
+            try {
+               localStorage.setItem(
+                  getWatchedStorageKey(),
+                  JSON.stringify(map),
+               );
+            } catch (e) {
+               console.warn("Failed to save watched games", e);
+            }
+         }
+         function getGameUniqueKey(game, url) {
+            const u = url || "";
+            const gn = String(game.gameNumber || "").trim();
+            const tn = String(game.tableNumber || "").trim();
+            return `${u}|${gn}|${tn}`;
+         }
+         function watchedBtnHtml(gameKey, isWatched) {
+            const label = isWatched ? "Просмотрено" : "Отметить";
+            const icon = isWatched ? "✅" : "☐";
+            const title = isWatched
+               ? "Снять отметку о просмотре"
+               : "Отметить как просмотренную";
+            return `<button class="watched-btn ${isWatched ? "is-watched" : ""}" type="button" title="${title}" data-game-key="${escapeHtml(gameKey)}" onclick="event.preventDefault();event.stopPropagation();toggleGameWatched(this.dataset.gameKey,this);return false;"><span class="watch-icon">${icon}</span><span class="watch-label">${label}</span></button>`;
+         }
+         function toggleGameWatched(gameKey, btn) {
+            if (!state.watchedGames) state.watchedGames = {};
+            if (state.watchedGames[gameKey]) delete state.watchedGames[gameKey];
+            else state.watchedGames[gameKey] = true;
+            saveWatchedGames(state.watchedGames);
+            const isWatched = !!state.watchedGames[gameKey];
+
+            document.querySelectorAll("[data-game-key]").forEach((el) => {
+               if (el.dataset.gameKey !== gameKey) return;
+               if (el.classList.contains("watched-btn")) {
+                  el.classList.toggle("is-watched", isWatched);
+                  const icon = el.querySelector(".watch-icon");
+                  if (icon) icon.textContent = isWatched ? "✅" : "☐";
+                  const label = el.querySelector(".watch-label");
+                  if (label)
+                     label.textContent = isWatched
+                        ? "Просмотрено"
+                        : "Отметить";
+               } else {
+                  el.classList.toggle("watched", isWatched);
+               }
+            });
+         }
+         function clearAllWatched() {
+            const count = Object.keys(state.watchedGames || {}).length;
+            if (count === 0) {
+               alert("Нет отметок о просмотренных играх.");
+               return;
+            }
+            if (!confirm(`Снять все отметки о просмотренных играх (${count})?`))
+               return;
+            state.watchedGames = {};
+            saveWatchedGames({});
+            if (state.filters.watched && state.filters.watched !== "all") {
+               applyVizFilters();
+            } else {
+               document
+                  .querySelectorAll(
+                     ".game-card.watched, .modal-game-card.watched",
+                  )
+                  .forEach((c) => c.classList.remove("watched"));
+               document
+                  .querySelectorAll(".watched-btn.is-watched")
+                  .forEach((b) => {
+                     b.classList.remove("is-watched");
+                     const icon = b.querySelector(".watch-icon");
+                     if (icon) icon.textContent = "☐";
+                     const label = b.querySelector(".watch-label");
+                     if (label) label.textContent = "Отметить";
+                  });
+            }
+         }
+
          function parseDateOnly(value) {
             if (!value) return null;
             const s = String(value).trim();
@@ -4167,6 +4366,7 @@
             state.targetPlayer = targetPlayer;
             state.playerUrl = playerProfileUrl;
             state.playerId = playerProfileId;
+            state.watchedGames = loadWatchedGames();
             state.partnerStats = computePartnerStats(flatGames);
             state.displayedPartnerStats = [...state.partnerStats];
             state.judgeStats = [];
@@ -4216,6 +4416,7 @@
             setVal("filterLosingMvp", "all");
             setVal("filterTournamentType", "all");
             setVal("filterTournamentFinal", "all");
+            setVal("filterWatched", "all");
 
             renderViz();
             renderAnalytics();
@@ -4593,6 +4794,7 @@
                   .value,
                tournamentFinal: document.getElementById("filterTournamentFinal")
                   .value,
+               watched: document.getElementById("filterWatched").value,
             };
          }
 
@@ -4638,7 +4840,7 @@
             return true;
          }
 
-         function gamePassesFilters(game, f) {
+         function gamePassesFilters(game, f, tournamentUrl) {
             const roleLower = game.role ? game.role.toLowerCase() : "";
             const me = Array.isArray(game.composition)
                ? game.composition.find((p) => p.isYou)
@@ -4689,6 +4891,12 @@
                const isLosingMvp = isLosingTeamMvp(game);
                if (f.losingMvp === "yes" && !isLosingMvp) return false;
                if (f.losingMvp === "no" && isLosingMvp) return false;
+            }
+            if (f.watched && f.watched !== "all") {
+               const key = getGameUniqueKey(game, tournamentUrl);
+               const isWatched = !!state.watchedGames[key];
+               if (f.watched === "yes" && !isWatched) return false;
+               if (f.watched === "no" && isWatched) return false;
             }
             return true;
          }
@@ -4803,7 +5011,8 @@
                if (!Array.isArray(tournament.games)) return;
                if (!tournamentPassesFilters(tournament, filters)) return;
                let games = tournament.games.filter((g) => {
-                  if (!gamePassesFilters(g, filters)) return false;
+                  if (!gamePassesFilters(g, filters, tournament.url))
+                     return false;
                   if (searchTerms.length) {
                      if (!Array.isArray(g.composition)) return false;
                      const names = g.composition.map((p) =>
@@ -5102,7 +5311,22 @@
                      totalTournaments > max
                         ? ` · показано <b>${Math.min(max, totalTournaments)}</b>`
                         : "";
-                  infoEl.innerHTML = `Найдено: <b>${totalGames}</b> ${pluralize(totalGames, "игра", "игры", "игр")} · <b>${totalTournaments}</b> ${pluralize(totalTournaments, "турнир", "турнира", "турниров")}${renderedInfo}${searchHint}`;
+                  const watchedCount = filteredTournaments.reduce(
+                     (s, x) =>
+                        s +
+                        x.games.filter(
+                           (g) =>
+                              state.watchedGames[
+                                 getGameUniqueKey(g, x.tournament.url)
+                              ],
+                        ).length,
+                     0,
+                  );
+                  const watchedInfo =
+                     watchedCount > 0
+                        ? ` · ✅ просмотрено: <b>${watchedCount}</b> из ${totalGames}`
+                        : "";
+                  infoEl.innerHTML = `Найдено: <b>${totalGames}</b> ${pluralize(totalGames, "игра", "игры", "игр")} · <b>${totalTournaments}</b> ${pluralize(totalTournaments, "турнир", "турнира", "турниров")}${renderedInfo}${watchedInfo}${searchHint}`;
                }
             }
             if (totalGames === 0) {
@@ -5116,53 +5340,62 @@
             renderTournaments();
          }
 
-         function renderGameCard(game, tournament) {
-            const isWin = game.isWin;
-            const me = Array.isArray(game.composition)
-               ? game.composition.find((p) => p.isYou)
-               : null;
-            const myRole = me ? me.role : game.role;
-            const myRoleKey = getRoleKey(myRole);
-            const winnerTitle = getWinnerName(game, myRoleKey);
-            const resultBadge = isWin
-               ? `<span class="badge" style="background:#d1fae5;color:#065f46;margin-left:auto;">✅ ${winnerTitle}</span>`
-               : `<span class="badge" style="background:#fee2e2;color:#991b1b;margin-left:auto;">❌ ${winnerTitle}</span>`;
-            const totalGamesInTournament = Array.isArray(tournament.games)
-               ? tournament.games.length
-               : null;
-            const hasFinalStage = !!tournament.hasFinalStage;
-            const copyText = buildGameCopyText(
-               tournament.tournament,
-               game.tableNumber,
-               game.gameNumber,
-               tournament.dateStart,
-               tournament.dateEnd,
-               totalGamesInTournament,
-               hasFinalStage,
-            );
-            const copyBtn = copyText
-               ? `<button class="copy-btn game-copy-btn" type="button" title="Скопировать: ${escapeHtml(copyText)}" data-copy-text="${escapeHtml(copyText)}" onclick="event.preventDefault();event.stopPropagation();copyGameInfo(this.dataset.copyText,this);return false;">📋</button>`
-               : "";
-            const searchBtn = copyText
-               ? `<button class="copy-btn game-copy-btn" type="button" title="Найти в браузере" data-copy-text="${escapeHtml(copyText)}" onclick="event.preventDefault();event.stopPropagation();searchGameInBrowser(this.dataset.copyText,this);return false;">🔍</button>`
-               : "";
-            const linkBtn = tournament.url
-               ? `<button class="copy-btn game-copy-btn" type="button" title="Открыть турнир" data-tourn-url="${escapeHtml(tournament.url)}" data-game-num="${escapeHtml(String(game.gameNumber || ""))}" onclick="event.preventDefault();event.stopPropagation();openGameInTournament(this.dataset.tournUrl, this.dataset.gameNum);return false;">🔗</button>`
-               : "";
-            const judgeHtml = game.tableJudge
-               ? `<div class="game-judge-centered">👨‍⚖️ Судья: ${escapeHtml(game.tableJudge)}</div>`
-               : "";
-            const gameInfoLeft = [game.gameNumber, game.tableNumber]
-               .filter(Boolean)
-               .join(' <span class="game-dot-separator"></span> ');
-            return `<div class="game-card">
-    <div class="game-meta"><span style="display:inline-flex;align-items:center;gap:.35rem;">${gameInfoLeft}</span><span style="display:inline-flex;align-items:center;gap:.35rem;flex-wrap:wrap;">${copyBtn}${searchBtn}${linkBtn}</span></div>
-    ${judgeHtml}
-    <div style="display:flex;gap:.5rem;margin-bottom:.5rem;flex-wrap:wrap;align-items:center;"><span class="badge ${getRoleBadgeClass(myRole)}">${myRole || "?"}</span>${resultBadge}</div>
-    <div class="composition">${formatComposition(game.composition, game)}</div>
-  </div>`;
-         }
+function renderGameCard(game, tournament) {
+   const isWin = game.isWin;
+   const me = Array.isArray(game.composition)
+      ? game.composition.find((p) => p.isYou)
+      : null;
+   const myRole = me ? me.role : game.role;
+   const myRoleKey = getRoleKey(myRole);
+   const winnerTitle = getWinnerName(game, myRoleKey);
+   const resultBadge = isWin
+      ? `<span class="badge" style="background:#d1fae5;color:#065f46;margin-left:auto;">✅ ${winnerTitle}</span>`
+      : `<span class="badge" style="background:#fee2e2;color:#991b1b;margin-left:auto;">❌ ${winnerTitle}</span>`;
 
+   const tableEloBadge = game.averageElo
+      ? `<span class="badge" style="background:var(--accent-soft);color:var(--accent);font-size:0.7rem;padding:0.2rem 0.5rem;letter-spacing:0.03em;margin-left:0.15rem;" title="Среднее ELO стола">📊 ${game.averageElo}</span>`
+      : "";
+
+   const totalGamesInTournament = Array.isArray(tournament.games)
+      ? tournament.games.length
+      : null;
+   const hasFinalStage = !!tournament.hasFinalStage;
+   const copyText = buildGameCopyText(
+      tournament.tournament,
+      game.tableNumber,
+      game.gameNumber,
+      tournament.dateStart,
+      tournament.dateEnd,
+      totalGamesInTournament,
+      hasFinalStage,
+   );
+   const copyBtn = copyText
+      ? `<button class="copy-btn game-copy-btn" type="button" title="Скопировать: ${escapeHtml(copyText)}" data-copy-text="${escapeHtml(copyText)}" onclick="event.preventDefault();event.stopPropagation();copyGameInfo(this.dataset.copyText,this);return false;">📋</button>`
+      : "";
+   const searchBtn = copyText
+      ? `<button class="copy-btn game-copy-btn" type="button" title="Найти в браузере" data-copy-text="${escapeHtml(copyText)}" onclick="event.preventDefault();event.stopPropagation();searchGameInBrowser(this.dataset.copyText,this);return false;">🔍</button>`
+      : "";
+   const linkBtn = tournament.url
+      ? `<button class="copy-btn game-copy-btn" type="button" title="Открыть турнир" data-tourn-url="${escapeHtml(tournament.url)}" data-game-num="${escapeHtml(String(game.gameNumber || ""))}" onclick="event.preventDefault();event.stopPropagation();openGameInTournament(this.dataset.tournUrl, this.dataset.gameNum);return false;">🔗</button>`
+      : "";
+   const judgeHtml = game.tableJudge
+      ? `<div class="game-judge-centered">👨‍⚖️ Судья: ${escapeHtml(game.tableJudge)}</div>`
+      : "";
+   const gameInfoLeft = [game.gameNumber, game.tableNumber]
+      .filter(Boolean)
+      .join(' <span class="game-dot-separator"></span> ');
+   const gameKey = getGameUniqueKey(game, tournament.url);
+   const watched = !!state.watchedGames[gameKey];
+   const watchedBtn = watchedBtnHtml(gameKey, watched);
+
+   return `<div class="game-card ${watched ? "watched" : ""}" data-game-key="${escapeHtml(gameKey)}">
+<div class="game-meta"><span style="display:inline-flex;align-items:center;gap:.35rem;">${gameInfoLeft}${tableEloBadge}</span><span style="display:inline-flex;align-items:center;gap:.35rem;">${copyBtn}${searchBtn}${linkBtn}</span></div>
+${judgeHtml}
+<div style="display:flex;gap:.35rem;margin-bottom:.5rem;flex-wrap:wrap;align-items:center;"><span class="badge ${getRoleBadgeClass(myRole)}">${myRole || "?"}</span>${resultBadge}</div>
+<div class="composition">${formatComposition(game.composition, game)}</div>
+<div class="game-card-watched-row">${watchedBtn}</div>
+</div>`;
+}
          function formatComposition(composition, game) {
             if (!Array.isArray(composition)) return "";
             let html = '<ol class="player-list">';
@@ -5281,26 +5514,25 @@
                   else if (!meRed && !otherRed) matchType = "togetherBlack";
                   else if (meRed && !otherRed) matchType = "oppositeTargetRed";
                   else matchType = "oppositeTargetBlack";
-                  s.games.push({
-                     tournamentName: tournament.tournament,
-                     tournamentUrl: tournament.url,
-                     dateStart: tournament.dateStart,
-                     dateEnd: tournament.dateEnd,
-                     gameNumber: game.gameNumber,
-                     tableNumber: game.tableNumber,
-                     tableJudge: game.tableJudge,
-                     winner: game.winner,
-                     role: game.role || me.role,
-                     isWin: game.isWin,
-                     composition: game.composition,
-                     mvp: game.mvp,
-                     firstKill: game.firstKill,
-                     matchType,
-                     totalGames: Array.isArray(tournament.games)
-                        ? tournament.games.length
-                        : null,
-                     hasFinalStage: !!tournament.hasFinalStage,
-                  });
+s.games.push({
+   tournamentName: tournament.tournament,
+   tournamentUrl: tournament.url,
+   dateStart: tournament.dateStart,
+   dateEnd: tournament.dateEnd,
+   gameNumber: game.gameNumber,
+   tableNumber: game.tableNumber,
+   tableJudge: game.tableJudge,
+   winner: game.winner,
+   role: game.role || me.role,
+   isWin: game.isWin,
+   composition: game.composition,
+   mvp: game.mvp,
+   firstKill: game.firstKill,
+   averageElo: game.averageElo,
+   matchType,
+   totalGames: Array.isArray(tournament.games) ? tournament.games.length : null,
+   hasFinalStage: !!tournament.hasFinalStage,
+});
                   if (matchType === "togetherRed") {
                      s.togetherRed++;
                      if (game.isWin) s.winsTogetherRed++;
@@ -6727,14 +6959,12 @@
                      : null;
                   if (!me) return;
 
-                  // Стадия берётся из scraper.js (scheme.number_of_games_final)
                   if (g.round === "Финал") {
                      final.games++;
                      if (g.isWin) final.wins++;
                      final.points += me.points || 0;
                      tFinal++;
                   } else {
-                     // 'Отбор' и 'Полуфинал' считаем отбором
                      qual.games++;
                      if (g.isWin) qual.wins++;
                      qual.points += me.points || 0;
@@ -6747,7 +6977,7 @@
                      name: extractTournamentName(t.tournament || ""),
                      qual: tQual,
                      final: tFinal,
-                     playedFinal: tFinal > 0, // ⬅️ новый флаг
+                     playedFinal: tFinal > 0,
                   });
                }
             });
@@ -7467,25 +7697,24 @@
                const me = game.composition.find((p) => p.isYou);
                if (!me) return;
                const myRoleKey = getRoleKey(me.role);
-               const item = {
-                  tournamentName: tournament.tournament,
-                  tournamentUrl: tournament.url,
-                  dateStart: tournament.dateStart,
-                  dateEnd: tournament.dateEnd,
-                  gameNumber: game.gameNumber,
-                  tableNumber: game.tableNumber,
-                  tableJudge: game.tableJudge,
-                  winner: game.winner,
-                  role: game.role || me.role,
-                  isWin: game.isWin,
-                  composition: game.composition,
-                  mvp: game.mvp,
-                  firstKill: game.firstKill,
-                  totalGames: Array.isArray(tournament.games)
-                     ? tournament.games.length
-                     : null,
-                  hasFinalStage: !!tournament.hasFinalStage,
-               };
+const item = {
+   tournamentName: tournament.tournament,
+   tournamentUrl: tournament.url,
+   dateStart: tournament.dateStart,
+   dateEnd: tournament.dateEnd,
+   gameNumber: game.gameNumber,
+   tableNumber: game.tableNumber,
+   tableJudge: game.tableJudge,
+   winner: game.winner,
+   role: game.role || me.role,
+   isWin: game.isWin,
+   composition: game.composition,
+   mvp: game.mvp,
+   firstKill: game.firstKill,
+   averageElo: game.averageElo,
+   totalGames: Array.isArray(tournament.games) ? tournament.games.length : null,
+   hasFinalStage: !!tournament.hasFinalStage,
+};
                const sheriff = game.composition.find(
                   (p) => !p.isYou && getRoleKey(p.role) === "sheriff",
                );
@@ -7796,25 +8025,24 @@
                if (!me) return;
                const k = getRoleKey(me.role);
                if (!judges[judge].roles[k]) return;
-               const item = {
-                  tournamentName: tournament.tournament,
-                  tournamentUrl: tournament.url,
-                  dateStart: tournament.dateStart,
-                  dateEnd: tournament.dateEnd,
-                  gameNumber: game.gameNumber,
-                  tableNumber: game.tableNumber,
-                  tableJudge: game.tableJudge,
-                  winner: game.winner,
-                  role: game.role || me.role,
-                  isWin: game.isWin,
-                  composition: game.composition,
-                  mvp: game.mvp,
-                  firstKill: game.firstKill,
-                  totalGames: Array.isArray(tournament.games)
-                     ? tournament.games.length
-                     : null,
-                  hasFinalStage: !!tournament.hasFinalStage,
-               };
+const item = {
+   tournamentName: tournament.tournament,
+   tournamentUrl: tournament.url,
+   dateStart: tournament.dateStart,
+   dateEnd: tournament.dateEnd,
+   gameNumber: game.gameNumber,
+   tableNumber: game.tableNumber,
+   tableJudge: game.tableJudge,
+   winner: game.winner,
+   role: game.role || me.role,
+   isWin: game.isWin,
+   composition: game.composition,
+   mvp: game.mvp,
+   firstKill: game.firstKill,
+   averageElo: game.averageElo,
+   totalGames: Array.isArray(tournament.games) ? tournament.games.length : null,
+   hasFinalStage: !!tournament.hasFinalStage,
+};
                const j = judges[judge];
                const points = me.points || 0;
                j.total++;
@@ -8222,6 +8450,9 @@
                   const myRoleBadge = myRole
                      ? `<span class="badge ${getRoleBadgeClass(myRole)}">${myRole}</span>`
                      : "";
+const tableEloBadge = g.averageElo
+   ? `<span class="badge" style="background:var(--accent-soft);color:var(--accent);font-size:0.7rem;padding:0.2rem 0.5rem;letter-spacing:0.03em;" title="Среднее ELO стола">📊 ${g.averageElo}</span>`
+   : "";
                   const dateStr = g.dateStart
                      ? `<span style="font-size:.8rem;color:var(--text-secondary);margin-right:.5rem;">📅 ${g.dateStart}</span>`
                      : "";
@@ -8249,19 +8480,24 @@
                   const gameInfoLeft = [g.gameNumber, g.tableNumber]
                      .filter(Boolean)
                      .join(' <span class="game-dot-separator"></span> ');
-                  return `<div class="modal-game-card">
-      <div class="modal-game-header">
-        <div style="display:flex;align-items:center;flex-wrap:wrap;gap:.4rem;">
-          <a href="${g.tournamentUrl || "#"}" target="_blank" class="modal-tournament-link">${g.tournamentName} ↗</a>
-          ${dateStr}
-          <span style="font-weight:600;color:var(--text-secondary);font-size:.8rem;display:inline-flex;align-items:center;gap:.35rem;">${gameInfoLeft}</span>
-          ${copyBtn}${searchBtn}${linkBtn}
-        </div>
-        <div class="modal-result-badges">${myRoleBadge}${winnerBadge}</div>
-      </div>
-      ${judgeHtml}
-      ${compHtml}
-    </div>`;
+                  const gameKey = getGameUniqueKey(g, g.tournamentUrl);
+                  const watched = !!state.watchedGames[gameKey];
+                  const watchedBtn = watchedBtnHtml(gameKey, watched);
+return `<div class="modal-game-card ${watched ? "watched" : ""}" data-game-key="${escapeHtml(gameKey)}">
+  <div class="modal-game-header">
+    <div style="display:flex;align-items:center;flex-wrap:wrap;gap:.4rem;">
+      <a href="${g.tournamentUrl || "#"}" target="_blank" class="modal-tournament-link">${g.tournamentName} ↗</a>
+      ${dateStr}
+      <span style="font-weight:600;color:var(--text-secondary);font-size:.8rem;display:inline-flex;align-items:center;gap:.35rem;">${gameInfoLeft}</span>
+      ${tableEloBadge}
+      ${copyBtn}${searchBtn}${linkBtn}
+    </div>
+    <div class="modal-result-badges">${myRoleBadge}${winnerBadge}</div>
+  </div>
+  ${judgeHtml}
+  ${compHtml}
+  <div class="modal-game-card-watched-row">${watchedBtn}</div>
+</div>`;
                })
                .join("");
          }

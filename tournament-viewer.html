@@ -1,0 +1,1666 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Tournament Games Viewer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<style>
+:root {
+  --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --bg-color: #f1f5f9;
+  --card-bg: #ffffff;
+  --card-bg-subtle: #f8fafc;
+  --border-color: #e2e8f0;
+  --border-subtle: #edf2f7;
+  --text-primary: #0f172a;
+  --text-secondary: #64748b;
+  --text-muted: #94a3b8;
+  --accent: #3b82f6;
+  --accent-hover: #2563eb;
+  --accent-soft: rgba(59,130,246,.1);
+  --success: #10b981;
+  --success-soft: rgba(16,185,129,.14);
+  --danger: #ef4444;
+  --danger-soft: rgba(239,68,68,.14);
+  --warning: #f59e0b;
+  --warning-soft: rgba(245,158,11,.14);
+  --role-red-bg: #fee2e2; --role-red-text: #b91c1c;
+  --role-sheriff-bg: #fef3c7; --role-sheriff-text: #b45309;
+  --role-mafia-bg: #e2e8f0; --role-mafia-text: #334155;
+  --role-don-bg: #ede9fe; --role-don-text: #6d28d9;
+  --role-lg-partial-bg: #dcfce7; --role-lg-partial-text: #15803d;
+  --role-lg-full-bg: #e0f2fe; --role-lg-full-text: #0369a1;
+  --role-lg-zero-text: #64748b; --role-lg-zero-border: #94a3b8;
+  --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / .06);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / .08);
+  --shadow-lg: 0 12px 24px -4px rgb(0 0 0 / .1);
+  --radius-sm: .5rem; --radius-md: .75rem; --radius-lg: 1rem; --radius-xl: 1.25rem;
+}
+body.dark-mode {
+  --bg-color: #090d16;
+  --card-bg: #121826;
+  --card-bg-subtle: #141c2e;
+  --border-color: #26334d;
+  --border-subtle: #1e293b;
+  --text-primary: #f8fafc;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
+  --accent-soft: rgba(59,130,246,.22);
+  --role-red-bg: rgba(239,68,68,.2); --role-red-text: #fca5a5;
+  --role-sheriff-bg: rgba(245,158,11,.2); --role-sheriff-text: #fcd34d;
+  --role-mafia-bg: rgba(148,163,184,.2); --role-mafia-text: #cbd5e1;
+  --role-don-bg: rgba(139,92,246,.25); --role-don-text: #d8b4fe;
+  --role-lg-partial-bg: rgba(16, 185, 129, 0.22); --role-lg-partial-text: #86efac;
+  --role-lg-full-bg: rgba(14, 165, 233, 0.24); --role-lg-full-text: #7dd3fc;
+  --role-lg-zero-text: #cbd5e1; --role-lg-zero-border: #64748b;
+  --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / .5);
+  --shadow-md: 0 6px 12px -2px rgb(0 0 0 / .6);
+  --shadow-lg: 0 16px 32px -4px rgb(0 0 0 / .75);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: var(--font-sans); background: var(--bg-color); color: var(--text-primary); line-height: 1.5; padding: 2rem 1.5rem; transition: background-color .3s, color .3s; -webkit-font-smoothing: antialiased; }
+.container { max-width: 1440px; margin: 0 auto; }
+
+header { text-align: center; margin-bottom: 2rem; padding: 2.25rem 1.5rem; background: var(--card-bg); border: 1px solid var(--border-color); border-radius: var(--radius-xl); box-shadow: var(--shadow-sm); }
+h1 { font-size: 2.2rem; font-weight: 800; letter-spacing: -.03em; margin-bottom: .4rem; background: linear-gradient(135deg, var(--text-primary) 30%, var(--accent) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.header-sub { color: var(--text-secondary); margin-bottom: 1.5rem; font-size: .95rem; }
+.header-controls { display: flex; gap: .75rem; justify-content: center; align-items: center; flex-wrap: wrap; }
+.theme-btn { padding: .65rem 1.25rem; border-radius: var(--radius-md); border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-primary); cursor: pointer; font-weight: 600; font-size: .9rem; display: inline-flex; align-items: center; gap: .5rem; transition: all .2s; box-shadow: var(--shadow-sm); }
+.theme-btn:hover { background: var(--card-bg-subtle); transform: translateY(-1px); }
+.file-upload { position: relative; display: inline-block; }
+.file-upload input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+.upload-btn { display: inline-flex; align-items: center; gap: .5rem; background: var(--accent); color: #fff; padding: .65rem 1.4rem; border-radius: var(--radius-md); font-weight: 600; font-size: .9rem; border: none; cursor: pointer; transition: all .2s; box-shadow: 0 4px 14px rgba(59,130,246,.35); }
+.upload-btn:hover { background: var(--accent-hover); transform: translateY(-1px); }
+.error-msg { color: var(--danger); background: var(--danger-soft); border: 1px solid rgba(239,68,68,.25); padding: .9rem 1.25rem; border-radius: var(--radius-md); text-align: center; margin-top: 1rem; font-weight: 500; }
+.error-msg code { background: rgba(0,0,0,.08); padding: .1rem .4rem; border-radius: 4px; font-family: ui-monospace, monospace; font-size: .85em; }
+body.dark-mode .error-msg code { background: rgba(255,255,255,.12); }
+.hidden { display: none !important; }
+
+.summary-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 1rem; margin-bottom: 1.75rem; }
+.stat-card { background: var(--card-bg); border: 1px solid var(--border-color); padding: 1.25rem; border-radius: var(--radius-lg); text-align: center; box-shadow: var(--shadow-sm); }
+.stat-value { font-size: 2rem; font-weight: 800; color: var(--accent); line-height: 1.1; letter-spacing: -.02em; }
+.stat-label { color: var(--text-secondary); font-size: .72rem; text-transform: uppercase; letter-spacing: .08em; font-weight: 700; margin-top: .35rem; }
+
+/* ── Симметричная панель фильтров (Grid) ── */
+.filter-panel {
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  padding: 1.5rem;
+  border-radius: var(--radius-lg);
+  margin-bottom: 1.5rem;
+  box-shadow: var(--shadow-sm);
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 1rem;
+  align-items: flex-end;
+}
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: .4rem;
+  min-width: 0;
+  grid-column: span 3;
+}
+.filter-group.span-6 { grid-column: span 6; }
+.filter-group.span-4 { grid-column: span 4; }
+.filter-group.span-3 { grid-column: span 3; }
+.filter-group.span-12 { grid-column: span 12; }
+
+@media (max-width: 1100px) {
+  .filter-group { grid-column: span 6 !important; }
+  .filter-group.span-12 { grid-column: span 12 !important; }
+}
+@media (max-width: 700px) {
+  .filter-group { grid-column: span 12 !important; }
+}
+
+.filter-label { font-size: .7rem; font-weight: 700; color: var(--text-secondary); text-transform: uppercase; letter-spacing: .05em; }
+.filter-select, .search-input { padding: .65rem .9rem; border-radius: var(--radius-md); border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-primary); font-family: inherit; font-size: .88rem; font-weight: 500; transition: all .2s; box-shadow: var(--shadow-sm); width: 100%; min-width: 0; height: 42px; }
+.filter-select:focus, .search-input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+
+/* Унифицированная кнопка сброса */
+.filter-reset-btn {
+  padding: .65rem 1.2rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-color);
+  background: var(--card-bg);
+  color: var(--text-secondary);
+  font-family: inherit;
+  font-size: .88rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all .2s;
+  box-shadow: var(--shadow-sm);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: .4rem;
+  width: 100%;
+  height: 42px;
+  white-space: nowrap;
+}
+.filter-reset-btn:hover {
+  background: var(--card-bg-subtle);
+  border-color: var(--accent);
+  color: var(--accent);
+  transform: translateY(-1px);
+}
+
+/* ── Анимированный свич ── */
+.toggle-switch-container {
+  position: relative;
+  display: flex;
+  background: var(--card-bg-subtle);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  height: 42px;
+  padding: 3px;
+  box-sizing: border-box;
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+}
+.toggle-switch-container input {
+  display: none;
+}
+.toggle-switch-container label {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  cursor: pointer;
+  z-index: 2;
+  transition: color 0.25s ease;
+  user-select: none;
+  white-space: nowrap;
+}
+.toggle-switch-container input:checked + label {
+  color: #fff;
+}
+.toggle-switch-slider {
+  position: absolute;
+  top: 3px;
+  bottom: 3px;
+  width: calc(50% - 3px);
+  background: var(--accent);
+  border-radius: calc(var(--radius-md) - 4px);
+  z-index: 1;
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), clip-path 0.4s ease;
+  box-shadow: 0 2px 10px rgba(59, 130, 246, 0.4);
+  clip-path: polygon(0 0, 100% 0, 84% 100%, 0% 100%);
+}
+#pmAll:checked ~ .player-mode-slider,
+#hrHide:checked ~ .role-toggle-slider {
+  transform: translateX(100%);
+  clip-path: polygon(16% 0, 100% 0, 100% 100%, 0% 100%);
+}
+
+/* Мультиселект турниров */
+.multi-select-dropdown {
+  position: relative;
+  width: 100%;
+}
+.multi-select-btn {
+  width: 100%;
+  height: 42px;
+  padding: .65rem .9rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-color);
+  background: var(--card-bg);
+  color: var(--text-primary);
+  font-family: inherit;
+  font-size: .88rem;
+  font-weight: 500;
+  text-align: left;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: var(--shadow-sm);
+}
+.multi-select-content {
+  display: none;
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+  z-index: 100;
+  max-height: 260px;
+  overflow-y: auto;
+  padding: .5rem;
+}
+.multi-select-dropdown.open .multi-select-content { display: block; }
+.multi-select-search {
+  width: 100%;
+  padding: .4rem .6rem;
+  margin-bottom: .4rem;
+  border-radius: 4px;
+  border: 1px solid var(--border-color);
+  background: var(--card-bg-subtle);
+  color: var(--text-primary);
+  font-size: .8rem;
+}
+.multi-select-options {
+  display: flex;
+  flex-direction: column;
+  gap: .25rem;
+}
+.multi-select-option {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  padding: .35rem .5rem;
+  border-radius: 4px;
+  font-size: .82rem;
+  cursor: pointer;
+  user-select: none;
+}
+.multi-select-option:hover { background: var(--card-bg-subtle); }
+
+.filter-stats { background: var(--card-bg); border: 1px solid var(--accent); border-left: 5px solid var(--accent); border-radius: var(--radius-lg); padding: 1rem 1.25rem; margin-bottom: 1.5rem; box-shadow: var(--shadow-sm); }
+.filter-stats-title { font-size: .72rem; font-weight: 800; color: var(--accent); text-transform: uppercase; letter-spacing: .06em; margin-bottom: .7rem; }
+.filter-stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: .75rem; }
+.fs-item { text-align: center; }
+.fs-val { font-size: 1.35rem; font-weight: 800; color: var(--text-primary); }
+.fs-lbl { font-size: .65rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: .05em; margin-top: .15rem; }
+
+.result-info { text-align: center; font-weight: 600; color: var(--text-secondary); font-size: .9rem; padding: .25rem 0 1.25rem; }
+.result-info b { color: var(--accent); }
+.result-info .mode-tag { display: inline-block; background: var(--accent-soft); color: var(--accent); padding: .1rem .55rem; border-radius: 9999px; font-size: .75rem; font-weight: 700; margin-left: .35rem; }
+
+.tournament-block { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: var(--radius-lg); padding: 1.25rem 1.5rem; margin-bottom: 1.25rem; box-shadow: var(--shadow-sm); border-left: 4px solid var(--accent); }
+.tournament-block summary { cursor: pointer; list-style: none; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: .75rem; font-size: 1.05rem; font-weight: 700; padding: .25rem 0; user-select: none; }
+.tournament-block > summary::-webkit-details-marker { display: none; }
+.tournament-block > summary::before { content: "›"; display: inline-block; margin-right: .5rem; font-size: 1.3rem; line-height: 1; color: var(--text-muted); transition: transform .2s; font-weight: 700; }
+.tournament-block[open] > summary::before { transform: rotate(90deg); color: var(--accent); }
+.tournament-header-inner { display: flex; flex-wrap: wrap; align-items: center; gap: .75rem 1.25rem; flex: 1; min-width: 0; }
+.tournament-title-group { display: flex; align-items: center; gap: .5rem; flex: 1; min-width: 0; }
+.tournament-title { color: var(--text-primary); text-decoration: none; font-weight: 700; font-size: 1.05rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.tournament-title:hover { color: var(--accent); }
+.tournament-quick { display: flex; gap: .4rem; flex-wrap: wrap; }
+.tq-item { display: flex; flex-direction: column; align-items: center; padding: .35rem .65rem; background: var(--card-bg-subtle); border: 1px solid var(--border-color); border-radius: var(--radius-md); font-size: .82rem; line-height: 1.2; min-width: 60px; }
+.tq-lbl { font-size: .6rem; text-transform: uppercase; color: var(--text-muted); letter-spacing: .05em; font-weight: 700; }
+.tq-item b { color: var(--text-primary); font-size: .9rem; font-weight: 700; }
+.tournament-meta { margin: .85rem 0 1rem; display: flex; flex-wrap: wrap; gap: .5rem; }
+.meta-chip { display: inline-flex; align-items: center; gap: .35rem; padding: .3rem .7rem; background: var(--card-bg-subtle); border-radius: 9999px; font-size: .78rem; font-weight: 500; color: var(--text-secondary); border: 1px solid var(--border-color); }
+.meta-chip b { color: var(--text-primary); font-weight: 600; }
+
+.tournament-team { margin-top: .75rem; padding: .75rem 1rem; background: var(--card-bg-subtle); border-radius: var(--radius-md); border: 1px solid var(--border-color); border-left: 3px solid var(--accent); }
+.team-head { display: flex; flex-wrap: wrap; justify-content: space-between; gap: .5rem; margin-bottom: .6rem; align-items: baseline; }
+.team-name { font-weight: 700; font-size: .9rem; }
+.team-meta { font-size: .8rem; color: var(--text-secondary); }
+.team-members { display: flex; flex-wrap: wrap; gap: .4rem; }
+.team-member { display: inline-flex; gap: .3rem; align-items: center; padding: .3rem .6rem; background: var(--card-bg); border-radius: var(--radius-sm); font-size: .8rem; border: 1px solid var(--border-color); }
+.team-member b { color: var(--success); font-weight: 700; }
+
+.standings-details { margin: .85rem 0 1rem; background: var(--card-bg-subtle); border: 1px solid var(--border-color); border-radius: var(--radius-md); overflow: hidden; }
+.standings-details > summary { cursor: pointer; list-style: none; padding: .7rem 1rem; font-weight: 700; font-size: .9rem; user-select: none; display: flex; align-items: center; gap: .5rem; transition: background .15s; }
+.standings-details > summary::-webkit-details-marker { display: none; }
+.standings-details > summary::before { content: "›"; font-size: 1.1rem; color: var(--text-muted); transition: transform .2s; display: inline-block; font-weight: 700; }
+.standings-details[open] > summary::before { transform: rotate(90deg); color: var(--accent); }
+.standings-details > summary:hover { background: var(--card-bg); }
+.standings-details .standings-count { margin-left: auto; font-size: .7rem; font-weight: 600; color: var(--text-muted); text-transform: none; letter-spacing: 0; }
+.standings-body { padding: .75rem 1rem 1rem; border-top: 1px solid var(--border-color); background: var(--card-bg); }
+.standings-block { margin-bottom: 1rem; }
+.standings-block:last-child { margin-bottom: 0; }
+.standings-block-title { font-size: .78rem; font-weight: 800; color: var(--text-secondary); text-transform: uppercase; letter-spacing: .05em; margin-bottom: .5rem; }
+.standings-block-title span { font-weight: 600; text-transform: none; letter-spacing: 0; color: var(--text-muted); }
+.standings-table-wrap { overflow-x: auto; border: 1px solid var(--border-color); border-radius: var(--radius-sm); background: var(--card-bg); }
+.standings-table { width: 100%; border-collapse: collapse; font-size: .8rem; }
+.standings-table th, .standings-table td { padding: .4rem .5rem; border-bottom: 1px solid var(--border-color); text-align: center; white-space: nowrap; }
+.standings-table th { background: var(--card-bg-subtle); font-weight: 700; color: var(--text-secondary); font-size: .68rem; text-transform: uppercase; letter-spacing: .04em; }
+.standings-table tr:last-child td { border-bottom: none; }
+.standings-table .col-name { text-align: left; font-weight: 600; min-width: 100px; }
+.standings-table .col-sum { font-weight: 800; color: var(--accent); }
+.standings-table .col-members { text-align: left; font-size: .75rem; color: var(--text-secondary); max-width: 260px; overflow: hidden; text-overflow: ellipsis; }
+.standings-table .sg-pos { color: var(--success); font-weight: 700; }
+.standings-table .sg-neg { color: var(--danger); font-weight: 700; }
+.standings-table tbody tr.row-highlight { background: var(--warning-soft); }
+.standings-table tbody tr.row-highlight .col-name { color: var(--warning); }
+.standings-table tbody tr:hover { background: var(--card-bg-subtle); }
+
+/* ================= TOURS LAYOUT ================= */
+.tours-container { display: flex; flex-direction: column; gap: 1.25rem; margin-top: 1rem; }
+
+.tour-block {
+  background: var(--card-bg-subtle);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: .9rem 1rem 1rem;
+}
+
+.tour-header {
+  display: flex;
+  align-items: center;
+  gap: .65rem;
+  margin-bottom: .75rem;
+  padding-bottom: .6rem;
+  border-bottom: 1px solid var(--border-color);
+  flex-wrap: wrap;
+}
+.tour-title { font-weight: 800; font-size: .95rem; color: var(--text-primary); }
+.tour-round-badge {
+  padding: .18rem .6rem;
+  border-radius: 9999px;
+  font-size: .68rem;
+  font-weight: 700;
+  background: var(--accent-soft);
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: .04em;
+}
+.tour-round-badge.round-final { background: rgba(245,158,11,.15); color: #b45309; }
+.tour-round-badge.round-semi { background: rgba(139,92,246,.15); color: #6d28d9; }
+body.dark-mode .tour-round-badge.round-final { background: rgba(245,158,11,.22); color: #fcd34d; }
+body.dark-mode .tour-round-badge.round-semi { background: rgba(139,92,246,.25); color: #d8b4fe; }
+.tour-tables-count {
+  margin-left: auto;
+  font-size: .78rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.tour-tables-scroll {
+  display: flex;
+  gap: .85rem;
+  overflow-x: auto;
+  padding-bottom: .55rem;
+  scroll-snap-type: x proximity;
+  scroll-behavior: smooth;
+}
+.tour-tables-scroll::-webkit-scrollbar { height: 8px; }
+.tour-tables-scroll::-webkit-scrollbar-track { background: var(--card-bg); border-radius: 4px; }
+.tour-tables-scroll::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 4px; }
+.tour-tables-scroll::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+.tour-tables-scroll { scrollbar-width: thin; scrollbar-color: var(--border-color) var(--card-bg); }
+
+.tour-singles-group {
+  background: var(--card-bg-subtle);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: .9rem 1rem 1rem;
+}
+.tour-singles-header {
+  display: flex;
+  align-items: center;
+  gap: .65rem;
+  margin-bottom: .75rem;
+  padding-bottom: .6rem;
+  border-bottom: 1px solid var(--border-color);
+  flex-wrap: wrap;
+}
+.tour-singles-title {
+  font-weight: 800;
+  font-size: .95rem;
+  color: var(--text-primary);
+}
+
+.game-card {
+  flex: 0 0 285px;
+  min-width: 285px;
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: .85rem;
+  transition: transform .2s, box-shadow .2s, opacity .2s;
+  box-shadow: var(--shadow-sm);
+  scroll-snap-align: start;
+}
+.game-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+
+.game-meta { display: flex; justify-content: space-between; align-items: center; margin-bottom: .55rem; flex-wrap: wrap; gap: .35rem; font-size: .78rem; color: var(--text-secondary); font-weight: 600; }
+.game-meta-left { display: inline-flex; align-items: center; gap: .35rem; flex-wrap: wrap; }
+.game-meta-right { display: inline-flex; align-items: center; gap: .25rem; }
+.game-meta .inline-round-badge {
+  padding: .1rem .45rem;
+  border-radius: 9999px;
+  font-size: .6rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+.game-meta .inline-round-badge.round-final { background: rgba(245,158,11,.15); color: #b45309; }
+.game-meta .inline-round-badge.round-semi { background: rgba(139,92,246,.15); color: #6d28d9; }
+body.dark-mode .game-meta .inline-round-badge.round-final { background: rgba(245,158,11,.22); color: #fcd34d; }
+body.dark-mode .game-meta .inline-round-badge.round-semi { background: rgba(139,92,246,.25); color: #d8b4fe; }
+
+.game-dot { display: inline-block; width: 4px; height: 4px; border-radius: 50%; background: var(--text-muted); opacity: .6; margin: 0 .15rem; vertical-align: middle; }
+.game-judge { text-align: center; font-size: .75rem; font-weight: 600; color: var(--text-secondary); margin-bottom: .5rem; padding: .28rem .5rem; background: var(--card-bg-subtle); border: 1px solid var(--border-subtle); border-radius: var(--radius-sm); }
+.game-badges { display: flex; gap: .35rem; margin-bottom: .5rem; flex-wrap: wrap; align-items: center; }
+.match-count-badge { font-size: .65rem; font-weight: 700; padding: .15rem .45rem; border-radius: 4px; background: var(--warning-soft); color: var(--warning); text-transform: uppercase; letter-spacing: .03em; }
+
+.badge { display: inline-block; padding: .28rem .7rem; border-radius: 9999px; font-size: .7rem; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; }
+.badge-win { background: #d1fae5; color: #065f46; }
+.badge-loss { background: #fee2e2; color: #991b1b; }
+body.dark-mode .badge-win { background: rgba(16,185,129,.25); color: #86efac; }
+body.dark-mode .badge-loss { background: rgba(239,68,68,.25); color: #fca5a5; }
+
+.elo-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: .2rem;
+  padding: .12rem .5rem;
+  border-radius: 9999px;
+  font-size: .68rem;
+  font-weight: 700;
+  background: var(--accent-soft);
+  color: var(--accent);
+  letter-spacing: .02em;
+  font-variant-numeric: tabular-nums;
+}
+.elo-badge.elo-low { background: var(--danger-soft); color: var(--danger); }
+.elo-badge.elo-mid { background: var(--warning-soft); color: var(--warning); }
+.elo-badge.elo-high { background: var(--success-soft); color: var(--success); }
+
+.copy-btn { background: var(--card-bg); border: 1px solid var(--border-color); color: var(--text-secondary); border-radius: var(--radius-sm); padding: .2rem .45rem; font-size: .75rem; cursor: pointer; transition: all .15s; line-height: 1.2; }
+.copy-btn:hover { background: var(--accent-soft); color: var(--accent); border-color: var(--accent); }
+.copy-btn.copied { background: var(--success-soft); color: var(--success); border-color: var(--success); }
+
+.composition-grid { display: flex; flex-direction: column; gap: .28rem; margin-top: .5rem; padding-top: .5rem; border-top: 1px dashed var(--border-color); }
+.composition-player { display: flex; align-items: center; justify-content: space-between; gap: .4rem; padding: .32rem .55rem; border-radius: var(--radius-sm); font-size: .78rem; border: 1px solid var(--border-color); background: var(--card-bg-subtle); }
+.comp-num { font-weight: 700; opacity: .5; min-width: 1.2rem; font-size: .72rem; }
+.comp-name { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: inline-flex; align-items: center; gap: 3px; flex: 1; min-width: 0; }
+.comp-points { font-weight: 700; font-size: .7rem; padding: .12rem .4rem; border-radius: 4px; flex-shrink: 0; }
+.p-pos { color: #059669; background: var(--success-soft); }
+.p-neg { color: var(--danger); background: var(--danger-soft); }
+.p-zero { color: var(--text-muted); background: var(--card-bg); }
+
+.comp-player.role-red { background: var(--role-red-bg); color: var(--role-red-text); border-color: transparent; }
+.comp-player.role-sheriff { background: var(--role-sheriff-bg); color: var(--role-sheriff-text); border-color: transparent; }
+.comp-player.role-mafia { background: var(--role-mafia-bg); color: var(--role-mafia-text); border-color: transparent; }
+.comp-player.role-don { background: var(--role-don-bg); color: var(--role-don-text); border-color: transparent; }
+
+/* ── Стили ЛХ (уход в первую ночь) ── */
+.comp-player.play-lg-partial {
+  background: var(--role-lg-partial-bg) !important;
+  color: var(--role-lg-partial-text) !important;
+  font-weight: 600;
+  border-color: transparent;
+}
+.comp-player.play-lg-full {
+  background: var(--role-lg-full-bg) !important;
+  color: var(--role-lg-full-text) !important;
+  font-weight: 700;
+  border-color: transparent;
+}
+.comp-player.play-lg-zero {
+  background: var(--role-lg-zero-bg) !important;
+  color: var(--role-lg-zero-text) !important;
+  font-weight: 600;
+  border: 1.5px dashed var(--role-lg-zero-border) !important;
+}
+
+.comp-player.highlight { box-shadow: 0 0 0 2px var(--warning); font-weight: 700; }
+.comp-player.hidden-role { background: var(--card-bg-subtle) !important; color: var(--text-secondary) !important; border-color: var(--border-color) !important; border-style: dashed; }
+
+.comp-elo { font-size: .62rem; font-weight: 600; color: var(--text-muted); margin-left: 2px; opacity: .8; }
+
+.mvp-badge { display: inline-flex; align-items: center; background: linear-gradient(135deg,#f59e0b,#d97706); color: #fff; font-size: .58rem; font-weight: 800; padding: 1px 4px; border-radius: 3px; line-height: 1.2; }
+.losing-mvp-badge { display: inline-flex; align-items: center; background: linear-gradient(135deg,#94a3b8,#64748b); color: #fff; font-size: .58rem; font-weight: 800; padding: 1px 4px; border-radius: 3px; line-height: 1.2; }
+
+.game-card-watched-row { display: flex; justify-content: center; margin-top: .6rem; padding-top: .5rem; border-top: 1px dashed var(--border-color); }
+.watched-btn { background: var(--card-bg); border: 1px solid var(--border-color); color: var(--text-secondary); border-radius: var(--radius-md); padding: .25rem .55rem; font-size: .72rem; font-weight: 600; display: inline-flex; align-items: center; gap: .25rem; cursor: pointer; transition: all .15s; }
+.watched-btn:hover { border-color: var(--accent); color: var(--accent); }
+.watched-btn.is-watched { background: var(--success-soft); border-color: var(--success); color: var(--success); }
+.watched-btn.is-watched:hover { background: var(--danger-soft); border-color: var(--danger); color: var(--danger); }
+
+/* Стили для кнопки избранного */
+.fav-btn {
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
+  border-radius: var(--radius-md);
+  padding: 0.28rem 0.55rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  box-shadow: var(--shadow-sm);
+  white-space: nowrap;
+  line-height: 1.2;
+}
+.fav-btn:hover {
+  border-color: var(--warning);
+  color: var(--warning);
+  transform: translateY(-1px);
+}
+.fav-btn.is-favorite {
+  background: var(--warning-soft);
+  border-color: var(--warning);
+  color: var(--warning);
+}
+.fav-btn.is-favorite:hover {
+  background: var(--danger-soft);
+  border-color: var(--danger);
+  color: var(--danger);
+}
+
+.game-card.watched { opacity: .55; border-color: var(--success); background: linear-gradient(90deg, rgba(16,185,129,.06) 0%, var(--card-bg) 55%); }
+.game-card.watched:hover { opacity: 1; }
+body.dark-mode .game-card.watched { background: linear-gradient(90deg, rgba(16,185,129,.12) 0%, var(--card-bg) 55%); }
+
+.load-more-btn { display: block; margin: 1.5rem auto 0; padding: .75rem 2rem; background: var(--card-bg); border: 1px solid var(--accent); color: var(--accent); border-radius: var(--radius-md); font-weight: 700; font-size: .9rem; cursor: pointer; transition: all .2s; box-shadow: var(--shadow-sm); }
+.load-more-btn:hover { background: var(--accent); color: #fff; }
+
+.empty-state { text-align: center; color: var(--text-muted); padding: 2rem 1rem; font-weight: 500; }
+
+@media (max-width: 720px) {
+  body { padding: 1rem .75rem; }
+  h1 { font-size: 1.6rem; }
+  .game-card { flex: 0 0 250px; min-width: 250px; }
+}
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <h1>🏆 Tournament Games Viewer</h1>
+    <p class="header-sub">Загрузите базу турниров — фильтры по игрокам, ELO стола, скрытие ролей и выборочный показ турниров</p>
+    <div class="header-controls">
+      <button id="themeToggle" class="theme-btn">🌙 Тёмная тема</button>
+      <div class="file-upload">
+        <button class="upload-btn">📁 Загрузить базу (JSON)</button>
+        <input type="file" id="fileInput" accept=".json" />
+      </div>
+      <button id="exportWatchedBtn" class="theme-btn" title="Скачать отметки о просмотренных играх">💾 Экспорт просмотров</button>
+      <div class="file-upload">
+        <button class="theme-btn">📥 Импорт просмотров</button>
+        <input type="file" id="importWatchedInput" accept=".json" />
+      </div>
+      <button id="clearWatchedBtn" class="theme-btn">🧹 Сбросить просмотры</button>
+    </div>
+    <div id="errorContainer"></div>
+  </header>
+
+  <div id="content" class="hidden">
+    <div class="summary-grid">
+      <div class="stat-card"><div class="stat-value" id="statTournaments">0</div><div class="stat-label">Турниров в базе</div></div>
+      <div class="stat-card"><div class="stat-value" id="statGames">0</div><div class="stat-label">Всего игр</div></div>
+      <div class="stat-card"><div class="stat-value" id="statFiltered">0</div><div class="stat-label">Игр после фильтра</div></div>
+      <div class="stat-card"><div class="stat-value" id="statWatched">0</div><div class="stat-label">✅ Просмотрено</div></div>
+      <div class="stat-card"><div class="stat-value" id="statFavorites">0</div><div class="stat-label">⭐ Избранное</div></div>
+    </div>
+
+    <!-- Симметричная сетка панели фильтров -->
+    <div class="filter-panel">
+      <!-- Ряд 1: Игроки, Режим поиска игроков, Скрытие ролей -->
+      <div class="filter-group span-6">
+        <label class="filter-label">Игроки (через запятую)</label>
+        <input type="text" id="playerSearch" class="search-input" placeholder="Например: Vendetta, Fizik" oninput="onFilterChange()" />
+      </div>
+
+      <div class="filter-group span-3">
+        <label class="filter-label">Режим поиска игроков</label>
+        <div class="toggle-switch-container" role="radiogroup">
+          <input type="radio" name="playerMode" id="pmAny" value="any" checked onchange="onFilterChange()" />
+          <label for="pmAny" title="Показать игры, где присутствует хотя бы один из указанных игроков">Любой</label>
+          <input type="radio" name="playerMode" id="pmAll" value="all" onchange="onFilterChange()" />
+          <label for="pmAll" title="Показать только игры, где присутствуют ВСЕ игроки из списка">Все</label>
+          <div class="toggle-switch-slider player-mode-slider"></div>
+        </div>
+      </div>
+
+      <div class="filter-group span-3">
+        <label class="filter-label">Скрытие ролей</label>
+        <div class="toggle-switch-container" role="radiogroup">
+          <input type="radio" name="hideRolesMode" id="hrShow" value="show" checked onchange="onFilterChange()" />
+          <label for="hrShow" title="Показывать роли всех участников">Не скрывать</label>
+          <input type="radio" name="hideRolesMode" id="hrHide" value="hide" onchange="onFilterChange()" />
+          <label for="hrHide" title="Скрыть роли всех участников, кроме вас">Скрывать</label>
+          <div class="toggle-switch-slider role-toggle-slider"></div>
+        </div>
+      </div>
+
+      <!-- Ряд 2: Выбор турниров -->
+      <div class="filter-group span-12">
+        <label class="filter-label">Турниры (выбор отображаемых)</label>
+        <div class="multi-select-dropdown" id="tournamentDropdown">
+          <button type="button" class="multi-select-btn" onclick="toggleTournamentDropdown(event)">
+            <span id="tournamentDropdownLabel">Все турниры</span>
+            <span>▼</span>
+          </button>
+          <div class="multi-select-content" id="tournamentDropdownContent" onclick="event.stopPropagation()">
+            <input type="text" class="multi-select-search" id="tournamentSearchInput" placeholder="Поиск турнира..." oninput="filterTournamentCheckboxes(this.value)" />
+            <div style="display:flex; justify-content:space-between; font-size:0.75rem; margin-bottom:0.4rem; padding:0 0.2rem;">
+              <a href="#" onclick="setAllTournaments(true); return false;" style="color:var(--accent);">Выбрать все</a>
+              <a href="#" onclick="setAllTournaments(false); return false;" style="color:var(--danger);">Сбросить</a>
+            </div>
+            <div class="multi-select-options" id="tournamentCheckboxesContainer"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Ряд 3: Компактные фильтры (тип победы, раунд, просмотрено, избранное) -->
+      <div class="filter-group span-3">
+        <label class="filter-label">Тип победы</label>
+        <select id="winnerFilter" class="filter-select" onchange="onFilterChange()">
+          <option value="all">Любой</option>
+          <option value="city">🟥 Мирные</option>
+          <option value="mafia">⬛ Мафия</option>
+        </select>
+      </div>
+
+      <div class="filter-group span-3">
+        <label class="filter-label">Раунд</label>
+        <select id="roundFilter" class="filter-select" onchange="onFilterChange()">
+          <option value="all">Все</option>
+          <option value="Отбор">Отбор</option>
+          <option value="Полуфинал">Полуфинал</option>
+          <option value="Финал">Финал</option>
+        </select>
+      </div>
+
+      <div class="filter-group span-3">
+        <label class="filter-label">Просмотрено</label>
+        <select id="watchedFilter" class="filter-select" onchange="onFilterChange()">
+          <option value="all">Все игры</option>
+          <option value="yes">✅ Просмотрено</option>
+          <option value="no">❌ Не просмотрено</option>
+        </select>
+      </div>
+
+      <div class="filter-group span-3">
+        <label class="filter-label">Избранное</label>
+        <select id="favoritesFilter" class="filter-select" onchange="onFilterChange()">
+          <option value="all">Все игры</option>
+          <option value="yes">⭐ В избранном</option>
+          <option value="no">☆ Без избранного</option>
+        </select>
+      </div>
+
+      <!-- Ряд 4: Мин ELO и Кнопка сброса -->
+      <div class="filter-group span-3">
+        <label class="filter-label" title="Показывать только столы со средним ELO не ниже указанного">Мин. ELO стола</label>
+        <input type="number" id="minEloFilter" class="filter-select" placeholder="например 1500" min="0" max="3000" step="50" oninput="onFilterChange()" />
+      </div>
+
+      <div class="filter-group span-3" style="grid-column-start: 10;">
+        <button class="filter-reset-btn" onclick="resetFilters()">↺ Сбросить</button>
+      </div>
+    </div>
+
+    <div id="filterStats" class="filter-stats hidden"></div>
+    <div id="resultInfo" class="result-info"></div>
+    <div id="tournamentsContainer"></div>
+  </div>
+</div>
+
+<script>
+// =====================================================================
+// STATE
+// =====================================================================
+const state = {
+  db: [],
+  watched: loadWatched(),
+  favorites: loadFavorites(),
+  tournamentDisplayCount: 10,
+  filtered: [],
+  filteredTournaments: [],
+  totalFilteredGames: 0,
+  selectedTournaments: new Set()
+};
+
+const WATCHED_KEY = 'mafia-tournament-watched-v1';
+const FAVORITES_KEY = 'mafia-tournament-favorites-v1';
+const DEFAULT_THEME_KEY = 'theme';
+
+document.addEventListener('click', (e) => {
+  const dropdown = document.getElementById('tournamentDropdown');
+  if (dropdown && !dropdown.contains(e.target)) {
+    dropdown.classList.remove('open');
+  }
+});
+
+function toggleTournamentDropdown(e) {
+  e.stopPropagation();
+  const dropdown = document.getElementById('tournamentDropdown');
+  dropdown.classList.toggle('open');
+}
+
+// =====================================================================
+// UTILS
+// =====================================================================
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+function pluralize(n, one, few, many) {
+  const m10 = n % 10, m100 = n % 100;
+  if (m10 === 1 && m100 !== 11) return one;
+  if (m10 >= 2 && m10 <= 4 && (m100 < 10 || m100 >= 20)) return few;
+  return many;
+}
+function getRoleKey(role) {
+  if (!role) return 'other';
+  const r = String(role).toLowerCase();
+  if (r.includes('мирн')) return 'peaceful';
+  if (r.includes('шериф')) return 'sheriff';
+  if (r.includes('маф')) return 'mafia';
+  if (r.includes('дон')) return 'don';
+  if (r === 'red') return 'peaceful';
+  if (r === 'sheriff') return 'sheriff';
+  if (r === 'mafia') return 'mafia';
+  if (r === 'don') return 'don';
+  return 'other';
+}
+function getRoleCompClass(role) {
+  const k = getRoleKey(role);
+  return {
+    peaceful: 'role-red', sheriff: 'role-sheriff',
+    mafia: 'role-mafia', don: 'role-don', other: 'role-red'
+  }[k];
+}
+function isCityPlayer(role) {
+  const k = getRoleKey(role);
+  return k === 'peaceful' || k === 'sheriff';
+}
+function getPlayIcon(t) { return t === 'y' ? '🌟' : t === 'r' ? '🔻' : ''; }
+
+function getLhClass(status) {
+  if (status === 'полный') return 'play-lg-full';
+  if (status === 'частичный') return 'play-lg-partial';
+  if (status === 'нулевой') return 'play-lg-zero';
+  return '';
+}
+
+function getRoundClass(round) {
+  if (round === 'Финал') return 'round-final';
+  if (round === 'Полуфинал') return 'round-semi';
+  return '';
+}
+function getGameKey(tournament, game, table) {
+  let tid = tournament.id;
+  if (!tid && tournament.url) {
+    const m = String(tournament.url).match(/\/tournament\/(\d+)/);
+    tid = m ? m[1] : tournament.url.trim().replace(/\/+$/, '');
+  }
+  tid = tid || tournament.tournament || 'unknown';
+  return `${tid}|${String(game.gameNumber || '').trim()}|${String(table.tableNumber || '').trim()}`;
+}
+function getEloClass(elo) {
+  if (typeof elo !== 'number') return '';
+  if (elo >= 2000) return 'elo-high';
+  if (elo >= 1500) return '';
+  if (elo >= 1000) return 'elo-mid';
+  return 'elo-low';
+}
+function getGameDate(gameNumber, dateStart, dateEnd, totalGames, hasFinalStage) {
+  const num = parseInt(gameNumber, 10);
+  if (!dateStart || !num) return '';
+  const parse = (v) => { if (!v) return null; const m = String(v).match(/^(\d{4})-(\d{2})-(\d{2})/); return m ? new Date(Date.UTC(+m[1], +m[2]-1, +m[3])) : null; };
+  const start = parse(dateStart); if (!start) return '';
+  const end = parse(dateEnd) || start;
+  const days = Math.max(1, Math.floor((end - start) / 86400000) + 1);
+  const total = totalGames || num;
+  let dayStarts = [1];
+  if (days === 1) dayStarts = [1];
+  else if (days === 2) {
+    if (total >= 15) dayStarts = [1, 8];
+    else if (total === 10) dayStarts = [1, 6];
+    else { const half = Math.ceil(total / 2); dayStarts = [1, half + 1]; }
+  } else if (days === 3) {
+    if (total === 25) dayStarts = hasFinalStage ? [1, 8, 16] : [1, 9, 18];
+    else { const per = Math.ceil(total / 3); dayStarts = [1, per + 1, 2 * per + 1]; }
+  } else { const per = Math.ceil(total / days); dayStarts = Array.from({ length: days }, (_, i) => i * per + 1); }
+  let idx = 0;
+  for (let i = dayStarts.length - 1; i >= 0; i--) if (num >= dayStarts[i]) { idx = i; break; }
+  const d = new Date(start); d.setUTCDate(d.getUTCDate() + idx);
+  const dd = String(d.getUTCDate()).padStart(2, '0');
+  const mm = String(d.getUTCMonth() + 1).padStart(2, '0');
+  return `${dd}.${mm}`;
+}
+function buildCopyText(tournament, game, table) {
+  const t = String(tournament.tournament || '').trim();
+  const shortT = t.split(',')[0].trim();
+  let tbl = String(table.tableNumber || '').trim();
+  tbl = tbl ? 'СТОЛ ' + tbl.replace(/^стол\s*/i, '') : '';
+  const totalGames = Array.isArray(tournament.games) ? tournament.games.length : null;
+  const dateStr = getGameDate(game.gameNumber, tournament.dateStart, tournament.dateEnd, totalGames, tournament.hasFinalStage);
+  return [shortT, tbl, dateStr].filter(Boolean).join(', ');
+}
+function copyToClipboard(text, btn) {
+  const original = btn ? btn.innerHTML : null;
+  const done = () => {
+    if (!btn) return;
+    btn.classList.add('copied');
+    btn.innerHTML = '✓';
+    setTimeout(() => { btn.classList.remove('copied'); btn.innerHTML = original; }, 1200);
+  };
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(done).catch(() => fallbackCopy(text, done));
+  } else fallbackCopy(text, done);
+}
+function fallbackCopy(text, cb) {
+  try {
+    const ta = document.createElement('textarea');
+    ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    cb && cb();
+  } catch (e) { console.warn('copy failed', e); }
+}
+
+// =====================================================================
+// WATCHED & FAVORITES STATE
+// =====================================================================
+function loadWatched() {
+  try { return JSON.parse(localStorage.getItem(WATCHED_KEY) || '{}'); }
+  catch { return {}; }
+}
+function saveWatched() {
+  try { localStorage.setItem(WATCHED_KEY, JSON.stringify(state.watched)); }
+  catch (e) { console.warn('save watched failed', e); }
+}
+
+function loadFavorites() {
+  try { return JSON.parse(localStorage.getItem(FAVORITES_KEY) || '{}'); }
+  catch { return {}; }
+}
+function saveFavorites() {
+  try { localStorage.setItem(FAVORITES_KEY, JSON.stringify(state.favorites)); }
+  catch (e) { console.warn('save favorites failed', e); }
+}
+
+function toggleWatched(key, btn) {
+  if (state.watched[key]) delete state.watched[key];
+  else state.watched[key] = true;
+  saveWatched();
+  const isWatched = !!state.watched[key];
+  document.querySelectorAll(`[data-game-key="${key}"]`).forEach(el => {
+    if (el.classList.contains('watched-btn')) {
+      el.classList.toggle('is-watched', isWatched);
+      const icon = el.querySelector('.watch-icon');
+      if (icon) icon.textContent = isWatched ? '✅' : '☐';
+      const label = el.querySelector('.watch-label');
+      if (label) label.textContent = isWatched ? 'Просмотрено' : 'Посмотрел';
+    } else {
+      el.classList.toggle('watched', isWatched);
+    }
+  });
+  updateStats();
+}
+
+function toggleFavorite(key, btn) {
+  if (state.favorites[key]) delete state.favorites[key];
+  else state.favorites[key] = true;
+  saveFavorites();
+  const isFav = !!state.favorites[key];
+  document.querySelectorAll(`[data-game-key="${key}"]`).forEach(el => {
+    if (el.classList.contains('fav-btn')) {
+      el.classList.toggle('is-favorite', isFav);
+      const icon = el.querySelector('.fav-icon');
+      if (icon) icon.textContent = isFav ? '⭐' : '☆';
+      const label = el.querySelector('.fav-label');
+      if (label) label.textContent = isFav ? 'В избранном' : 'В избранное';
+    }
+  });
+  updateStats();
+}
+
+function clearWatched() {
+  const count = Object.keys(state.watched).length;
+  if (!count) { alert('Нет отметок о просмотренных играх.'); return; }
+  if (!confirm(`Снять все отметки (${count})?`)) return;
+  state.watched = {};
+  saveWatched();
+  onFilterChange();
+}
+
+function exportWatched() {
+  const data = JSON.stringify(state.watched, null, 2);
+  const blob = new Blob([data], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'watched-games.json';
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+function importWatched(file) {
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    try {
+      const parsed = JSON.parse(e.target.result);
+      if (typeof parsed !== 'object' || Array.isArray(parsed)) throw new Error('Ожидался объект');
+      state.watched = { ...state.watched, ...parsed };
+      saveWatched();
+      onFilterChange();
+    } catch (err) {
+      alert('Ошибка импорта: ' + err.message);
+    }
+  };
+  reader.readAsText(file);
+}
+
+// =====================================================================
+// FILE LOAD
+// =====================================================================
+document.getElementById('fileInput').addEventListener('change', (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (ev) => {
+    try {
+      const parsed = JSON.parse(ev.target.result);
+      if (!Array.isArray(parsed)) throw new Error('Ожидался массив турниров');
+      state.db = parsed;
+      state.tournamentDisplayCount = 10;
+      state.selectedTournaments = new Set(parsed.map(t => String(t.id ?? t.url)));
+      initAfterLoad();
+    } catch (err) {
+      document.getElementById('errorContainer').innerHTML = `<div class="error-msg">${escapeHtml(err.message)}</div>`;
+    }
+  };
+  reader.readAsText(file);
+});
+document.getElementById('importWatchedInput').addEventListener('change', (e) => {
+  const f = e.target.files[0];
+  if (f) importWatched(f);
+  e.target.value = '';
+});
+
+function initAfterLoad() {
+  document.getElementById('content').classList.remove('hidden');
+  document.getElementById('errorContainer').innerHTML = '';
+  populateTournamentCheckboxes();
+  updateStats();
+  checkEloAvailability();
+  onFilterChange();
+}
+
+function checkEloAvailability() {
+  let hasElo = false;
+  let totalTables = 0;
+  for (const t of state.db) {
+    for (const g of (t.games || [])) {
+      for (const tbl of (g.tables || [])) {
+        totalTables++;
+        if (typeof tbl.averageElo === 'number') { hasElo = true; }
+      }
+    }
+  }
+  if (!hasElo && state.db.length > 0) {
+    const note = document.createElement('div');
+    note.className = 'error-msg';
+    note.style.background = 'var(--warning-soft)';
+    note.style.borderColor = 'var(--warning)';
+    note.style.color = 'var(--warning)';
+    note.innerHTML = `⚠️ В базе нет данных ELO столов (${totalTables} столов без ELO). Запустите: <code>node tournament-parser.js --enrich-only</code> — это обогатит существующую базу ELO из elo-cache.json.`;
+    document.getElementById('errorContainer').appendChild(note);
+  }
+}
+
+function populateTournamentCheckboxes() {
+  const container = document.getElementById('tournamentCheckboxesContainer');
+  container.innerHTML = '';
+  state.db.forEach(t => {
+    const id = String(t.id ?? t.url);
+    const labelText = `${t.tournament} (${t.dateStart || '?'})`;
+    const div = document.createElement('label');
+    div.className = 'multi-select-option tournament-option-item';
+    div.dataset.searchText = labelText.toLowerCase();
+    div.innerHTML = `<input type="checkbox" value="${escapeHtml(id)}" checked onchange="onTournamentCheckboxChange(this)" /> <span>${escapeHtml(labelText)}</span>`;
+    container.appendChild(div);
+  });
+  updateDropdownLabel();
+}
+
+function filterTournamentCheckboxes(query) {
+  const q = query.toLowerCase();
+  document.querySelectorAll('.tournament-option-item').forEach(el => {
+    const text = el.dataset.searchText || '';
+    el.style.display = text.includes(q) ? 'flex' : 'none';
+  });
+}
+
+function setAllTournaments(select) {
+  const checkboxes = document.querySelectorAll('#tournamentCheckboxesContainer input[type="checkbox"]');
+  checkboxes.forEach(cb => {
+    cb.checked = select;
+    const id = cb.value;
+    if (select) state.selectedTournaments.add(id);
+    else state.selectedTournaments.delete(id);
+  });
+  updateDropdownLabel();
+  onFilterChange();
+}
+
+function onTournamentCheckboxChange(cb) {
+  const id = cb.value;
+  if (cb.checked) state.selectedTournaments.add(id);
+  else state.selectedTournaments.delete(id);
+  updateDropdownLabel();
+  onFilterChange();
+}
+
+function updateDropdownLabel() {
+  const total = state.db.length;
+  const selCount = state.selectedTournaments.size;
+  const lbl = document.getElementById('tournamentDropdownLabel');
+  if (selCount === total || selCount === 0) {
+    lbl.textContent = `Все турниры (${total})`;
+  } else {
+    lbl.textContent = `Выбрано турниров: ${selCount} из ${total}`;
+  }
+}
+
+// =====================================================================
+// FILTERS
+// =====================================================================
+function readFilters() {
+  const modeEl = document.querySelector('input[name="playerMode"]:checked');
+  const hideRolesEl = document.querySelector('input[name="hideRolesMode"]:checked');
+  const minEloRaw = (document.getElementById('minEloFilter')?.value || '').trim();
+  const minEloNum = minEloRaw === '' ? null : parseInt(minEloRaw, 10);
+  return {
+    players: (document.getElementById('playerSearch').value || '')
+      .split(',').map(s => s.trim().toLowerCase()).filter(Boolean),
+    playerMode: modeEl ? modeEl.value : 'any',
+    winner: document.getElementById('winnerFilter').value,
+    round: document.getElementById('roundFilter').value,
+    watched: document.getElementById('watchedFilter').value,
+    favorites: document.getElementById('favoritesFilter').value,
+    minElo: Number.isFinite(minEloNum) ? minEloNum : null,
+    hideRoles: hideRolesEl ? hideRolesEl.value === 'hide' : false
+  };
+}
+
+function gameMatchesFilters(tournament, game, table, filters) {
+  const tval = String(tournament.id ?? tournament.url);
+  if (!state.selectedTournaments.has(tval)) return false;
+
+  if (filters.winner !== 'all' && table.winner !== filters.winner) return false;
+  if (filters.round !== 'all' && game.round !== filters.round) return false;
+
+  if (filters.minElo != null) {
+    const elo = table.averageElo;
+    if (typeof elo !== 'number' || elo < filters.minElo) return false;
+  }
+
+  if (filters.players.length) {
+    const logins = table.players.map(p => (p.login || '').toLowerCase());
+    if (filters.playerMode === 'all') {
+      for (const term of filters.players) {
+        if (!logins.some(l => l.includes(term))) return false;
+      }
+    } else {
+      const hasAny = filters.players.some(term => logins.some(l => l.includes(term)));
+      if (!hasAny) return false;
+    }
+  }
+
+  if (filters.watched !== 'all') {
+    const key = getGameKey(tournament, game, table);
+    const isWatched = !!state.watched[key];
+    if (filters.watched === 'yes' && !isWatched) return false;
+    if (filters.watched === 'no' && isWatched) return false;
+  }
+
+  if (filters.favorites !== 'all') {
+    const key = getGameKey(tournament, game, table);
+    const isFav = !!state.favorites[key];
+    if (filters.favorites === 'yes' && !isFav) return false;
+    if (filters.favorites === 'no' && isFav) return false;
+  }
+
+  return true;
+}
+
+function countMatchedPlayers(players, terms) {
+  if (!terms.length) return 0;
+  const matched = new Set();
+  players.forEach(p => {
+    const login = (p.login || '').toLowerCase();
+    for (const t of terms) {
+      if (login.includes(t)) { matched.add(login); break; }
+    }
+  });
+  return matched.size;
+}
+
+function onFilterChange() {
+  const filters = readFilters();
+  state.tournamentDisplayCount = 10;
+  renderFiltered(filters);
+}
+
+function renderFiltered(filters) {
+  const container = document.getElementById('tournamentsContainer');
+  container.innerHTML = '';
+  const filteredTournaments = [];
+  let totalGames = 0;
+
+  state.db.forEach(t => {
+    const games = [];
+    (t.games || []).forEach(g => {
+      const tables = (g.tables || []).filter(tbl => gameMatchesFilters(t, g, tbl, filters));
+      if (tables.length) games.push({ game: g, tables });
+    });
+    if (games.length) {
+      filteredTournaments.push({ tournament: t, games });
+      games.forEach(g => { totalGames += g.tables.length; });
+    }
+  });
+
+  state.filtered = filteredTournaments;
+  state.totalFilteredGames = totalGames;
+
+  renderFilterStats(filters, filteredTournaments);
+
+  const info = document.getElementById('resultInfo');
+  if (totalGames === 0) {
+    info.textContent = 'По выбранным фильтрам игр не найдено';
+    container.innerHTML = '<p class="empty-state">По выбранным фильтрам игр не найдено.</p>';
+    updateStats();
+    return;
+  }
+  const max = state.tournamentDisplayCount;
+  const shown = Math.min(max, filteredTournaments.length);
+  const modeTag = filters.players.length
+    ? (filters.playerMode === 'all'
+        ? `<span class="mode-tag">все игроки из списка</span>`
+        : `<span class="mode-tag">любой игрок из списка</span>`)
+    : '';
+  const eloTag = filters.minElo != null
+    ? `<span class="mode-tag">ELO ≥ ${filters.minElo}</span>`
+    : '';
+  info.innerHTML = `Найдено: <b>${totalGames}</b> ${pluralize(totalGames, 'игра', 'игры', 'игр')} · <b>${filteredTournaments.length}</b> ${pluralize(filteredTournaments.length, 'турнир', 'турнира', 'турниров')}${filteredTournaments.length > max ? ` · показано <b>${shown}</b>` : ''}${modeTag}${eloTag}`;
+
+  filteredTournaments.slice(0, max).forEach(({ tournament, games }) => {
+    container.appendChild(buildTournamentElement(tournament, games, filters));
+  });
+
+  if (filteredTournaments.length > max) {
+    const remaining = filteredTournaments.length - max;
+    const btnWrap = document.createElement('div');
+    btnWrap.style.textAlign = 'center';
+    btnWrap.innerHTML = `<button class="load-more-btn" onclick="loadMoreTournaments()">Показать ещё ${Math.min(10, remaining)} из ${remaining}</button>`;
+    container.appendChild(btnWrap);
+  }
+
+  updateStats();
+}
+
+function renderFilterStats(filters, filteredTournaments) {
+  const el = document.getElementById('filterStats');
+  if (!filters.players.length) {
+    el.classList.add('hidden');
+    return;
+  }
+  const stats = {};
+  filteredTournaments.forEach(({ games }) => {
+    games.forEach(({ tables }) => {
+      tables.forEach(table => {
+        table.players.forEach(p => {
+          const login = (p.login || '').toLowerCase();
+          const matchedTerm = filters.players.find(t => login.includes(t));
+          if (!matchedTerm) return;
+          if (!stats[login]) stats[login] = { name: p.login, games: 0, wins: 0, points: 0, roles: {} };
+          stats[login].games++;
+          stats[login].points += p.points || 0;
+          const isCityWin = table.winner === 'city';
+          const isWin = isCityPlayer(p.role) ? isCityWin : !isCityWin;
+          if (isWin) stats[login].wins++;
+          const rk = getRoleKey(p.role);
+          stats[login].roles[rk] = (stats[login].roles[rk] || 0) + 1;
+        });
+      });
+    });
+  });
+
+  const rows = Object.values(stats);
+  if (!rows.length) { el.classList.add('hidden'); return; }
+
+  const roleLabels = { peaceful: '🟥 Мирный', sheriff: '🕵️ Шериф', mafia: '⬛ Мафия', don: '👑 Дон' };
+  const modeLabel = filters.playerMode === 'all'
+    ? '🔸 режим: все игроки из списка'
+    : '🔹 режим: любой игрок из списка';
+  const cardsHtml = rows.map(s => {
+    const wr = s.games ? ((s.wins / s.games) * 100).toFixed(1) : '0.0';
+    const avg = s.games ? (s.points / s.games).toFixed(2) : '0.00';
+    const roles = Object.entries(s.roles).sort((a, b) => b[1] - a[1])
+      .map(([k, v]) => `${roleLabels[k] || k}: ${v}`).join(' · ');
+    return `<div class="stat-card" style="text-align:left;">
+      <div class="stat-label" style="text-align:left;color:var(--accent);font-size:.78rem;">${escapeHtml(s.name)}</div>
+      <div class="filter-stats-grid" style="margin-top:.6rem;">
+        <div class="fs-item"><div class="fs-val">${s.games}</div><div class="fs-lbl">Игр</div></div>
+        <div class="fs-item"><div class="fs-val">${s.wins}</div><div class="fs-lbl">Побед</div></div>
+        <div class="fs-item"><div class="fs-val">${wr}%</div><div class="fs-lbl">Винрейт</div></div>
+        <div class="fs-item"><div class="fs-val">${avg}</div><div class="fs-lbl">Ср. балл</div></div>
+      </div>
+      ${roles ? `<div style="margin-top:.55rem;font-size:.72rem;color:var(--text-muted);">${roles}</div>` : ''}
+    </div>`;
+  }).join('');
+
+  el.innerHTML = `<div class="filter-stats-title">📊 Статистика по игрокам из фильтра · <span style="color:var(--text-secondary);text-transform:none;letter-spacing:0;font-weight:600;">${modeLabel}</span></div><div class="summary-grid" style="margin-bottom:0;">${cardsHtml}</div>`;
+  el.classList.remove('hidden');
+}
+
+function updateStats() {
+  let totalGames = 0;
+  state.db.forEach(t => (t.games || []).forEach(g => { totalGames += (g.tables || []).length; }));
+  document.getElementById('statTournaments').textContent = state.db.length;
+  document.getElementById('statGames').textContent = totalGames;
+  document.getElementById('statFiltered').textContent = state.totalFilteredGames || 0;
+  document.getElementById('statWatched').textContent = Object.keys(state.watched).length;
+  document.getElementById('statFavorites').textContent = Object.keys(state.favorites).length;
+}
+
+function resetFilters() {
+  document.getElementById('playerSearch').value = '';
+  document.getElementById('pmAny').checked = true;
+  document.getElementById('hrShow').checked = true;
+  setAllTournaments(true);
+  document.getElementById('winnerFilter').value = 'all';
+  document.getElementById('roundFilter').value = 'all';
+  document.getElementById('watchedFilter').value = 'all';
+  document.getElementById('favoritesFilter').value = 'all';
+  const mel = document.getElementById('minEloFilter');
+  if (mel) mel.value = '';
+  onFilterChange();
+}
+
+function loadMoreTournaments() {
+  state.tournamentDisplayCount += 10;
+  onFilterChange();
+}
+
+// =====================================================================
+// STANDINGS
+// =====================================================================
+function buildStandingsSection(t, filters) {
+  const s = t.standings || {};
+  const withFinal = Array.isArray(s.withFinal) ? s.withFinal : [];
+  const withoutFinal = Array.isArray(s.withoutFinal) ? s.withoutFinal : [];
+  const teams = Array.isArray(t.teams) ? t.teams : [];
+  const hasStandings = withFinal.length > 0 || withoutFinal.length > 0;
+  const hasTeams = teams.length > 0;
+  if (!hasStandings && !hasTeams) return null;
+
+  const playerTerms = (filters && filters.players) ? filters.players : [];
+
+  function renderStandingsTable(rows, title) {
+    if (!rows.length) return '';
+    return `<div class="standings-block">
+      <div class="standings-block-title">${title} <span>(${rows.length} ${pluralize(rows.length,'участник','участника','участников')})</span></div>
+      <div class="standings-table-wrap"><table class="standings-table">
+        <thead><tr>
+          <th>№</th><th>Игрок</th><th>Σ</th><th>Σдб</th><th>+</th><th>−</th><th>Лх</th><th>Ci</th>
+          <th>П</th><th>Д</th><th>Ш</th><th>У</th><th>GG</th><th>ELO</th>
+        </tr></thead>
+        <tbody>${rows.map(r => {
+          const login = r.login || '—';
+          const loginLower = String(login).toLowerCase();
+          const isHi = playerTerms.some(t => loginLower.includes(t));
+          const trCls = isHi ? 'row-highlight' : '';
+          const n = (v) => (v === null || v === undefined || v === '') ? '—' : v;
+          const ggCls = typeof r.gg === 'number' && r.gg > 0 ? 'sg-pos' : (typeof r.gg === 'number' && r.gg < 0 ? 'sg-neg' : '');
+          const eloCls = typeof r.elo_delta === 'number' && r.elo_delta > 0 ? 'sg-pos' : (typeof r.elo_delta === 'number' && r.elo_delta < 0 ? 'sg-neg' : '');
+          const ggStr = (r.gg === null || r.gg === undefined) ? '—' : ((r.gg > 0 ? '+' : '') + r.gg);
+          const eloStr = (r.elo_delta === null || r.elo_delta === undefined) ? '—' : ((r.elo_delta > 0 ? '+' : '') + r.elo_delta);
+          return `<tr class="${trCls}">
+            <td>${n(r.place)}</td>
+            <td class="col-name">${escapeHtml(login)}</td>
+            <td class="col-sum">${n(r.sum)}</td>
+            <td>${n(r.sum_extra)}</td>
+            <td>${n(r.plus)}</td>
+            <td>${n(r.minus)}</td>
+            <td>${n(r.first_kill_point)}</td>
+            <td>${n(r.compensation_point)}</td>
+            <td>${n(r.wins)}</td>
+            <td>${n(r.wins_as_don)}</td>
+            <td>${n(r.wins_as_sheriff)}</td>
+            <td>${n(r.first_kill)}</td>
+            <td class="${ggCls}">${ggStr}</td>
+            <td class="${eloCls}">${eloStr}</td>
+          </tr>`;
+        }).join('')}</tbody>
+      </table></div>
+    </div>`;
+  }
+
+  let body = '';
+  if (t.hasFinalStage && withFinal.length && withoutFinal.length) {
+    body += renderStandingsTable(withFinal, '🏁 Итог (Финал)');
+    body += renderStandingsTable(withoutFinal, '📋 Отбор (не прошли в финал)');
+  } else if (withFinal.length) {
+    body += renderStandingsTable(withFinal, t.hasFinalStage ? '🏁 Итог (Финал)' : '📋 Итоговая таблица');
+  } else if (withoutFinal.length) {
+    body += renderStandingsTable(withoutFinal, '📋 Отбор');
+  }
+
+  if (hasTeams) {
+    body += `<div class="standings-block">
+      <div class="standings-block-title">👥 Командный зачёт <span>(${teams.length} ${pluralize(teams.length,'команда','команды','команд')})</span></div>
+      <div class="standings-table-wrap"><table class="standings-table">
+        <thead><tr>
+          <th>№</th><th>Команда</th><th>Σ</th><th>Σдб</th><th>GG</th><th>Победы</th><th>Состав</th>
+        </tr></thead>
+        <tbody>${teams.map(tm => {
+          const members = (tm.users || []).map(u => u.login).filter(Boolean).join(', ');
+          const membersStr = members.length > 90 ? members.slice(0, 87) + '...' : members;
+          const n = (v) => (v === null || v === undefined || v === '') ? '—' : v;
+          return `<tr>
+            <td>${n(tm.place)}</td>
+            <td class="col-name">${escapeHtml(tm.title || '—')}</td>
+            <td class="col-sum">${n(tm.sum)}</td>
+            <td>${n(tm.sum_extra)}</td>
+            <td>${tm.gg != null ? ((tm.gg > 0 ? '+' : '') + tm.gg) : '—'}</td>
+            <td>${n(tm.wins)}</td>
+            <td class="col-members" title="${escapeHtml(members)}">${escapeHtml(membersStr || '—')}</td>
+          </tr>`;
+        }).join('')}</tbody>
+      </table></div>
+    </div>`;
+  }
+
+  return body;
+}
+
+// =====================================================================
+// RENDER TOURNAMENT
+// =====================================================================
+function buildTournamentElement(t, games, filters) {
+  const details = document.createElement('details');
+  details.className = 'tournament-block';
+  details.open = true;
+
+  const gamesCount = games.reduce((s, g) => s + g.tables.length, 0);
+  const dateStr = t.dateStart ? `${t.dateStart}${t.dateEnd && t.dateEnd !== t.dateStart ? ' – ' + t.dateEnd : ''}` : '';
+  const typeStr = t.typeTranslate || (t.type === 'team' ? 'Командный' : t.type === 'individual' ? 'Личный' : '');
+
+  let quick = `<span class="tq-item"><span class="tq-lbl">Игр</span><b>${gamesCount}</b></span>`;
+  if (t.star !== null && t.star !== undefined) quick += `<span class="tq-item"><span class="tq-lbl">⭐</span><b>${t.star}</b></span>`;
+  if (t.elo_average !== null && t.elo_average !== undefined) quick += `<span class="tq-item"><span class="tq-lbl">ELO ср.</span><b>${t.elo_average}</b></span>`;
+
+  const chips = [];
+  if (dateStr) chips.push(`<span class="meta-chip">📅 ${escapeHtml(dateStr)}</span>`);
+  if (typeStr) chips.push(`<span class="meta-chip">📊 ${escapeHtml(typeStr)}</span>`);
+  if (t.city) chips.push(`<span class="meta-chip">📍 ${escapeHtml(t.city)}</span>`);
+  if (t.hasFinalStage) chips.push(`<span class="meta-chip">🏁 Финал: ${t.scheme?.final || 0} игр</span>`);
+
+  let teamHtml = '';
+  const myTeam = (t.teams || [])[0];
+  if (myTeam && myTeam.title) {
+    const members = (myTeam.users || []).map(u => `<span class="team-member">${escapeHtml(u.login)}</span>`).join('');
+    teamHtml = `<div class="tournament-team">
+      <div class="team-head">
+        <span class="team-name">👥 ${escapeHtml(myTeam.title)}</span>
+        <span class="team-meta">Место: <b>${myTeam.place}</b> / ${t.teams.length} · Σ <b>${myTeam.sum ?? '—'}</b> · GG <b>${myTeam.gg ?? '—'}</b></span>
+      </div>
+      <div class="team-members">${members}</div>
+    </div>`;
+  }
+
+  const standingsBody = buildStandingsSection(t, filters);
+  const standingsHtml = standingsBody
+    ? `<details class="standings-details" open>
+         <summary>📋 Таблица результатов <span class="standings-count">клик — свернуть/развернуть</span></summary>
+         <div class="standings-body">${standingsBody}</div>
+       </details>`
+    : '';
+
+  details.innerHTML = `
+    <summary>
+      <span class="tournament-header-inner">
+        <span class="tournament-title-group">
+          <a href="${escapeHtml(t.url || '#')}" target="_blank" rel="noopener" class="tournament-title" onclick="event.stopPropagation()">🏆 ${escapeHtml(t.tournament)} ↗</a>
+        </span>
+        <span class="tournament-quick">${quick}</span>
+      </span>
+    </summary>
+    <div class="tournament-meta">${chips.join('')}</div>
+    ${teamHtml}
+    ${standingsHtml}
+    <div class="tours-container"></div>
+  `;
+
+  const toursContainer = details.querySelector('.tours-container');
+  renderToursInto(toursContainer, t, games, filters);
+
+  return details;
+}
+
+// =====================================================================
+// РЕНДЕР ТУРОВ
+// =====================================================================
+function renderToursInto(container, tournament, games, filters) {
+  let singleBuffer = [];
+
+  const flushSingles = () => {
+    if (!singleBuffer.length) return;
+    const group = document.createElement('div');
+    group.className = 'tour-singles-group';
+
+    const firstGame = singleBuffer[0].game;
+    const lastGame = singleBuffer[singleBuffer.length - 1].game;
+    const round = firstGame.round || '';
+    const rangeStr = firstGame.gameNumber === lastGame.gameNumber
+      ? `Игра ${firstGame.gameNumber}`
+      : `Игры ${firstGame.gameNumber}–${lastGame.gameNumber}`;
+    const roundBadge = round
+      ? `<span class="tour-round-badge ${getRoundClass(round)}">${escapeHtml(round)}</span>`
+      : '';
+
+    group.innerHTML = `
+      <div class="tour-singles-header">
+        <span class="tour-singles-title">🎮 ${escapeHtml(rangeStr)}</span>
+        ${roundBadge}
+        <span class="tour-tables-count">${singleBuffer.length} ${pluralize(singleBuffer.length, 'игра', 'игры', 'игр')}</span>
+      </div>
+      <div class="tour-tables-scroll"></div>
+    `;
+
+    const scroll = group.querySelector('.tour-tables-scroll');
+    singleBuffer.forEach(({ game, table }) => {
+      scroll.appendChild(buildGameCard(tournament, game, table, filters, { showGameInfo: true }));
+    });
+    container.appendChild(group);
+    singleBuffer = [];
+  };
+
+  games.forEach(({ game, tables }) => {
+    const originalTablesCount = Array.isArray(game.tables) ? game.tables.length : tables.length;
+    const isTrueSingleTableTour = originalTablesCount === 1;
+
+    if (isTrueSingleTableTour && tables.length === 1) {
+      singleBuffer.push({ game, table: tables[0] });
+    } else {
+      flushSingles();
+      container.appendChild(buildTourBlock(tournament, game, tables, filters));
+    }
+  });
+  flushSingles();
+}
+
+function buildTourBlock(tournament, game, tables, filters) {
+  const block = document.createElement('div');
+  block.className = 'tour-block';
+
+  const roundBadge = game.round
+    ? `<span class="tour-round-badge ${getRoundClass(game.round)}">${escapeHtml(game.round)}</span>`
+    : '';
+
+  const originalCount = Array.isArray(game.tables) ? game.tables.length : tables.length;
+  const isFiltered = originalCount !== tables.length;
+  const countText = isFiltered
+    ? `<span style="color:var(--warning);font-weight:700;">показано ${tables.length} из ${originalCount}</span>`
+    : `${tables.length} ${pluralize(tables.length, 'стол', 'стола', 'столов')}`;
+
+  block.innerHTML = `
+    <div class="tour-header">
+      <span class="tour-title">🎮 Игра ${game.gameNumber}</span>
+      ${roundBadge}
+      <span class="tour-tables-count">${countText}</span>
+    </div>
+    <div class="tour-tables-scroll"></div>
+  `;
+
+  const scroll = block.querySelector('.tour-tables-scroll');
+  tables.forEach(table => {
+    scroll.appendChild(buildGameCard(tournament, game, table, filters));
+  });
+
+  return block;
+}
+
+// =====================================================================
+// RENDER GAME CARD
+// =====================================================================
+function computeMvp(players) {
+  if (!Array.isArray(players) || !players.length) return [];
+  const maxPts = Math.max(...players.map(p => p.points || 0));
+  if (!(maxPts > 0)) return [];
+  return players.filter(p => (p.points || 0) === maxPts);
+}
+function computeLosingMvp(players, winner) {
+  const losing = players.filter(p => winner === 'city' ? !isCityPlayer(p.role) : isCityPlayer(p.role));
+  if (!losing.length) return [];
+  const maxPts = Math.max(...losing.map(p => p.points || 0));
+  if (!(maxPts >= 0.5)) return [];
+  return losing.filter(p => (p.points || 0) === maxPts);
+}
+
+function favoriteBtnHtml(gameKey, isFavorite) {
+  const label = isFavorite ? "В избранном" : "В избранное";
+  const icon = isFavorite ? "⭐" : "☆";
+  const title = isFavorite ? "Убрать из избранного" : "Добавить в избранное";
+  return `<button class="fav-btn ${isFavorite ? "is-favorite" : ""}" type="button" title="${title}" data-game-key="${escapeHtml(gameKey)}" onclick="event.preventDefault();event.stopPropagation();toggleFavorite(this.dataset.gameKey,this);return false;"><span class="fav-icon">${icon}</span><span class="fav-label">${label}</span></button>`;
+}
+
+function buildGameCard(tournament, game, table, filters, opts = {}) {
+  const showGameInfo = !!opts.showGameInfo;
+  const hideRoles = filters ? filters.hideRoles : false;
+  const card = document.createElement('div');
+  card.className = 'game-card';
+
+  const gameKey = getGameKey(tournament, game, table);
+  const isWatched = !!state.watched[gameKey];
+  const isFavorite = !!state.favorites[gameKey];
+  if (isWatched) card.classList.add('watched');
+  card.dataset.gameKey = gameKey;
+
+  const winnerBadge = table.winner === 'city'
+    ? `<span class="badge badge-win">🟥 Победа мирных</span>`
+    : `<span class="badge badge-loss">⬛ Победа мафии</span>`;
+
+  const matchedCount = filters && filters.players.length
+    ? countMatchedPlayers(table.players, filters.players)
+    : 0;
+  const matchCountBadge = matchedCount > 0
+    ? `<span class="match-count-badge" title="Сколько игроков из фильтра присутствует за столом">🎯 ${matchedCount}/${filters.players.length} из фильтра</span>`
+    : '';
+
+  const eloBadge = (typeof table.averageElo === 'number')
+    ? `<span class="elo-badge ${getEloClass(table.averageElo)}" title="Среднее ELO стола">📊 ${table.averageElo}</span>`
+    : '';
+
+  const copyText = buildCopyText(tournament, game, table);
+  const copyBtn = copyText
+    ? `<button class="copy-btn" type="button" title="Скопировать" data-copy="${escapeHtml(copyText)}" onclick="event.preventDefault();event.stopPropagation();copyToClipboard(this.dataset.copy,this);return false;">📋</button>`
+    : '';
+  const searchBtn = copyText
+    ? `<button class="copy-btn" type="button" title="Найти в браузере" data-copy="${escapeHtml(copyText)}" onclick="event.preventDefault();event.stopPropagation();copyToClipboard(this.dataset.copy,this);window.open('https://yandex.ru/search/?text='+encodeURIComponent(this.dataset.copy),'_blank','noopener');return false;">🔍</button>`
+    : '';
+  const openBtn = tournament.url
+    ? `<button class="copy-btn" type="button" title="Открыть турнир" onclick="event.preventDefault();event.stopPropagation();window.open('${escapeHtml(tournament.url.split('#')[0])}?tab=games&round=${encodeURIComponent(game.round||'')}','_blank','noopener');return false;">🔗</button>`
+    : '';
+
+  let gameMetaLeft;
+  if (showGameInfo) {
+    const inlineRound = game.round
+      ? `<span class="inline-round-badge ${getRoundClass(game.round)}">${escapeHtml(game.round)}</span>`
+      : '';
+    gameMetaLeft = `<span>Игра ${game.gameNumber}</span><span class="game-dot"></span><span>Стол ${table.tableNumber}</span>${eloBadge}${inlineRound}`;
+  } else {
+    gameMetaLeft = `<span>Стол ${table.tableNumber}</span>${eloBadge}`;
+  }
+
+  const playerTerms = filters ? filters.players : [];
+  const mvpArr = computeMvp(table.players);
+  const losingMvpArr = computeLosingMvp(table.players, table.winner);
+  const mvpLogins = new Set(mvpArr.map(p => p.login));
+  const losingMvpLogins = new Set(losingMvpArr.map(p => p.login));
+
+  const compHtml = '<div class="composition-grid">' + table.players.map((p, i) => {
+    const isYou = filters.players.length > 0 && playerTerms.some(t => (p.login || '').toLowerCase().includes(t));
+    const hideThis = hideRoles && !isYou;
+    const roleClass = hideThis ? 'hidden-role' : getRoleCompClass(p.role);
+    const lhClass = (!hideThis && p.lhStatus) ? getLhClass(p.lhStatus) : '';
+    const loginLower = (p.login || '').toLowerCase();
+    const highlight = playerTerms.some(t => loginLower.includes(t)) ? 'highlight' : '';
+    const icon = hideThis ? '' : getPlayIcon(p.playType);
+    const pts = p.points || 0;
+    const ptsStr = pts > 0 ? '+' + pts : String(pts);
+    const ptsCls = pts > 0 ? 'p-pos' : pts < 0 ? 'p-neg' : 'p-zero';
+    let mvpBadge = '';
+    if (!hideThis) {
+      if (mvpLogins.has(p.login)) mvpBadge = '<span class="mvp-badge" title="MVP игры">👑</span>';
+      else if (losingMvpLogins.has(p.login)) mvpBadge = '<span class="losing-mvp-badge" title="MVP проигравших">🥈</span>';
+    }
+    const eloText = (typeof p.elo === 'number' && !hideThis) ? `<span class="comp-elo">${p.elo}</span>` : '';
+    const roleText = hideThis ? 'Роль скрыта' : `Роль: ${p.role}`;
+    const lhText = p.lhStatus ? ` | ЛХ: ${p.lhStatus}` : '';
+    return `<div class="composition-player comp-player ${roleClass} ${lhClass} ${highlight}" title="${escapeHtml(p.login)} | ${roleText}${lhText}">
+      <span class="comp-num">${i + 1}.</span>
+      <span class="comp-name">${escapeHtml(p.login)}${eloText}${mvpBadge}${icon ? ' ' + icon : ''}</span>
+      <span class="comp-points ${ptsCls}">${ptsStr}</span>
+    </div>`;
+  }).join('') + '</div>';
+
+  const watchedBtnHtml = `<button class="watched-btn ${isWatched ? 'is-watched' : ''}" type="button"
+    onclick="event.preventDefault();event.stopPropagation();toggleWatched(this.closest('.game-card').dataset.gameKey,this);return false;">
+    <span class="watch-icon">${isWatched ? '✅' : '☐'}</span>
+    <span class="watch-label">${isWatched ? 'Просмотрено' : 'Посмотрел'}</span>
+  </button>`;
+
+  card.innerHTML = `
+    <div class="game-meta">
+      <span class="game-meta-left">${gameMetaLeft}</span>
+      <span class="game-meta-right">${copyBtn}${searchBtn}${openBtn}</span>
+    </div>
+    ${table.judge ? `<div class="game-judge">👨‍⚖️ Судья: ${escapeHtml(table.judge)}</div>` : ''}
+    <div class="game-badges">${winnerBadge}${matchCountBadge}</div>
+    ${compHtml}
+    <div class="game-card-watched-row" style="gap: 0.5rem;">
+      ${watchedBtnHtml}
+      ${favoriteBtnHtml(gameKey, isFavorite)}
+    </div>
+  `;
+  return card;
+}
+
+// =====================================================================
+// THEME
+// =====================================================================
+const themeToggle = document.getElementById('themeToggle');
+if (localStorage.getItem(DEFAULT_THEME_KEY) === 'dark') {
+  document.body.classList.add('dark-mode');
+  themeToggle.textContent = '☀️ Светлая тема';
+}
+themeToggle.addEventListener('click', () => {
+  document.body.classList.toggle('dark-mode');
+  const isDark = document.body.classList.contains('dark-mode');
+  themeToggle.textContent = isDark ? '☀️ Светлая тема' : '🌙 Тёмная тема';
+  localStorage.setItem(DEFAULT_THEME_KEY, isDark ? 'dark' : 'light');
+});
+
+document.getElementById('clearWatchedBtn').addEventListener('click', clearWatched);
+document.getElementById('exportWatchedBtn').addEventListener('click', exportWatched);
+</script>
+</body>
+</html>
