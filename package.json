@@ -1,12 +1,16 @@
 {
   "name": "gomafia-parser",
   "version": "1.0.0",
-  "description": "Парсер игр gomafia.pro",
-  "main": "scraper.js",
+  "description": "Парсер игр и аналитика для gomafia.pro",
+  "main": "index.html",
   "scripts": {
-    "start": "node scraper.js"
+    "start": "node scraper.js",
+    "parse:tournaments": "node tournament-parser.js",
+    "elo:cache": "node buildEloCache.js",
+    "elo:enrich": "node enrichTournaments.js"
   },
   "dependencies": {
     "playwright": "^1.40.0"
   }
 }
+```[cite: 26]
