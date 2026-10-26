@@ -2,6 +2,8 @@ const { chromium } = require('playwright');
 const fs = require('fs');
 const path = require('path');
 const readline = require('readline');
+const enricher = require('./enricher');
+
 const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
 const question = (query) => new Promise((resolve) => rl.question(query, resolve));
 
@@ -455,10 +457,13 @@ async function scrapeSingleTournament(context, tournamentHref, tournamentName, p
 
 // ============== Получение списка турниров со страницы истории ==============
 
-async function fetchTournamentListFromProfile(page, playerUrl) {
+async function fetchTournamentListFromProfile(page, playerUrl, opts = {}) {
+    const { knownIds = null } = opts;
     const list = [];
     let currentPage = 1;
     let globalIndex = 0;
+    let reachedKnown = false;
+
     while (true) {
         const targetUrl = new URL(playerUrl);
         targetUrl.searchParams.set('tab', 'history');
@@ -477,24 +482,40 @@ async function fetchTournamentListFromProfile(page, playerUrl) {
         if (rows.length === 0) break;
 
         let foundAny = false;
+        let newOnThisPage = 0;   // ← новых именно на этой странице
+
         for (const row of rows) {
             const cells = await row.$$('td');
             const cellTexts = await Promise.all(cells.map(c => c.evaluate(el => el.innerText.trim())));
             const linkElement = await row.$('td:nth-child(2) a');
             const href = linkElement ? await linkElement.evaluate(el => el.getAttribute('href')) : null;
             if (!href) continue;
+
             foundAny = true;
             globalIndex++;
+
+            const tid = extractTournamentId(`https://gomafia.pro${href}`);
+            if (knownIds && tid && knownIds.has(tid)) {
+                reachedKnown = true;
+                continue;   // не добавляем известные в список на парсинг
+            }
+
+            newOnThisPage++;
             const name = (cellTexts[1] || 'Неизвестный турнир').replace(/\n/g, ', ');
             list.push({
-                index: globalIndex,
-                href,
-                name,
+                index: globalIndex, href, name,
                 eloDeltaFromList: idxElo >= 0 ? parseEloFromList(cellTexts[idxElo]) : null,
                 ggFromList: idxGG >= 0 ? num(cellTexts[idxGG]) : null
             });
         }
         if (!foundAny) break;
+
+        // Останавливаемся, как только на целой странице не оказалось ничего нового.
+        // Всё, что глубже — уже точно спаршено (профиль отдаёт new→old).
+        if (knownIds && reachedKnown && newOnThisPage === 0) {
+            console.log(`⏩ На стр. ${currentPage} новых нет — пагинация остановлена.`);
+            break;
+        }
 
         const nextPageBtn = await page.$('.Pagination_pagination__page___s0V8:not(.Pagination_pagination__page-selected__8gXVU)');
         if (!nextPageBtn) break;
@@ -545,6 +566,9 @@ async function parsePlayerHistory(playerUrl, targetRoles, matchMode, startIdx, e
             results[0].playerName = playerName;
             const idMatch = String(playerUrl).match(/\/(\d+)(?:[/?#]|$)/);
             if (idMatch) results[0].playerId = parseInt(idMatch[1], 10);
+
+            const stat = enricher.enrichResults(results);
+            console.log(`   🎯 ELO-обогащение: игр=${stat.games}, в кэше игроков=${stat.players}`);
         }
         return { results, playerName };
     } catch (error) {
@@ -593,16 +617,14 @@ async function updatePlayerHistory(playerUrl) {
             existing.map(r => extractTournamentId(r.url)).filter(v => v != null)
         );
 
-        const list = await fetchTournamentListFromProfile(page, playerUrl);
-        console.log(`📋 Турниров в истории: ${list.length}`);
+        // ⬇️ Передаём knownIds — fetch остановит пагинацию, как только вся страница окажется известной
+        const list = await fetchTournamentListFromProfile(page, playerUrl, { knownIds });
+        console.log(`📋 Новых турниров к парсингу: ${list.length}`);
 
         const targetRoles = ['red', 'sheriff', 'mafia', 'don'];
         const newTournaments = [];
 
         for (const item of list) {
-            const fullUrl = `https://gomafia.pro${item.href}`;
-            const tid = extractTournamentId(fullUrl);
-            if (tid && knownIds.has(tid)) continue;
             console.log(`\n🆕 Новый турнир #${item.index}: ${item.name}`);
             const result = await scrapeSingleTournament(
                 context, item.href, item.name, playerName, targetRoles, 'all',
@@ -611,17 +633,58 @@ async function updatePlayerHistory(playerUrl) {
             if (result) newTournaments.push(result);
         }
 
+        // Порядок "новые → старые":
+        //   • newTournaments уже отсортированы new→old (в порядке обхода страниц профиля);
+        //   • existing — прошлый результат этого же скрипта, тоже new→old.
         const merged = [...newTournaments, ...existing];
         if (merged.length === 0) {
             console.log(`⚠️ Нет данных для сохранения.`);
             return { playerName, saved: false, newCount: 0, totalCount: 0 };
         }
 
-        // Обновляем мета-инфо игрока (id, url, name) в первом элементе
+        // Пересчитываем актуальные порядковые номера (1 = самый новый) —
+        // чтобы порядок в файле был однозначным даже при ручном просмотре.
+        merged.forEach((t, i) => { t.index = i + 1; });
+
+        // Мета-поля игрока — на самый новый турнир
         merged[0].playerUrl = playerUrl;
         merged[0].playerName = playerName;
         const idMatch = String(playerUrl).match(/\/(\d+)(?:[/?#]|$)/);
         if (idMatch) merged[0].playerId = parseInt(idMatch[1], 10);
+
+        // ⬇️ ELO-обогащение ПЕРЕД сохранением: проставляем elo у игроков и averageElo у столов.
+        //    Кэш грузим один раз на весь файл — быстро даже для сотен турниров.
+        try {
+            const eloCacheMod = require('./eloCache');
+            const cache = eloCacheMod.load();
+            const playersInCache = Object.keys(cache.players || {}).length;
+            if (playersInCache === 0) {
+                console.warn(`   ℹ️ elo-cache.json пуст — ELO не обогащён. Запусти buildEloCache.js.`);
+            } else {
+                let gamesEnriched = 0;
+                for (const t of merged) {
+                    if (!Array.isArray(t.games)) continue;
+                    for (const g of t.games) {
+                        if (!Array.isArray(g.composition)) continue;
+                        let eloSum = 0, eloCount = 0;
+                        for (const p of g.composition) {
+                            if (!p || !p.name) continue;
+                            const cached = eloCacheMod.get(cache, p.name);
+                            if (cached && cached.elo != null) {
+                                p.elo = cached.elo;
+                                eloSum += cached.elo;
+                                eloCount++;
+                            }
+                        }
+                        g.averageElo = eloCount > 0 ? Math.round(eloSum / eloCount) : null;
+                        gamesEnriched++;
+                    }
+                }
+                console.log(`   🎯 ELO-обогащение: игр=${gamesEnriched}, в кэше игроков=${playersInCache}`);
+            }
+        } catch (e) {
+            console.warn(`⚠️ Не удалось обогатить ELO: ${e.message}`);
+        }
 
         if (!fs.existsSync(outputDir)) fs.mkdirSync(outputDir, { recursive: true });
         fs.writeFileSync(filename, JSON.stringify(merged, null, 2), 'utf-8');
@@ -635,7 +698,6 @@ async function updatePlayerHistory(playerUrl) {
         await browser.close();
     }
 }
-
 // ============== Точка входа ==============
 
 (async () => {

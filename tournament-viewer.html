@@ -84,7 +84,6 @@ body.dark-mode .error-msg code { background: rgba(255,255,255,.12); }
 .stat-value { font-size: 2rem; font-weight: 800; color: var(--accent); line-height: 1.1; letter-spacing: -.02em; }
 .stat-label { color: var(--text-secondary); font-size: .72rem; text-transform: uppercase; letter-spacing: .08em; font-weight: 700; margin-top: .35rem; }
 
-/* ── Симметричная панель фильтров (Grid) ── */
 .filter-panel {
   background: var(--card-bg);
   border: 1px solid var(--border-color);
@@ -121,7 +120,6 @@ body.dark-mode .error-msg code { background: rgba(255,255,255,.12); }
 .filter-select, .search-input { padding: .65rem .9rem; border-radius: var(--radius-md); border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-primary); font-family: inherit; font-size: .88rem; font-weight: 500; transition: all .2s; box-shadow: var(--shadow-sm); width: 100%; min-width: 0; height: 42px; }
 .filter-select:focus, .search-input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
 
-/* Унифицированная кнопка сброса */
 .filter-reset-btn {
   padding: .65rem 1.2rem;
   border-radius: var(--radius-md);
@@ -149,7 +147,6 @@ body.dark-mode .error-msg code { background: rgba(255,255,255,.12); }
   transform: translateY(-1px);
 }
 
-/* ── Анимированный свич ── */
 .toggle-switch-container {
   position: relative;
   display: flex;
@@ -162,33 +159,16 @@ body.dark-mode .error-msg code { background: rgba(255,255,255,.12); }
   overflow: hidden;
   box-shadow: var(--shadow-sm);
 }
-.toggle-switch-container input {
-  display: none;
-}
+.toggle-switch-container input { display: none; }
 .toggle-switch-container label {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.75rem;
-  font-weight: 600;
-  color: var(--text-secondary);
-  cursor: pointer;
-  z-index: 2;
-  transition: color 0.25s ease;
-  user-select: none;
-  white-space: nowrap;
+  flex: 1; display: flex; align-items: center; justify-content: center;
+  font-size: 0.75rem; font-weight: 600; color: var(--text-secondary);
+  cursor: pointer; z-index: 2; transition: color 0.25s ease; user-select: none; white-space: nowrap;
 }
-.toggle-switch-container input:checked + label {
-  color: #fff;
-}
+.toggle-switch-container input:checked + label { color: #fff; }
 .toggle-switch-slider {
-  position: absolute;
-  top: 3px;
-  bottom: 3px;
-  width: calc(50% - 3px);
-  background: var(--accent);
-  border-radius: calc(var(--radius-md) - 4px);
+  position: absolute; top: 3px; bottom: 3px; width: calc(50% - 3px);
+  background: var(--accent); border-radius: calc(var(--radius-md) - 4px);
   z-index: 1;
   transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), clip-path 0.4s ease;
   box-shadow: 0 2px 10px rgba(59, 130, 246, 0.4);
@@ -200,78 +180,179 @@ body.dark-mode .error-msg code { background: rgba(255,255,255,.12); }
   clip-path: polygon(16% 0, 100% 0, 100% 100%, 0% 100%);
 }
 
-/* Мультиселект турниров */
-.multi-select-dropdown {
-  position: relative;
-  width: 100%;
-}
+.multi-select-dropdown { position: relative; width: 100%; }
 .multi-select-btn {
-  width: 100%;
-  height: 42px;
-  padding: .65rem .9rem;
-  border-radius: var(--radius-md);
-  border: 1px solid var(--border-color);
-  background: var(--card-bg);
-  color: var(--text-primary);
-  font-family: inherit;
-  font-size: .88rem;
-  font-weight: 500;
-  text-align: left;
-  cursor: pointer;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  width: 100%; height: 42px; padding: .65rem .9rem;
+  border-radius: var(--radius-md); border: 1px solid var(--border-color);
+  background: var(--card-bg); color: var(--text-primary);
+  font-family: inherit; font-size: .88rem; font-weight: 500;
+  text-align: left; cursor: pointer;
+  display: flex; justify-content: space-between; align-items: center;
   box-shadow: var(--shadow-sm);
 }
 .multi-select-content {
-  display: none;
-  position: absolute;
-  top: calc(100% + 4px);
-  left: 0;
-  right: 0;
-  background: var(--card-bg);
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-md);
-  box-shadow: var(--shadow-lg);
-  z-index: 100;
-  max-height: 260px;
-  overflow-y: auto;
-  padding: .5rem;
+  display: none; position: absolute; top: calc(100% + 4px); left: 0; right: 0;
+  background: var(--card-bg); border: 1px solid var(--border-color);
+  border-radius: var(--radius-md); box-shadow: var(--shadow-lg);
+  z-index: 100; max-height: 260px; overflow-y: auto; padding: .5rem;
 }
 .multi-select-dropdown.open .multi-select-content { display: block; }
 .multi-select-search {
-  width: 100%;
-  padding: .4rem .6rem;
-  margin-bottom: .4rem;
-  border-radius: 4px;
-  border: 1px solid var(--border-color);
-  background: var(--card-bg-subtle);
-  color: var(--text-primary);
-  font-size: .8rem;
+  width: 100%; padding: .4rem .6rem; margin-bottom: .4rem;
+  border-radius: 4px; border: 1px solid var(--border-color);
+  background: var(--card-bg-subtle); color: var(--text-primary); font-size: .8rem;
 }
-.multi-select-options {
-  display: flex;
-  flex-direction: column;
-  gap: .25rem;
-}
+.multi-select-options { display: flex; flex-direction: column; gap: .25rem; }
 .multi-select-option {
-  display: flex;
-  align-items: center;
-  gap: .5rem;
-  padding: .35rem .5rem;
-  border-radius: 4px;
-  font-size: .82rem;
-  cursor: pointer;
-  user-select: none;
+  display: flex; align-items: center; gap: .5rem;
+  padding: .35rem .5rem; border-radius: 4px; font-size: .82rem;
+  cursor: pointer; user-select: none;
 }
 .multi-select-option:hover { background: var(--card-bg-subtle); }
 
-.filter-stats { background: var(--card-bg); border: 1px solid var(--accent); border-left: 5px solid var(--accent); border-radius: var(--radius-lg); padding: 1rem 1.25rem; margin-bottom: 1.5rem; box-shadow: var(--shadow-sm); }
-.filter-stats-title { font-size: .72rem; font-weight: 800; color: var(--accent); text-transform: uppercase; letter-spacing: .06em; margin-bottom: .7rem; }
-.filter-stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: .75rem; }
-.fs-item { text-align: center; }
-.fs-val { font-size: 1.35rem; font-weight: 800; color: var(--text-primary); }
-.fs-lbl { font-size: .65rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: .05em; margin-top: .15rem; }
+/* ======================================================
+   БЛОК «Статистика по игрокам из фильтра»
+   ====================================================== */
+.filter-stats {
+  background: var(--card-bg);
+  border: 1px solid var(--accent);
+  border-left: 5px solid var(--accent);
+  border-radius: var(--radius-lg);
+  padding: 1rem 1.25rem 1.1rem;
+  margin-bottom: 1.5rem;
+  box-shadow: var(--shadow-sm);
+}
+.filter-stats-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: .5rem 1rem;
+  margin-bottom: .85rem;
+}
+.filter-stats-title {
+  font-size: .72rem;
+  font-weight: 800;
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: .06em;
+}
+.filter-stats-meta {
+  margin-left: auto;
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: .5rem;
+  font-size: .72rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+.filter-stats-meta .mode-tag {
+  display: inline-block;
+  background: var(--accent-soft);
+  color: var(--accent);
+  padding: .1rem .55rem;
+  border-radius: 9999px;
+  font-size: .7rem;
+  font-weight: 700;
+}
+.filter-stats-meta .sort-hint { color: var(--text-muted); font-weight: 500; }
+.filter-stats-meta .bracket-hint {
+  color: var(--text-muted); font-weight: 500;
+  padding: .1rem .5rem;
+  border: 1px dashed var(--border-color);
+  border-radius: 9999px;
+  font-size: .68rem;
+}
+
+.fs-table-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  background: var(--card-bg);
+}
+.fs-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: .82rem;
+}
+.fs-table th {
+  background: var(--card-bg-subtle);
+  font-size: .68rem;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  color: var(--text-secondary);
+  font-weight: 700;
+  padding: .55rem .7rem;
+  text-align: center;
+  white-space: nowrap;
+  border-bottom: 1px solid var(--border-color);
+  position: relative;
+}
+.fs-table th.sortable { cursor: pointer; user-select: none; padding-right: 1.15rem; }
+.fs-table th.sortable::after {
+  content: "⇅";
+  position: absolute;
+  right: .45rem; top: 50%;
+  transform: translateY(-50%);
+  font-size: .75rem;
+  opacity: .35;
+  font-weight: 700;
+}
+.fs-table th.sortable:hover { color: var(--accent); }
+.fs-table th.sortable:hover::after { opacity: .7; color: var(--accent); }
+.fs-table th.sorted-desc::after { content: "▼"; opacity: 1; color: var(--accent); font-size: .6rem; }
+.fs-table th.sorted-asc::after { content: "▲"; opacity: 1; color: var(--accent); font-size: .6rem; }
+
+.fs-table td {
+  padding: .5rem .7rem;
+  border-bottom: 1px solid var(--border-subtle);
+  text-align: center;
+  white-space: nowrap;
+}
+.fs-table tbody tr:last-child td { border-bottom: none; }
+.fs-table tbody tr:hover { background: var(--card-bg-subtle); }
+
+.fs-table .fs-col-rank { width: 42px; color: var(--text-muted); font-weight: 700; font-variant-numeric: tabular-nums; }
+.fs-table .fs-col-name { text-align: left; font-weight: 600; min-width: 120px; }
+.fs-table .fs-col-games, .fs-table .fs-col-wins { font-variant-numeric: tabular-nums; font-weight: 600; }
+.fs-table .fs-col-wr { min-width: 175px; }
+.fs-table .fs-col-avg { font-weight: 700; color: var(--accent); font-variant-numeric: tabular-nums; }
+.fs-table .fs-col-roles { text-align: left; }
+
+/* Приглушённое значение в скобках */
+.fs-dim {
+  color: var(--text-muted);
+  font-weight: 500;
+  font-size: 0.82em;
+}
+.fs-table .fs-col-avg .fs-dim { color: var(--text-muted); font-weight: 500; }
+
+.fs-wr-wrap { display: flex; align-items: center; gap: .5rem; justify-content: center; }
+.fs-wr-bar {
+  width: 55px; height: 6px; border-radius: 9999px;
+  background: var(--card-bg-subtle); overflow: hidden;
+  border: 1px solid var(--border-color); flex-shrink: 0;
+}
+.fs-wr-fill { height: 100%; transition: width .3s; border-radius: 9999px; }
+.fs-wr-fill.fs-wr-high { background: var(--success); }
+.fs-wr-fill.fs-wr-mid { background: var(--warning); }
+.fs-wr-fill.fs-wr-low { background: var(--danger); }
+.fs-wr-val { font-variant-numeric: tabular-nums; font-weight: 700; font-size: .78rem; text-align: right; }
+
+.fs-role-list { display: flex; flex-wrap: wrap; gap: .3rem; }
+.fs-role-chip {
+  display: inline-flex; align-items: center; gap: .2rem;
+  padding: .12rem .5rem; border-radius: 9999px;
+  font-size: .68rem; font-weight: 700; white-space: nowrap; line-height: 1.3;
+}
+.fs-role-peaceful { background: var(--role-red-bg); color: var(--role-red-text); }
+.fs-role-sheriff { background: var(--role-sheriff-bg); color: var(--role-sheriff-text); }
+.fs-role-mafia { background: var(--role-mafia-bg); color: var(--role-mafia-text); }
+.fs-role-don { background: var(--role-don-bg); color: var(--role-don-text); }
+.fs-role-other { background: var(--card-bg-subtle); color: var(--text-secondary); }
+.fs-role-chip .fs-dim { color: inherit; opacity: .65; }
+
+.fs-empty { color: var(--text-muted); font-size: .8rem; padding: 1rem; text-align: center; }
 
 .result-info { text-align: center; font-weight: 600; color: var(--text-secondary); font-size: .9rem; padding: .25rem 0 1.25rem; }
 .result-info b { color: var(--accent); }
@@ -328,54 +409,76 @@ body.dark-mode .error-msg code { background: rgba(255,255,255,.12); }
 .standings-table tbody tr.row-highlight .col-name { color: var(--warning); }
 .standings-table tbody tr:hover { background: var(--card-bg-subtle); }
 
-/* ================= TOURS LAYOUT ================= */
+.standings-table .player-select {
+  background: transparent; border: none;
+  border-bottom: 1px dashed var(--border-color);
+  padding: 0; margin: 0; font: inherit; font-weight: 600;
+  color: var(--text-primary); cursor: pointer; text-align: left;
+  transition: color .15s, background .15s, border-color .15s;
+}
+.standings-table .player-select:hover { color: var(--accent); border-bottom-color: var(--accent); }
+.standings-table .player-select.is-selected {
+  color: var(--accent); background: var(--accent-soft);
+  border-bottom-color: transparent; border-radius: 4px; padding: 0 .35rem;
+}
+
+.table-filter { margin: .75rem 0 1rem; background: var(--card-bg-subtle); border: 1px solid var(--border-color); border-radius: var(--radius-md); overflow: hidden; }
+.table-filter-toggle {
+  width: 100%; text-align: left; padding: .55rem .85rem;
+  background: transparent; border: none; cursor: pointer;
+  font-family: inherit; font-weight: 600; font-size: .82rem;
+  color: var(--text-secondary);
+  display: flex; align-items: center; gap: .5rem;
+  transition: background .15s, color .15s;
+}
+.table-filter-toggle:hover { background: var(--card-bg); color: var(--accent); }
+.table-filter-toggle .tf-count {
+  background: var(--danger-soft); color: var(--danger);
+  padding: .1rem .5rem; border-radius: 9999px;
+  font-size: .68rem; font-weight: 700;
+}
+.table-filter-toggle .tf-arrow { margin-left: auto; font-size: .68rem; opacity: .7; }
+.table-filter-panel { padding: .7rem .85rem .85rem; border-top: 1px solid var(--border-color); background: var(--card-bg); }
+.table-filter-actions { display: flex; gap: .4rem; flex-wrap: wrap; margin-bottom: .6rem; }
+.table-filter-action-btn {
+  padding: .28rem .7rem; background: var(--card-bg-subtle);
+  border: 1px solid var(--border-color); border-radius: var(--radius-sm);
+  font-family: inherit; font-size: .72rem; font-weight: 600;
+  cursor: pointer; color: var(--text-secondary); transition: all .15s;
+}
+.table-filter-action-btn:hover { border-color: var(--accent); color: var(--accent); }
+.table-filter-action-btn.danger:hover { border-color: var(--danger); color: var(--danger); }
+.table-filter-options { display: flex; flex-wrap: wrap; gap: .35rem .6rem; max-height: 260px; overflow-y: auto; padding-right: .25rem; }
+.table-filter-option {
+  display: inline-flex; align-items: center; gap: .35rem;
+  font-size: .78rem; cursor: pointer;
+  padding: .25rem .55rem; border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm); background: var(--card-bg-subtle);
+  transition: all .15s; user-select: none;
+}
+.table-filter-option:hover { border-color: var(--accent); }
+.table-filter-option input { cursor: pointer; margin: 0; }
+.table-filter-option.is-hidden { background: var(--danger-soft); border-color: rgba(239,68,68,.35); color: var(--danger); }
+.table-filter-option.is-hidden span { text-decoration: line-through; }
+
 .tours-container { display: flex; flex-direction: column; gap: 1.25rem; margin-top: 1rem; }
-
-.tour-block {
-  background: var(--card-bg-subtle);
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-md);
-  padding: .9rem 1rem 1rem;
-}
-
-.tour-header {
-  display: flex;
-  align-items: center;
-  gap: .65rem;
-  margin-bottom: .75rem;
-  padding-bottom: .6rem;
-  border-bottom: 1px solid var(--border-color);
-  flex-wrap: wrap;
-}
+.tour-block { background: var(--card-bg-subtle); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: .9rem 1rem 1rem; }
+.tour-header { display: flex; align-items: center; gap: .65rem; margin-bottom: .75rem; padding-bottom: .6rem; border-bottom: 1px solid var(--border-color); flex-wrap: wrap; }
 .tour-title { font-weight: 800; font-size: .95rem; color: var(--text-primary); }
 .tour-round-badge {
-  padding: .18rem .6rem;
-  border-radius: 9999px;
-  font-size: .68rem;
-  font-weight: 700;
-  background: var(--accent-soft);
-  color: var(--accent);
-  text-transform: uppercase;
-  letter-spacing: .04em;
+  padding: .18rem .6rem; border-radius: 9999px; font-size: .68rem; font-weight: 700;
+  background: var(--accent-soft); color: var(--accent);
+  text-transform: uppercase; letter-spacing: .04em;
 }
 .tour-round-badge.round-final { background: rgba(245,158,11,.15); color: #b45309; }
 .tour-round-badge.round-semi { background: rgba(139,92,246,.15); color: #6d28d9; }
 body.dark-mode .tour-round-badge.round-final { background: rgba(245,158,11,.22); color: #fcd34d; }
 body.dark-mode .tour-round-badge.round-semi { background: rgba(139,92,246,.25); color: #d8b4fe; }
-.tour-tables-count {
-  margin-left: auto;
-  font-size: .78rem;
-  font-weight: 600;
-  color: var(--text-secondary);
-}
+.tour-tables-count { margin-left: auto; font-size: .78rem; font-weight: 600; color: var(--text-secondary); }
 
 .tour-tables-scroll {
-  display: flex;
-  gap: .85rem;
-  overflow-x: auto;
-  padding-bottom: .55rem;
-  scroll-snap-type: x proximity;
-  scroll-behavior: smooth;
+  display: flex; gap: .85rem; overflow-x: auto; padding-bottom: .55rem;
+  scroll-snap-type: x proximity; scroll-behavior: smooth;
 }
 .tour-tables-scroll::-webkit-scrollbar { height: 8px; }
 .tour-tables-scroll::-webkit-scrollbar-track { background: var(--card-bg); border-radius: 4px; }
@@ -383,37 +486,15 @@ body.dark-mode .tour-round-badge.round-semi { background: rgba(139,92,246,.25); 
 .tour-tables-scroll::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
 .tour-tables-scroll { scrollbar-width: thin; scrollbar-color: var(--border-color) var(--card-bg); }
 
-.tour-singles-group {
-  background: var(--card-bg-subtle);
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-md);
-  padding: .9rem 1rem 1rem;
-}
-.tour-singles-header {
-  display: flex;
-  align-items: center;
-  gap: .65rem;
-  margin-bottom: .75rem;
-  padding-bottom: .6rem;
-  border-bottom: 1px solid var(--border-color);
-  flex-wrap: wrap;
-}
-.tour-singles-title {
-  font-weight: 800;
-  font-size: .95rem;
-  color: var(--text-primary);
-}
+.tour-singles-group { background: var(--card-bg-subtle); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: .9rem 1rem 1rem; }
+.tour-singles-header { display: flex; align-items: center; gap: .65rem; margin-bottom: .75rem; padding-bottom: .6rem; border-bottom: 1px solid var(--border-color); flex-wrap: wrap; }
+.tour-singles-title { font-weight: 800; font-size: .95rem; color: var(--text-primary); }
 
 .game-card {
-  flex: 0 0 285px;
-  min-width: 285px;
-  background: var(--card-bg);
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-md);
-  padding: .85rem;
-  transition: transform .2s, box-shadow .2s, opacity .2s;
-  box-shadow: var(--shadow-sm);
-  scroll-snap-align: start;
+  flex: 0 0 285px; min-width: 285px; background: var(--card-bg);
+  border: 1px solid var(--border-color); border-radius: var(--radius-md);
+  padding: .85rem; transition: transform .2s, box-shadow .2s, opacity .2s;
+  box-shadow: var(--shadow-sm); scroll-snap-align: start;
 }
 .game-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
 
@@ -421,14 +502,9 @@ body.dark-mode .tour-round-badge.round-semi { background: rgba(139,92,246,.25); 
 .game-meta-left { display: inline-flex; align-items: center; gap: .35rem; flex-wrap: wrap; }
 .game-meta-right { display: inline-flex; align-items: center; gap: .25rem; }
 .game-meta .inline-round-badge {
-  padding: .1rem .45rem;
-  border-radius: 9999px;
-  font-size: .6rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: .04em;
-  background: var(--accent-soft);
-  color: var(--accent);
+  padding: .1rem .45rem; border-radius: 9999px;
+  font-size: .6rem; font-weight: 700; text-transform: uppercase; letter-spacing: .04em;
+  background: var(--accent-soft); color: var(--accent);
 }
 .game-meta .inline-round-badge.round-final { background: rgba(245,158,11,.15); color: #b45309; }
 .game-meta .inline-round-badge.round-semi { background: rgba(139,92,246,.15); color: #6d28d9; }
@@ -447,17 +523,11 @@ body.dark-mode .badge-win { background: rgba(16,185,129,.25); color: #86efac; }
 body.dark-mode .badge-loss { background: rgba(239,68,68,.25); color: #fca5a5; }
 
 .elo-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: .2rem;
-  padding: .12rem .5rem;
-  border-radius: 9999px;
-  font-size: .68rem;
-  font-weight: 700;
-  background: var(--accent-soft);
-  color: var(--accent);
-  letter-spacing: .02em;
-  font-variant-numeric: tabular-nums;
+  display: inline-flex; align-items: center; gap: .2rem;
+  padding: .12rem .5rem; border-radius: 9999px;
+  font-size: .68rem; font-weight: 700;
+  background: var(--accent-soft); color: var(--accent);
+  letter-spacing: .02em; font-variant-numeric: tabular-nums;
 }
 .elo-badge.elo-low { background: var(--danger-soft); color: var(--danger); }
 .elo-badge.elo-mid { background: var(--warning-soft); color: var(--warning); }
@@ -481,24 +551,20 @@ body.dark-mode .badge-loss { background: rgba(239,68,68,.25); color: #fca5a5; }
 .comp-player.role-mafia { background: var(--role-mafia-bg); color: var(--role-mafia-text); border-color: transparent; }
 .comp-player.role-don { background: var(--role-don-bg); color: var(--role-don-text); border-color: transparent; }
 
-/* ── Стили ЛХ (уход в первую ночь) ── */
 .comp-player.play-lg-partial {
   background: var(--role-lg-partial-bg) !important;
   color: var(--role-lg-partial-text) !important;
-  font-weight: 600;
-  border-color: transparent;
+  font-weight: 600; border-color: transparent;
 }
 .comp-player.play-lg-full {
   background: var(--role-lg-full-bg) !important;
   color: var(--role-lg-full-text) !important;
-  font-weight: 700;
-  border-color: transparent;
+  font-weight: 700; border-color: transparent;
 }
 .comp-player.play-lg-zero {
   background: var(--role-lg-zero-bg) !important;
   color: var(--role-lg-zero-text) !important;
-  font-weight: 600;
-  border: 1.5px dashed var(--role-lg-zero-border) !important;
+  font-weight: 600; border: 1.5px dashed var(--role-lg-zero-border) !important;
 }
 
 .comp-player.highlight { box-shadow: 0 0 0 2px var(--warning); font-weight: 700; }
@@ -515,39 +581,17 @@ body.dark-mode .badge-loss { background: rgba(239,68,68,.25); color: #fca5a5; }
 .watched-btn.is-watched { background: var(--success-soft); border-color: var(--success); color: var(--success); }
 .watched-btn.is-watched:hover { background: var(--danger-soft); border-color: var(--danger); color: var(--danger); }
 
-/* Стили для кнопки избранного */
 .fav-btn {
-  background: var(--card-bg);
-  border: 1px solid var(--border-color);
-  color: var(--text-secondary);
-  border-radius: var(--radius-md);
-  padding: 0.28rem 0.55rem;
-  font-size: 0.72rem;
-  font-weight: 600;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.25rem;
-  cursor: pointer;
-  transition: all 0.15s ease;
-  box-shadow: var(--shadow-sm);
-  white-space: nowrap;
-  line-height: 1.2;
+  background: var(--card-bg); border: 1px solid var(--border-color);
+  color: var(--text-secondary); border-radius: var(--radius-md);
+  padding: 0.28rem 0.55rem; font-size: 0.72rem; font-weight: 600;
+  display: inline-flex; align-items: center; gap: 0.25rem;
+  cursor: pointer; transition: all 0.15s ease;
+  box-shadow: var(--shadow-sm); white-space: nowrap; line-height: 1.2;
 }
-.fav-btn:hover {
-  border-color: var(--warning);
-  color: var(--warning);
-  transform: translateY(-1px);
-}
-.fav-btn.is-favorite {
-  background: var(--warning-soft);
-  border-color: var(--warning);
-  color: var(--warning);
-}
-.fav-btn.is-favorite:hover {
-  background: var(--danger-soft);
-  border-color: var(--danger);
-  color: var(--danger);
-}
+.fav-btn:hover { border-color: var(--warning); color: var(--warning); transform: translateY(-1px); }
+.fav-btn.is-favorite { background: var(--warning-soft); border-color: var(--warning); color: var(--warning); }
+.fav-btn.is-favorite:hover { background: var(--danger-soft); border-color: var(--danger); color: var(--danger); }
 
 .game-card.watched { opacity: .55; border-color: var(--success); background: linear-gradient(90deg, rgba(16,185,129,.06) 0%, var(--card-bg) 55%); }
 .game-card.watched:hover { opacity: 1; }
@@ -562,6 +606,7 @@ body.dark-mode .game-card.watched { background: linear-gradient(90deg, rgba(16,1
   body { padding: 1rem .75rem; }
   h1 { font-size: 1.6rem; }
   .game-card { flex: 0 0 250px; min-width: 250px; }
+  .fs-wr-bar { width: 40px; }
 }
 </style>
 </head>
@@ -582,6 +627,7 @@ body.dark-mode .game-card.watched { background: linear-gradient(90deg, rgba(16,1
         <input type="file" id="importWatchedInput" accept=".json" />
       </div>
       <button id="clearWatchedBtn" class="theme-btn">🧹 Сбросить просмотры</button>
+      <button id="showAllTablesBtn" class="theme-btn hidden" title="Показать все скрытые столы во всех турнирах" onclick="clearAllHiddenTables()">🔄 Показать все столы</button>
     </div>
     <div id="errorContainer"></div>
   </header>
@@ -595,9 +641,7 @@ body.dark-mode .game-card.watched { background: linear-gradient(90deg, rgba(16,1
       <div class="stat-card"><div class="stat-value" id="statFavorites">0</div><div class="stat-label">⭐ Избранное</div></div>
     </div>
 
-    <!-- Симметричная сетка панели фильтров -->
     <div class="filter-panel">
-      <!-- Ряд 1: Игроки, Режим поиска игроков, Скрытие ролей -->
       <div class="filter-group span-6">
         <label class="filter-label">Игроки (через запятую)</label>
         <input type="text" id="playerSearch" class="search-input" placeholder="Например: Vendetta, Fizik" oninput="onFilterChange()" />
@@ -625,7 +669,6 @@ body.dark-mode .game-card.watched { background: linear-gradient(90deg, rgba(16,1
         </div>
       </div>
 
-      <!-- Ряд 2: Выбор турниров -->
       <div class="filter-group span-12">
         <label class="filter-label">Турниры (выбор отображаемых)</label>
         <div class="multi-select-dropdown" id="tournamentDropdown">
@@ -644,7 +687,6 @@ body.dark-mode .game-card.watched { background: linear-gradient(90deg, rgba(16,1
         </div>
       </div>
 
-      <!-- Ряд 3: Компактные фильтры (тип победы, раунд, просмотрено, избранное) -->
       <div class="filter-group span-3">
         <label class="filter-label">Тип победы</label>
         <select id="winnerFilter" class="filter-select" onchange="onFilterChange()">
@@ -682,7 +724,6 @@ body.dark-mode .game-card.watched { background: linear-gradient(90deg, rgba(16,1
         </select>
       </div>
 
-      <!-- Ряд 4: Мин ELO и Кнопка сброса -->
       <div class="filter-group span-3">
         <label class="filter-label" title="Показывать только столы со средним ELO не ниже указанного">Мин. ELO стола</label>
         <input type="number" id="minEloFilter" class="filter-select" placeholder="например 1500" min="0" max="3000" step="50" oninput="onFilterChange()" />
@@ -707,16 +748,29 @@ const state = {
   db: [],
   watched: loadWatched(),
   favorites: loadFavorites(),
+  hiddenTables: loadHiddenTables(),
+  tableFilterOpen: {},
   tournamentDisplayCount: 10,
   filtered: [],
   filteredTournaments: [],
   totalFilteredGames: 0,
-  selectedTournaments: new Set()
+  selectedTournaments: new Set(),
+  lastFilterStatsRows: [],
+  filterStatsSort: { field: 'games', dir: 'desc' }
 };
 
 const WATCHED_KEY = 'mafia-tournament-watched-v1';
 const FAVORITES_KEY = 'mafia-tournament-favorites-v1';
+const HIDDEN_TABLES_KEY = 'mafia-tournament-hidden-tables-v1';
 const DEFAULT_THEME_KEY = 'theme';
+
+const ROLE_META = {
+  peaceful: { icon: '🟥', label: 'Мирный', cls: 'fs-role-peaceful' },
+  sheriff:  { icon: '🕵️', label: 'Шериф', cls: 'fs-role-sheriff' },
+  mafia:    { icon: '⬛', label: 'Мафия', cls: 'fs-role-mafia' },
+  don:      { icon: '👑', label: 'Дон',   cls: 'fs-role-don' },
+  other:    { icon: '❔', label: 'Прочее', cls: 'fs-role-other' }
+};
 
 document.addEventListener('click', (e) => {
   const dropdown = document.getElementById('tournamentDropdown');
@@ -873,6 +927,125 @@ function loadFavorites() {
 function saveFavorites() {
   try { localStorage.setItem(FAVORITES_KEY, JSON.stringify(state.favorites)); }
   catch (e) { console.warn('save favorites failed', e); }
+}
+
+// =====================================================================
+// HIDDEN TABLES STATE
+// =====================================================================
+function loadHiddenTables() {
+  try { return JSON.parse(localStorage.getItem(HIDDEN_TABLES_KEY) || '{}'); }
+  catch { return {}; }
+}
+function saveHiddenTables() {
+  try { localStorage.setItem(HIDDEN_TABLES_KEY, JSON.stringify(state.hiddenTables)); }
+  catch (e) { console.warn('save hidden tables failed', e); }
+}
+
+function getTournamentKey(t) {
+  return String(t.id ?? t.url ?? '');
+}
+
+function getTournamentTableNumbers(t) {
+  const nums = new Set();
+  (t.games || []).forEach(g => {
+    (g.tables || []).forEach(tbl => {
+      const n = tbl.tableNumber;
+      if (n != null && n !== '') nums.add(String(n));
+    });
+  });
+  return Array.from(nums).sort((a, b) => {
+    const na = parseInt(a, 10), nb = parseInt(b, 10);
+    if (Number.isFinite(na) && Number.isFinite(nb) && na !== nb) return na - nb;
+    return String(a).localeCompare(String(b));
+  });
+}
+
+function isTableHidden(tid, tableNumber) {
+  const h = state.hiddenTables[tid];
+  return !!(h && h[String(tableNumber)]);
+}
+
+function getHiddenTableCount(tid) {
+  const h = state.hiddenTables[tid];
+  return h ? Object.keys(h).length : 0;
+}
+
+function toggleHiddenTable(tid, tableNumber, hide) {
+  if (!state.hiddenTables[tid]) state.hiddenTables[tid] = {};
+  if (hide) state.hiddenTables[tid][String(tableNumber)] = true;
+  else delete state.hiddenTables[tid][String(tableNumber)];
+  if (Object.keys(state.hiddenTables[tid]).length === 0) delete state.hiddenTables[tid];
+  saveHiddenTables();
+  onFilterChange();
+}
+
+function toggleHiddenTableFromCheckbox(cb) {
+  const wrapper = cb.closest('.table-filter');
+  if (!wrapper) return;
+  const tid = wrapper.dataset.tid;
+  const tableNumber = cb.dataset.tableNumber;
+  if (!tid || tableNumber == null) return;
+  toggleHiddenTable(tid, tableNumber, cb.checked);
+}
+
+function hideAllTablesForTournamentFromBtn(btn) {
+  const wrapper = btn.closest('.table-filter');
+  if (!wrapper) return;
+  const tid = wrapper.dataset.tid;
+  if (!tid) return;
+  const t = state.db.find(x => getTournamentKey(x) === tid);
+  if (!t) return;
+  const nums = getTournamentTableNumbers(t);
+  if (!nums.length) return;
+  state.hiddenTables[tid] = {};
+  nums.forEach(n => { state.hiddenTables[tid][n] = true; });
+  saveHiddenTables();
+  onFilterChange();
+}
+
+function clearHiddenTablesForTournamentFromBtn(btn) {
+  const wrapper = btn.closest('.table-filter');
+  if (!wrapper) return;
+  const tid = wrapper.dataset.tid;
+  if (!tid) return;
+  delete state.hiddenTables[tid];
+  saveHiddenTables();
+  onFilterChange();
+}
+
+function toggleTableFilterPanel(btn) {
+  const wrapper = btn.closest('.table-filter');
+  if (!wrapper) return;
+  const tid = wrapper.dataset.tid;
+  if (!tid) return;
+  if (state.tableFilterOpen[tid]) delete state.tableFilterOpen[tid];
+  else state.tableFilterOpen[tid] = true;
+  const panel = wrapper.querySelector('.table-filter-panel');
+  if (panel) panel.style.display = state.tableFilterOpen[tid] ? 'block' : 'none';
+  const arrow = btn.querySelector('.tf-arrow');
+  if (arrow) arrow.textContent = state.tableFilterOpen[tid] ? '▲' : '▼';
+}
+
+function clearAllHiddenTables() {
+  const total = Object.values(state.hiddenTables).reduce((s, o) => s + Object.keys(o).length, 0);
+  if (!total) { alert('Нет скрытых столов.'); return; }
+  if (!confirm(`Показать все столы во всех турнирах? (${total} скрыто)`)) return;
+  state.hiddenTables = {};
+  saveHiddenTables();
+  onFilterChange();
+}
+
+function updateShowAllTablesBtn() {
+  const btn = document.getElementById('showAllTablesBtn');
+  if (!btn) return;
+  let total = 0;
+  Object.values(state.hiddenTables).forEach(o => { total += Object.keys(o).length; });
+  if (total > 0) {
+    btn.classList.remove('hidden');
+    btn.textContent = `🔄 Показать все столы (${total})`;
+  } else {
+    btn.classList.add('hidden');
+  }
 }
 
 function toggleWatched(key, btn) {
@@ -1079,9 +1252,13 @@ function readFilters() {
   };
 }
 
-function gameMatchesFilters(tournament, game, table, filters) {
+function gameMatchesFilters(tournament, game, table, filters, opts) {
+  opts = opts || {};
+  const skipHiddenTables = !!opts.skipHiddenTables;
   const tval = String(tournament.id ?? tournament.url);
   if (!state.selectedTournaments.has(tval)) return false;
+
+  if (!skipHiddenTables && isTableHidden(tval, table.tableNumber)) return false;
 
   if (filters.winner !== 'all' && table.winner !== filters.winner) return false;
   if (filters.round !== 'all' && game.round !== filters.round) return false;
@@ -1136,33 +1313,49 @@ function onFilterChange() {
   const filters = readFilters();
   state.tournamentDisplayCount = 10;
   renderFiltered(filters);
+  updateShowAllTablesBtn();
 }
 
 function renderFiltered(filters) {
   const container = document.getElementById('tournamentsContainer');
   container.innerHTML = '';
   const filteredTournaments = [];
+  const filteredTournamentsNoHidden = [];
   let totalGames = 0;
 
   state.db.forEach(t => {
-    const games = [];
+    const tval = String(t.id ?? t.url);
+    const gamesNoHidden = [];
+    const gamesFiltered = [];
+
     (t.games || []).forEach(g => {
-      const tables = (g.tables || []).filter(tbl => gameMatchesFilters(t, g, tbl, filters));
-      if (tables.length) games.push({ game: g, tables });
+      // Сначала фильтруем БЕЗ учёта скрытых столов — это «полный» набор
+      const matching = (g.tables || []).filter(tbl => gameMatchesFilters(t, g, tbl, filters, { skipHiddenTables: true }));
+      if (!matching.length) return;
+
+      gamesNoHidden.push({ game: g, tables: matching });
+
+      // Затем убираем скрытые столы — это «с фильтром»
+      const visible = matching.filter(tbl => !isTableHidden(tval, tbl.tableNumber));
+      if (visible.length) gamesFiltered.push({ game: g, tables: visible });
     });
-    if (games.length) {
-      filteredTournaments.push({ tournament: t, games });
-      games.forEach(g => { totalGames += g.tables.length; });
+
+    if (gamesNoHidden.length) {
+      filteredTournamentsNoHidden.push({ tournament: t, games: gamesNoHidden });
+    }
+    if (gamesFiltered.length) {
+      filteredTournaments.push({ tournament: t, games: gamesFiltered });
+      gamesFiltered.forEach(g => { totalGames += g.tables.length; });
     }
   });
 
   state.filtered = filteredTournaments;
   state.totalFilteredGames = totalGames;
 
-  renderFilterStats(filters, filteredTournaments);
+  renderFilterStats(filters, filteredTournaments, filteredTournamentsNoHidden);
 
   const info = document.getElementById('resultInfo');
-  if (totalGames === 0) {
+  if (totalGames === 0 && filteredTournamentsNoHidden.length === 0) {
     info.textContent = 'По выбранным фильтрам игр не найдено';
     container.innerHTML = '<p class="empty-state">По выбранным фильтрам игр не найдено.</p>';
     updateStats();
@@ -1195,12 +1388,12 @@ function renderFiltered(filters) {
   updateStats();
 }
 
-function renderFilterStats(filters, filteredTournaments) {
-  const el = document.getElementById('filterStats');
-  if (!filters.players.length) {
-    el.classList.add('hidden');
-    return;
-  }
+// =====================================================================
+// СТАТИСТИКА ПО ИГРОКАМ ИЗ ФИЛЬТРА
+//   Основное значение — без учёта скрытых столов (полная статистика)
+//   В скобках       — с учётом скрытых столов
+// =====================================================================
+function computePlayerStats(filteredTournaments, filters) {
   const stats = {};
   filteredTournaments.forEach(({ games }) => {
     games.forEach(({ tables }) => {
@@ -1221,33 +1414,175 @@ function renderFilterStats(filters, filteredTournaments) {
       });
     });
   });
+  return stats;
+}
 
-  const rows = Object.values(stats);
-  if (!rows.length) { el.classList.add('hidden'); return; }
+function renderFilterStats(filters, filteredTournaments, filteredTournamentsNoHidden) {
+  const el = document.getElementById('filterStats');
+  if (!filters.players.length) {
+    el.classList.add('hidden');
+    state.lastFilterStatsRows = [];
+    return;
+  }
 
-  const roleLabels = { peaceful: '🟥 Мирный', sheriff: '🕵️ Шериф', mafia: '⬛ Мафия', don: '👑 Дон' };
+  const fullStats = computePlayerStats(filteredTournamentsNoHidden || filteredTournaments, filters);
+  const filteredStats = computePlayerStats(filteredTournaments, filters);
+
+  const rows = Object.values(fullStats).map(s => {
+    const loginLower = String(s.name || '').toLowerCase();
+    const f = filteredStats[loginLower] || { games: 0, wins: 0, points: 0, roles: {} };
+    return { ...s, filtered: f };
+  });
+
+  if (!rows.length) {
+    el.classList.add('hidden');
+    state.lastFilterStatsRows = [];
+    return;
+  }
+
+  state.lastFilterStatsRows = rows;
+
   const modeLabel = filters.playerMode === 'all'
     ? '🔸 режим: все игроки из списка'
     : '🔹 режим: любой игрок из списка';
-  const cardsHtml = rows.map(s => {
-    const wr = s.games ? ((s.wins / s.games) * 100).toFixed(1) : '0.0';
-    const avg = s.games ? (s.points / s.games).toFixed(2) : '0.00';
-    const roles = Object.entries(s.roles).sort((a, b) => b[1] - a[1])
-      .map(([k, v]) => `${roleLabels[k] || k}: ${v}`).join(' · ');
-    return `<div class="stat-card" style="text-align:left;">
-      <div class="stat-label" style="text-align:left;color:var(--accent);font-size:.78rem;">${escapeHtml(s.name)}</div>
-      <div class="filter-stats-grid" style="margin-top:.6rem;">
-        <div class="fs-item"><div class="fs-val">${s.games}</div><div class="fs-lbl">Игр</div></div>
-        <div class="fs-item"><div class="fs-val">${s.wins}</div><div class="fs-lbl">Побед</div></div>
-        <div class="fs-item"><div class="fs-val">${wr}%</div><div class="fs-lbl">Винрейт</div></div>
-        <div class="fs-item"><div class="fs-val">${avg}</div><div class="fs-lbl">Ср. балл</div></div>
-      </div>
-      ${roles ? `<div style="margin-top:.55rem;font-size:.72rem;color:var(--text-muted);">${roles}</div>` : ''}
-    </div>`;
-  }).join('');
+  const playerCountStr = `${rows.length} ${pluralize(rows.length, 'игрок', 'игрока', 'игроков')}`;
 
-  el.innerHTML = `<div class="filter-stats-title">📊 Статистика по игрокам из фильтра · <span style="color:var(--text-secondary);text-transform:none;letter-spacing:0;font-weight:600;">${modeLabel}</span></div><div class="summary-grid" style="margin-bottom:0;">${cardsHtml}</div>`;
+  el.innerHTML = `
+    <div class="filter-stats-header">
+      <div class="filter-stats-title">📊 Статистика по игрокам из фильтра</div>
+      <div class="filter-stats-meta">
+        <span class="mode-tag">${modeLabel}</span>
+        <span>${playerCountStr}</span>
+        <span class="bracket-hint" title="Основное число — все столы. В скобках — после скрытия столов.">в скобках — без скрытых столов</span>
+        <span class="sort-hint">клик по заголовку — сортировка</span>
+      </div>
+    </div>
+    <div class="fs-table-wrap">
+      <table class="fs-table">
+        <thead><tr id="fsTheadRow"></tr></thead>
+        <tbody id="fsTbody"></tbody>
+      </table>
+    </div>
+  `;
+  renderFilterStatsTable();
   el.classList.remove('hidden');
+}
+
+function buildFsThead() {
+  const s = state.filterStatsSort;
+  const col = (field, label, opts) => {
+    opts = opts || {};
+    const cls = [];
+    if (opts.cls) cls.push(opts.cls);
+    if (opts.sortable !== false) {
+      cls.push('sortable');
+      if (s.field === field) cls.push(s.dir === 'desc' ? 'sorted-desc' : 'sorted-asc');
+    }
+    const onclick = opts.sortable !== false ? ` onclick="sortFilterStats('${field}')"` : '';
+    return `<th class="${cls.join(' ')}"${onclick}>${label}</th>`;
+  };
+  return `<th class="fs-col-rank">#</th>` +
+    col('name', 'Игрок', { cls: 'fs-col-name' }) +
+    col('games', 'Игр', { cls: 'fs-col-games' }) +
+    col('wins', 'Побед', { cls: 'fs-col-wins' }) +
+    col('wr', 'Винрейт', { cls: 'fs-col-wr' }) +
+    col('avg', 'Ср. балл', { cls: 'fs-col-avg' }) +
+    col('roles', 'Роли', { cls: 'fs-col-roles', sortable: false });
+}
+
+function sortStatsRows(rows) {
+  const { field, dir } = state.filterStatsSort;
+  const mult = dir === 'asc' ? 1 : -1;
+  const copy = [...rows];
+  copy.sort((a, b) => {
+    let va, vb;
+    switch (field) {
+      case 'name': va = (a.name || '').toLowerCase(); vb = (b.name || '').toLowerCase(); break;
+      case 'games': va = a.games; vb = b.games; break;
+      case 'wins': va = a.wins; vb = b.wins; break;
+      case 'wr': va = a.games ? a.wins / a.games : 0; vb = b.games ? b.wins / b.games : 0; break;
+      case 'avg': va = a.games ? a.points / a.games : 0; vb = b.games ? b.points / b.games : 0; break;
+      default: va = a.games; vb = b.games;
+    }
+    if (va < vb) return -1 * mult;
+    if (va > vb) return 1 * mult;
+    return 0;
+  });
+  return copy;
+}
+
+function fmtWithBracket(fullVal, filteredVal, fullStr, filteredStr, differs) {
+  if (!differs) return fullStr;
+  return `${fullStr} <span class="fs-dim">(${filteredStr})</span>`;
+}
+
+function renderFilterStatsTable() {
+  const thead = document.getElementById('fsTheadRow');
+  const tbody = document.getElementById('fsTbody');
+  if (!thead || !tbody) return;
+  thead.innerHTML = buildFsThead();
+
+  const rows = sortStatsRows(state.lastFilterStatsRows || []);
+  if (!rows.length) {
+    tbody.innerHTML = `<tr><td colspan="7" class="fs-empty">Нет данных</td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = rows.map((s, i) => {
+    const f = s.filtered || { games: 0, wins: 0, points: 0, roles: {} };
+
+    const wr = s.games ? (s.wins / s.games) * 100 : 0;
+    const avg = s.games ? (s.points / s.games) : 0;
+    const fWr = f.games ? (f.wins / f.games) * 100 : 0;
+    const fAvg = f.games ? (f.points / f.games) : 0;
+
+    const hasHiddenDiff = f.games !== s.games;
+    const wrCls = wr >= 60 ? 'fs-wr-high' : wr >= 40 ? 'fs-wr-mid' : 'fs-wr-low';
+
+    const gamesCell = fmtWithBracket(s.games, f.games, String(s.games), String(f.games), hasHiddenDiff);
+    const winsCell = fmtWithBracket(s.wins, f.wins, String(s.wins), String(f.wins), hasHiddenDiff);
+    const wrCell = fmtWithBracket(wr, fWr, wr.toFixed(1) + '%', fWr.toFixed(1) + '%', hasHiddenDiff);
+    const avgCell = fmtWithBracket(avg, fAvg, avg.toFixed(2), fAvg.toFixed(2), hasHiddenDiff);
+
+    // Роли — объединение ключей из полных и фильтрованных
+    const roleKeys = new Set([...Object.keys(s.roles || {}), ...Object.keys(f.roles || {})]);
+    const rolesHtml = [...roleKeys]
+      .sort((a, b) => (s.roles[b] || 0) - (s.roles[a] || 0))
+      .map(k => {
+        const fullCnt = s.roles[k] || 0;
+        const filtCnt = f.roles[k] || 0;
+        const m = ROLE_META[k] || ROLE_META.other;
+        const cntStr = fullCnt === filtCnt
+          ? `${fullCnt}`
+          : `${fullCnt} <span class="fs-dim">(${filtCnt})</span>`;
+        return `<span class="fs-role-chip ${m.cls}">${m.icon} ${m.label} · ${cntStr}</span>`;
+      }).join('');
+
+    return `<tr>
+      <td class="fs-col-rank">${i + 1}</td>
+      <td class="fs-col-name">${escapeHtml(s.name)}</td>
+      <td class="fs-col-games">${gamesCell}</td>
+      <td class="fs-col-wins">${winsCell}</td>
+      <td class="fs-col-wr">
+        <div class="fs-wr-wrap">
+          <div class="fs-wr-bar"><div class="fs-wr-fill ${wrCls}" style="width:${Math.max(0, Math.min(100, wr))}%"></div></div>
+          <span class="fs-wr-val">${wrCell}</span>
+        </div>
+      </td>
+      <td class="fs-col-avg">${avgCell}</td>
+      <td class="fs-col-roles"><div class="fs-role-list">${rolesHtml || '<span class="fs-empty" style="padding:0;">—</span>'}</div></td>
+    </tr>`;
+  }).join('');
+}
+
+function sortFilterStats(field) {
+  if (state.filterStatsSort.field === field) {
+    state.filterStatsSort.dir = state.filterStatsSort.dir === 'desc' ? 'asc' : 'desc';
+  } else {
+    state.filterStatsSort.field = field;
+    state.filterStatsSort.dir = 'desc';
+  }
+  renderFilterStatsTable();
 }
 
 function updateStats() {
@@ -1276,6 +1611,24 @@ function resetFilters() {
 
 function loadMoreTournaments() {
   state.tournamentDisplayCount += 10;
+  onFilterChange();
+}
+
+// =====================================================================
+// КЛИК ПО ИГРОКУ В ТАБЛИЦЕ РЕЗУЛЬТАТОВ → В ФИЛЬТР
+// =====================================================================
+function toggleStandingPlayer(login) {
+  if (!login || login === '—') return;
+  const input = document.getElementById('playerSearch');
+  const terms = (input.value || '').split(',').map(s => s.trim()).filter(Boolean);
+  const loginLower = String(login).trim().toLowerCase();
+
+  const matched = terms.filter(t => loginLower.includes(t.toLowerCase()));
+  const next = matched.length
+    ? terms.filter(t => !loginLower.includes(t.toLowerCase()))
+    : [...terms, String(login).trim()];
+
+  input.value = next.join(', ');
   onFilterChange();
 }
 
@@ -1314,7 +1667,7 @@ function buildStandingsSection(t, filters) {
           const eloStr = (r.elo_delta === null || r.elo_delta === undefined) ? '—' : ((r.elo_delta > 0 ? '+' : '') + r.elo_delta);
           return `<tr class="${trCls}">
             <td>${n(r.place)}</td>
-            <td class="col-name">${escapeHtml(login)}</td>
+            <td class="col-name"><button type="button" class="player-select${isHi ? ' is-selected' : ''}" data-login="${escapeHtml(login)}" title="${isHi ? 'Убрать из фильтра' : 'Показать игры игрока'}" onclick="toggleStandingPlayer(this.dataset.login)">${escapeHtml(login)}</button></td>
             <td class="col-sum">${n(r.sum)}</td>
             <td>${n(r.sum_extra)}</td>
             <td>${n(r.plus)}</td>
@@ -1374,6 +1727,40 @@ function buildStandingsSection(t, filters) {
 // =====================================================================
 // RENDER TOURNAMENT
 // =====================================================================
+function buildTableFilterHtml(t) {
+  const tid = getTournamentKey(t);
+  const allTableNums = getTournamentTableNumbers(t);
+  if (!allTableNums.length) return '';
+
+  const hiddenCount = getHiddenTableCount(tid);
+  const isPanelOpen = !!state.tableFilterOpen[tid];
+
+  const optionsHtml = allTableNums.map(num => {
+    const hidden = isTableHidden(tid, num);
+    return `<label class="table-filter-option${hidden ? ' is-hidden' : ''}">
+      <input type="checkbox" ${hidden ? 'checked' : ''} data-table-number="${escapeHtml(num)}" onchange="toggleHiddenTableFromCheckbox(this)">
+      <span>Стол ${escapeHtml(num)}</span>
+    </label>`;
+  }).join('');
+
+  return `
+    <div class="table-filter" data-tid="${escapeHtml(tid)}">
+      <button type="button" class="table-filter-toggle" onclick="toggleTableFilterPanel(this)">
+        🚫 Скрыть столы
+        ${hiddenCount > 0 ? `<span class="tf-count">${hiddenCount} скрыто</span>` : ''}
+        <span class="tf-arrow">${isPanelOpen ? '▲' : '▼'}</span>
+      </button>
+      <div class="table-filter-panel" style="display:${isPanelOpen ? 'block' : 'none'};">
+        <div class="table-filter-actions">
+          <button type="button" class="table-filter-action-btn" onclick="hideAllTablesForTournamentFromBtn(this)">Скрыть все</button>
+          <button type="button" class="table-filter-action-btn danger" onclick="clearHiddenTablesForTournamentFromBtn(this)">Сбросить</button>
+        </div>
+        <div class="table-filter-options">${optionsHtml}</div>
+      </div>
+    </div>
+  `;
+}
+
 function buildTournamentElement(t, games, filters) {
   const details = document.createElement('details');
   details.className = 'tournament-block';
@@ -1406,10 +1793,12 @@ function buildTournamentElement(t, games, filters) {
     </div>`;
   }
 
+  const tableFilterHtml = buildTableFilterHtml(t);
+
   const standingsBody = buildStandingsSection(t, filters);
   const standingsHtml = standingsBody
     ? `<details class="standings-details" open>
-         <summary>📋 Таблица результатов <span class="standings-count">клик — свернуть/развернуть</span></summary>
+         <summary>📋 Таблица результатов <span class="standings-count">клик по игроку — фильтр игр</span></summary>
          <div class="standings-body">${standingsBody}</div>
        </details>`
     : '';
@@ -1424,6 +1813,7 @@ function buildTournamentElement(t, games, filters) {
       </span>
     </summary>
     <div class="tournament-meta">${chips.join('')}</div>
+    ${tableFilterHtml}
     ${teamHtml}
     ${standingsHtml}
     <div class="tours-container"></div>
@@ -1542,7 +1932,8 @@ function favoriteBtnHtml(gameKey, isFavorite) {
   return `<button class="fav-btn ${isFavorite ? "is-favorite" : ""}" type="button" title="${title}" data-game-key="${escapeHtml(gameKey)}" onclick="event.preventDefault();event.stopPropagation();toggleFavorite(this.dataset.gameKey,this);return false;"><span class="fav-icon">${icon}</span><span class="fav-label">${label}</span></button>`;
 }
 
-function buildGameCard(tournament, game, table, filters, opts = {}) {
+function buildGameCard(tournament, game, table, filters, opts) {
+  opts = opts || {};
   const showGameInfo = !!opts.showGameInfo;
   const hideRoles = filters ? filters.hideRoles : false;
   const card = document.createElement('div');
