@@ -262,11 +262,15 @@ async function scrapeTournament(context, rawUrl) {
 
                 const players = (table.table || []).map(p => {
                     const loginLower = (p.login || '').toLowerCase();
+                    const rawRole = (p.role !== null && p.role !== undefined && String(p.role).trim() !== '') 
+                        ? String(p.role).trim() 
+                        : null;
+
                     return {
                         login: p.login,
                         userId: p.user_id ?? p.userId ?? p.uid ?? null,
-                        role: p.role,
-                        roleName: ROLE_NAMES[p.role] || p.role,
+                        role: rawRole,
+                        roleName: rawRole ? (ROLE_NAMES[rawRole] || rawRole) : null,
                         playType: p.type || 'n',
                         points: typeof p.points === 'number' ? p.points : 0,
                         lhStatus: lhMap[loginLower] || null,
@@ -281,7 +285,7 @@ async function scrapeTournament(context, rawUrl) {
                 tables.push({
                     tableNumber: tableNum,
                     judge,
-                    winner: table.win,   // 'city' | 'mafia'
+                    winner: table.win || null,   // 'city' | 'mafia' | null
                     averageElo,
                     players
                 });
