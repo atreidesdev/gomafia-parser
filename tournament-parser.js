@@ -6,6 +6,7 @@
 //   node tournament-parser.js   (интерактивный ввод)
 //   node tournament-parser.js --force         — перезаписать существующие в базе
 //   node tournament-parser.js --enrich-only   — только обогатить существующую базу ELO (без скрейпа)
+//   node tournament-parser.js --fix-unplayed  — очистить роли/очки у несыгранных столов в базе
 //
 // ELO игроков берётся из elo-cache.json (рядом с парсером). Для наполнения кэша:
 //   node buildEloCache.js --from-results ./results
@@ -42,8 +43,23 @@ function loadGlobalEloCache() {
     }
 }
 
+/**
+ * Обогащает игроков ELO из кэша и возвращает среднее ELO стола.
+ *
+ * Среднее = сумма ELO тех игроков, у кого ELO есть в кэше,
+ * поделённая на количество таких игроков. Игроки без ELO
+ * не учитываются вообще (ни в числителе, ни в знаменателе).
+ *
+ * Возвращает null, только если ELO нет ни у одного игрока стола
+ * (или кэш не загружен).
+ *
+ * Считается как для сыгранных, так и для запланированных столов —
+ * среднее по известному составу полезно и до игры.
+ */
 function enrichPlayersWithElo(players) {
     if (!GLOBAL_ELO_CACHE || !eloCacheModule) return null;
+    if (!Array.isArray(players) || players.length === 0) return null;
+
     let eloSum = 0, eloCount = 0;
     players.forEach(p => {
         if (!p.login) return;
@@ -59,7 +75,9 @@ function enrichPlayersWithElo(players) {
         }
         GLOBAL_ELO_STATS.total++;
     });
-    return eloCount > 0 ? Math.round(eloSum / eloCount) : null;
+
+    if (eloCount === 0) return null;
+    return Math.round(eloSum / eloCount);
 }
 
 // ============ UTILS ============
@@ -117,6 +135,20 @@ function mapStandingRow(r) {
         elo_delta: num(r.elo_delta),
         is_paid: r.is_paid === '1' || r.is_paid === 1
     };
+}
+
+/**
+ * Стол считается сыгранным ТОЛЬКО если в нём определён победитель (city/mafia).
+ * В мафии ничьих нет → win == null ⇔ стол не игран.
+ *
+ * ВАЖНО: нельзя использовать role или points как признак сыгранности.
+ * gomafia отдаёт "role": "red" и "points": 0 как ЗАГЛУШКИ для несыгранных
+ * столов, поэтому старая fallback-проверка по role/points всегда возвращала true
+ * и все игроки несыгранных столов записывались как «Мирный».
+ */
+function isTablePlayed(table) {
+    if (!table) return false;
+    return table.win === 'city' || table.win === 'mafia';
 }
 
 async function clickTabByText(page, text) {
@@ -244,6 +276,9 @@ async function scrapeTournament(context, rawUrl) {
         const games = [];
         let totalTables = 0;
         let tablesWithElo = 0;
+        let playedTables = 0;
+        let unplayedTables = 0;
+
         for (const game of gamesData) {
             const gameNum = parseInt(String(game.gameNum).replace(/\D/g, ''), 10) || 0;
             let round = 'Отбор';
@@ -254,17 +289,25 @@ async function scrapeTournament(context, rawUrl) {
             for (const table of (game.game || [])) {
                 const tableNum = int(table.tableNum) ?? table.tableNum;
                 if (tableNum === null || tableNum === undefined) continue;
+
                 const lhKey = `${gameNum}_${tableNum}`;
                 const judgeJson = getJudgeFromJson(table);
                 const judgeHtml = snapshot.judgeMap[lhKey] || null;
                 const judge = judgeJson || judgeHtml || null;
                 const lhMap = snapshot.lhMap[lhKey] || {};
 
+                // Сайт отдаёт "role": "red" и "points": 0 даже для несыгранных
+                // столов (заглушки). Поэтому роли/очки/ЛХ пишем только если
+                // у стола реально определён победитель.
+                const played = isTablePlayed(table);
+
                 const players = (table.table || []).map(p => {
                     const loginLower = (p.login || '').toLowerCase();
-                    const rawRole = (p.role !== null && p.role !== undefined && String(p.role).trim() !== '') 
-                        ? String(p.role).trim() 
-                        : null;
+
+                    let rawRole = null;
+                    if (played && p.role !== null && p.role !== undefined && String(p.role).trim() !== '') {
+                        rawRole = String(p.role).trim();
+                    }
 
                     return {
                         login: p.login,
@@ -272,21 +315,27 @@ async function scrapeTournament(context, rawUrl) {
                         role: rawRole,
                         roleName: rawRole ? (ROLE_NAMES[rawRole] || rawRole) : null,
                         playType: p.type || 'n',
-                        points: typeof p.points === 'number' ? p.points : 0,
-                        lhStatus: lhMap[loginLower] || null,
+                        points: played
+                            ? (typeof p.points === 'number' ? p.points : 0)
+                            : null,
+                        lhStatus: played ? (lhMap[loginLower] || null) : null,
                         elo: null
                     };
                 });
 
-                // Enrich composition with ELO from cache + compute table average
+                // Среднее ELO считаем ВСЕГДА (и для сыгранных, и для
+                // запланированных столов) — по известному составу.
+                // Игроки без ELO не учитываются.
                 const averageElo = enrichPlayersWithElo(players);
                 if (averageElo != null) tablesWithElo++;
+                if (played) playedTables++; else unplayedTables++;
 
                 tables.push({
                     tableNumber: tableNum,
                     judge,
                     winner: table.win || null,   // 'city' | 'mafia' | null
-                    averageElo,
+                    played,                       // флаг «стол реально сыгран»
+                    averageElo,                   // среднее по известным ELO состава
                     players
                 });
                 totalTables++;
@@ -295,7 +344,7 @@ async function scrapeTournament(context, rawUrl) {
             games.push({ gameNumber: gameNum, round, tables });
         }
 
-        console.log(`  🎮 Игр: ${games.length} | столов: ${totalTables} | с ELO: ${tablesWithElo}`);
+        console.log(`  🎮 Игр: ${games.length} | столов: ${totalTables} (сыграно: ${playedTables}, запланировано: ${unplayedTables}) | с ELO: ${tablesWithElo}`);
 
         return {
             id: tid,
@@ -380,25 +429,83 @@ function enrichExistingDatabase() {
 
     let tablesProcessed = 0;
     let tablesWithElo = 0;
+    let tablesWithoutElo = 0;
+
     db.forEach(t => {
         (t.games || []).forEach(g => {
             (g.tables || []).forEach(tbl => {
                 const players = Array.isArray(tbl.players) ? tbl.players : [];
+                // Истину о сыгранности берём из winner, а не из tbl.played.
+                const played = tbl.winner === 'city' || tbl.winner === 'mafia';
+                tbl.played = played;
+                // Среднее ELO считаем для ВСЕХ столов (и сыгранных, и запланированных).
                 const avg = enrichPlayersWithElo(players);
                 tbl.averageElo = avg;
                 if (avg != null) tablesWithElo++;
+                else tablesWithoutElo++;
                 tablesProcessed++;
             });
         });
     });
     fs.writeFileSync(DB_FILE, JSON.stringify(db, null, 2), 'utf-8');
 
-    const pct = tablesProcessed > 0 ? Math.round(tablesWithElo / tablesProcessed * 100) : 0;
     console.log(`\n✅ Готово. Столов обработано: ${tablesProcessed}`);
-    console.log(`   С ELO: ${tablesWithElo} (${pct}%)`);
+    console.log(`   С ELO (хотя бы у одного игрока):  ${tablesWithElo}`);
+    console.log(`   Без ELO (нет ни у кого):          ${tablesWithoutElo}`);
     console.log(`   💾 Сохранено в ${DB_FILE}`);
 
     reportEloStats();
+}
+
+// ============ FIX UNPLAYED TABLES IN EXISTING DB ============
+function fixUnplayedTables() {
+    if (!fs.existsSync(DB_FILE)) {
+        console.error(`❌ База не найдена: ${DB_FILE}`);
+        return;
+    }
+    console.log(`📂 Очистка несыгранных столов: ${DB_FILE}`);
+    const db = JSON.parse(fs.readFileSync(DB_FILE, 'utf-8'));
+    if (!Array.isArray(db)) { console.error('❌ База не является массивом'); return; }
+
+    let fixedTables = 0;
+    let clearedFields = 0;
+    let playedTables = 0;
+
+    db.forEach(t => {
+        (t.games || []).forEach(g => {
+            (g.tables || []).forEach(tbl => {
+                // Безусловно пересчитываем из winner — не доверяем сохранённому played.
+                const played = tbl.winner === 'city' || tbl.winner === 'mafia';
+                tbl.played = played;
+
+                if (!played) {
+                    // ВАЖНО: averageElo у несыгранных столов НЕ обнуляем —
+                    // среднее ELO по известному составу валидно и до игры.
+                    (tbl.players || []).forEach(p => {
+                        if (p.role != null) clearedFields++;
+                        if (p.roleName != null) clearedFields++;
+                        if (p.points != null) clearedFields++;
+                        if (p.lhStatus != null) clearedFields++;
+                        p.role = null;
+                        p.roleName = null;
+                        p.points = null;
+                        p.lhStatus = null;
+                    });
+                    fixedTables++;
+                } else {
+                    playedTables++;
+                }
+            });
+        });
+    });
+
+    fs.writeFileSync(DB_FILE, JSON.stringify(db, null, 2), 'utf-8');
+    console.log(`\n✅ Готово.`);
+    console.log(`   Несыгранных столов очищено (роли/очки): ${fixedTables}`);
+    console.log(`   Сыграно столов (не тронуты):            ${playedTables}`);
+    console.log(`   Полей у игроков очищено:                ${clearedFields}`);
+    console.log(`   💾 Сохранено в ${DB_FILE}`);
+    console.log(`   ℹ️ averageElo у несыгранных сохранён — запустите --enrich-only, если нужно пересчитать.`);
 }
 
 function reportEloStats() {
@@ -425,6 +532,11 @@ async function main() {
 
     if (process.argv.includes('--enrich-only')) {
         enrichExistingDatabase();
+        return;
+    }
+
+    if (process.argv.includes('--fix-unplayed')) {
+        fixUnplayedTables();
         return;
     }
 

@@ -745,6 +745,12 @@ body.dark-mode .game-card.watched { background: linear-gradient(90deg, rgba(16,1
 // =====================================================================
 // STATE
 // =====================================================================
+
+const WATCHED_KEY = 'mafia-tournament-watched-v1';
+const FAVORITES_KEY = 'mafia-tournament-favorites-v1';
+const HIDDEN_TABLES_KEY = 'mafia-tournament-hidden-tables-v1';
+const DEFAULT_THEME_KEY = 'theme';
+
 const state = {
   db: [],
   watched: loadWatched(),
@@ -760,10 +766,6 @@ const state = {
   filterStatsSort: { field: 'games', dir: 'desc' }
 };
 
-const WATCHED_KEY = 'mafia-tournament-watched-v1';
-const FAVORITES_KEY = 'mafia-tournament-favorites-v1';
-const HIDDEN_TABLES_KEY = 'mafia-tournament-hidden-tables-v1';
-const DEFAULT_THEME_KEY = 'theme';
 
 const ROLE_META = {
   peaceful: { icon: '🟥', label: 'Мирный', cls: 'fs-role-peaceful' },
@@ -1158,25 +1160,47 @@ function initAfterLoad() {
 }
 
 function checkEloAvailability() {
-  let hasElo = false;
   let totalTables = 0;
+  let tablesWithPlayersElo = 0;
+  let tablesWithAverageElo = 0;
+
   for (const t of state.db) {
     for (const g of (t.games || [])) {
       for (const tbl of (g.tables || [])) {
         totalTables++;
-        if (typeof tbl.averageElo === 'number') { hasElo = true; }
+        if (typeof tbl.averageElo === 'number') tablesWithAverageElo++;
+        const hasAnyPlayerElo = (tbl.players || []).some(p => typeof p.elo === 'number');
+        if (hasAnyPlayerElo) tablesWithPlayersElo++;
       }
     }
   }
-  if (!hasElo && state.db.length > 0) {
+
+  if (state.db.length === 0 || totalTables === 0) return;
+
+  // Реальная проблема: у игроков ELO есть, а средние не посчитаны
+  if (tablesWithPlayersElo > 0 && tablesWithAverageElo === 0) {
     const note = document.createElement('div');
     note.className = 'error-msg';
     note.style.background = 'var(--warning-soft)';
     note.style.borderColor = 'var(--warning)';
     note.style.color = 'var(--warning)';
-    note.innerHTML = `⚠️ В базе нет данных ELO столов (${totalTables} столов без ELO). Запустите: <code>node tournament-parser.js --enrich-only</code> — это обогатит существующую базу ELO из elo-cache.json.`;
+    note.innerHTML = `⚠️ В базе есть ELO игроков, но средние ELO столов не посчитаны. Запустите: <code>node tournament-parser.js --enrich-only</code>.`;
+    document.getElementById('errorContainer').appendChild(note);
+    return;
+  }
+
+  // Другая проблема: ELO игроков вообще нет в базе (пустой кэш)
+  if (tablesWithPlayersElo === 0) {
+    const note = document.createElement('div');
+    note.className = 'error-msg';
+    note.style.background = 'var(--warning-soft)';
+    note.style.borderColor = 'var(--warning)';
+    note.style.color = 'var(--warning)';
+    note.innerHTML = `⚠️ В базе нет ELO игроков (${totalTables} столов без ELO). Наполните <code>elo-cache.json</code> и запустите: <code>node tournament-parser.js --enrich-only</code>.`;
     document.getElementById('errorContainer').appendChild(note);
   }
+
+  // Иначе всё ок — средние ELO есть, либо игроков без ELO не встретилось.
 }
 
 function populateTournamentCheckboxes() {
