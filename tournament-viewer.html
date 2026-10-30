@@ -319,7 +319,6 @@ body.dark-mode .error-msg code { background: rgba(255,255,255,.12); }
 .fs-table .fs-col-avg { font-weight: 700; color: var(--accent); font-variant-numeric: tabular-nums; }
 .fs-table .fs-col-roles { text-align: left; }
 
-/* Приглушённое значение в скобках */
 .fs-dim {
   color: var(--text-muted);
   font-weight: 500;
@@ -421,6 +420,7 @@ body.dark-mode .error-msg code { background: rgba(255,255,255,.12); }
   color: var(--accent); background: var(--accent-soft);
   border-bottom-color: transparent; border-radius: 4px; padding: 0 .35rem;
 }
+.standings-table .cell-empty { color: var(--text-muted); }
 
 .table-filter { margin: .75rem 0 1rem; background: var(--card-bg-subtle); border: 1px solid var(--border-color); border-radius: var(--radius-md); overflow: hidden; }
 .table-filter-toggle {
@@ -550,6 +550,7 @@ body.dark-mode .badge-loss { background: rgba(239,68,68,.25); color: #fca5a5; }
 .comp-player.role-sheriff { background: var(--role-sheriff-bg); color: var(--role-sheriff-text); border-color: transparent; }
 .comp-player.role-mafia { background: var(--role-mafia-bg); color: var(--role-mafia-text); border-color: transparent; }
 .comp-player.role-don { background: var(--role-don-bg); color: var(--role-don-text); border-color: transparent; }
+.comp-player.role-none { background: var(--card-bg); color: var(--text-primary); border-color: var(--border-color); }
 
 .comp-player.play-lg-partial {
   background: var(--role-lg-partial-bg) !important;
@@ -811,6 +812,7 @@ function getRoleKey(role) {
   return 'other';
 }
 function getRoleCompClass(role) {
+  if (!role) return 'role-none';
   const k = getRoleKey(role);
   return {
     peaceful: 'role-red', sheriff: 'role-sheriff',
@@ -1329,13 +1331,11 @@ function renderFiltered(filters) {
     const gamesFiltered = [];
 
     (t.games || []).forEach(g => {
-      // Сначала фильтруем БЕЗ учёта скрытых столов — это «полный» набор
       const matching = (g.tables || []).filter(tbl => gameMatchesFilters(t, g, tbl, filters, { skipHiddenTables: true }));
       if (!matching.length) return;
 
       gamesNoHidden.push({ game: g, tables: matching });
 
-      // Затем убираем скрытые столы — это «с фильтром»
       const visible = matching.filter(tbl => !isTableHidden(tval, tbl.tableNumber));
       if (visible.length) gamesFiltered.push({ game: g, tables: visible });
     });
@@ -1390,8 +1390,6 @@ function renderFiltered(filters) {
 
 // =====================================================================
 // СТАТИСТИКА ПО ИГРОКАМ ИЗ ФИЛЬТРА
-//   Основное значение — без учёта скрытых столов (полная статистика)
-//   В скобках       — с учётом скрытых столов
 // =====================================================================
 function computePlayerStats(filteredTournaments, filters) {
   const stats = {};
@@ -1544,7 +1542,6 @@ function renderFilterStatsTable() {
     const wrCell = fmtWithBracket(wr, fWr, wr.toFixed(1) + '%', fWr.toFixed(1) + '%', hasHiddenDiff);
     const avgCell = fmtWithBracket(avg, fAvg, avg.toFixed(2), fAvg.toFixed(2), hasHiddenDiff);
 
-    // Роли — объединение ключей из полных и фильтрованных
     const roleKeys = new Set([...Object.keys(s.roles || {}), ...Object.keys(f.roles || {})]);
     const rolesHtml = [...roleKeys]
       .sort((a, b) => (s.roles[b] || 0) - (s.roles[a] || 0))
@@ -1724,6 +1721,70 @@ function buildStandingsSection(t, filters) {
   return body;
 }
 
+/**
+ * Если у турнира нет готовой таблицы результатов (standings),
+ * но в играх есть данные о набранных баллах игроков,
+ * рассчитываем суммарные баллы по всем играм турнира
+ * и отображаем компактную таблицу: №, Игрок и Баллы (Σ).
+ */
+function buildPlayersListSection(t, filters) {
+  const map = new Map();
+  let hasAnyPoints = false;
+
+  (t.games || []).forEach(g => {
+    (g.tables || []).forEach(tbl => {
+      (tbl.players || []).forEach(p => {
+        const login = String(p.login || '').trim();
+        if (!login) return;
+        const key = login.toLowerCase();
+
+        if (!map.has(key)) {
+          map.set(key, { name: login, points: 0, gamesCount: 0 });
+        }
+
+        const entry = map.get(key);
+        entry.gamesCount++;
+
+        if (typeof p.points === 'number' && !isNaN(p.points)) {
+          entry.points += p.points;
+          hasAnyPoints = true;
+        }
+      });
+    });
+  });
+
+  if (!map.size) return null;
+
+  const playerTerms = (filters && filters.players) ? filters.players : [];
+  const rows = [...map.values()];
+
+  if (hasAnyPoints) {
+    rows.sort((a, b) => b.points - a.points || a.name.localeCompare(b.name, 'ru'));
+  } else {
+    rows.sort((a, b) => a.name.localeCompare(b.name, 'ru'));
+  }
+
+  return `<div class="standings-block">
+    <div class="standings-block-title">📊 Результаты игроков <span>(${rows.length} ${pluralize(rows.length, 'участник', 'участника', 'участников')})</span></div>
+    <div class="standings-table-wrap"><table class="standings-table" style="max-width: 480px;">
+      <thead><tr>
+        <th style="width: 50px;">№</th>
+        <th style="text-align: left;">Игрок</th>
+        <th style="width: 100px;">Баллы (Σ)</th>
+      </tr></thead>
+      <tbody>${rows.map((r, i) => {
+        const isHi = playerTerms.some(term => r.name.toLowerCase().includes(term));
+        const ptsDisplay = hasAnyPoints ? (Math.round(r.points * 100) / 100) : '—';
+        return `<tr class="${isHi ? 'row-highlight' : ''}">
+          <td class="cell-empty">${i + 1}</td>
+          <td class="col-name"><button type="button" class="player-select${isHi ? ' is-selected' : ''}" data-login="${escapeHtml(r.name)}" title="${isHi ? 'Убрать из фильтра' : 'Показать игры игрока'}" onclick="toggleStandingPlayer(this.dataset.login)">${escapeHtml(r.name)}</button></td>
+          <td class="col-sum">${ptsDisplay}</td>
+        </tr>`;
+      }).join('')}</tbody>
+    </table></div>
+  </div>`;
+}
+
 // =====================================================================
 // RENDER TOURNAMENT
 // =====================================================================
@@ -1796,12 +1857,21 @@ function buildTournamentElement(t, games, filters) {
   const tableFilterHtml = buildTableFilterHtml(t);
 
   const standingsBody = buildStandingsSection(t, filters);
-  const standingsHtml = standingsBody
-    ? `<details class="standings-details" open>
+  let standingsHtml = '';
+  if (standingsBody) {
+    standingsHtml = `<details class="standings-details" open>
          <summary>📋 Таблица результатов <span class="standings-count">клик по игроку — фильтр игр</span></summary>
          <div class="standings-body">${standingsBody}</div>
-       </details>`
-    : '';
+       </details>`;
+  } else {
+    const playersListBody = buildPlayersListSection(t, filters);
+    if (playersListBody) {
+      standingsHtml = `<details class="standings-details" open>
+         <summary>📋 Таблица результатов (по играм) <span class="standings-count">клик по игроку — фильтр игр</span></summary>
+         <div class="standings-body">${playersListBody}</div>
+       </details>`;
+    }
+  }
 
   details.innerHTML = `
     <summary>
@@ -1953,7 +2023,7 @@ function buildGameCard(tournament, game, table, filters, opts) {
     ? countMatchedPlayers(table.players, filters.players)
     : 0;
   const matchCountBadge = matchedCount > 0
-    ? `<span class="match-count-badge" title="Сколько игроков из фильтра присутствует за столом">🎯 ${matchedCount}/${filters.players.length} из фильтра</span>`
+    ? `<span class="match-count-badge" title="Сколько игроков из фильтра присутствует за столом">🎯 ${matchedCount} из ${table.players.length} из фильтра</span>`
     : '';
 
   const eloBadge = (typeof table.averageElo === 'number')

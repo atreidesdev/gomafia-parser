@@ -1538,15 +1538,17 @@
             transform: translateY(-2px);
             box-shadow: var(--shadow-md);
          }
-         .game-meta {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 0.6rem;
-            font-size: 0.82rem;
-            color: var(--text-secondary);
-            font-weight: 600;
-            align-items: center;
-         }
+.game-meta {
+    display: flex;
+    flex-wrap: wrap;                /* ← разрешаем перенос между блоками */
+    justify-content: space-between;
+    gap: 0.4rem 0.75rem;            /* ← отступы, когда блоки на разных строках */
+    margin-bottom: 0.6rem;
+    font-size: 0.82rem;
+    color: var(--text-secondary);
+    font-weight: 600;
+    align-items: center;
+}
          .composition {
             margin-top: 0.85rem;
             padding-top: 0.85rem;
@@ -5388,8 +5390,11 @@ function renderGameCard(game, tournament) {
    const watched = !!state.watchedGames[gameKey];
    const watchedBtn = watchedBtnHtml(gameKey, watched);
 
-   return `<div class="game-card ${watched ? "watched" : ""}" data-game-key="${escapeHtml(gameKey)}">
-<div class="game-meta"><span style="display:inline-flex;align-items:center;gap:.35rem;">${gameInfoLeft}${tableEloBadge}</span><span style="display:inline-flex;align-items:center;gap:.35rem;">${copyBtn}${searchBtn}${linkBtn}</span></div>
+return `<div class="game-card ${watched ? "watched" : ""}" data-game-key="${escapeHtml(gameKey)}">
+<div class="game-meta">
+  <span style="display:inline-flex;align-items:center;gap:.35rem;flex-wrap:nowrap;white-space:nowrap;">${gameInfoLeft}${tableEloBadge}</span>
+  <span style="display:inline-flex;align-items:center;gap:.35rem;flex-wrap:nowrap;white-space:nowrap;">${copyBtn}${searchBtn}${linkBtn}</span>
+</div>
 ${judgeHtml}
 <div style="display:flex;gap:.35rem;margin-bottom:.5rem;flex-wrap:wrap;align-items:center;"><span class="badge ${getRoleBadgeClass(myRole)}">${myRole || "?"}</span>${resultBadge}</div>
 <div class="composition">${formatComposition(game.composition, game)}</div>
