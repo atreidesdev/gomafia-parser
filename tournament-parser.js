@@ -1,12 +1,17 @@
 // tournament-parser.js
 // Парсер турниров gomafia.pro — сохраняет таблицу + все игры/столы/игроков в один JSON
+//
 // Запуск:
+//   node tournament-parser.js                 — интерактивное меню
 //   node tournament-parser.js 2659 2760 https://gomafia.pro/tournament/3299
 //   node tournament-parser.js --file tournaments.txt
-//   node tournament-parser.js   (интерактивный ввод)
+//   node tournament-parser.js --auto          — читать tournaments.txt рядом со скриптом
 //   node tournament-parser.js --force         — перезаписать существующие в базе
-//   node tournament-parser.js --enrich-only   — только обогатить существующую базу ELO (без скрейпа)
-//   node tournament-parser.js --fix-unplayed  — очистить роли/очки у несыгранных столов в базе
+//   node tournament-parser.js --enrich-only   — только обогатить существующую базу ELO
+//   node tournament-parser.js --fix-unplayed  — очистить роли/очки у несыгранных столов
+//   node tournament-parser.js --list          — показать список турниров в базе
+//   node tournament-parser.js --remove 2659   — удалить турнир(ы) из базы по ID
+//   node tournament-parser.js --remove=2659,2760
 //
 // ELO игроков берётся из elo-cache.json (рядом с парсером). Для наполнения кэша:
 //   node buildEloCache.js --from-results ./results
@@ -372,7 +377,78 @@ async function scrapeTournament(context, rawUrl) {
     }
 }
 
-// ============ INPUT ============
+// ============ RUN SCRAPE (shared by CLI and menu) ============
+async function runScrape(urls, { force }) {
+    if (!urls || urls.length === 0) {
+        console.log('⚠️ Нет входных данных.');
+        return;
+    }
+    console.log(`📋 К обработке: ${urls.length}`);
+
+    let db = [];
+    if (fs.existsSync(DB_FILE)) {
+        try {
+            const parsed = JSON.parse(fs.readFileSync(DB_FILE, 'utf-8'));
+            if (Array.isArray(parsed)) {
+                db = parsed;
+                console.log(`📂 Существующая база: ${db.length} турниров (${DB_FILE})`);
+            }
+        } catch (e) {
+            console.warn(`⚠️ Не удалось прочитать ${DB_FILE}, начинаем с нуля`);
+        }
+    } else {
+        console.log(`📂 База не найдена, создаём: ${DB_FILE}`);
+    }
+    const existingIds = new Set(db.map(t => t.id).filter(v => v != null));
+    const saveDb = () => fs.writeFileSync(DB_FILE, JSON.stringify(db, null, 2), 'utf-8');
+
+    const browser = await chromium.launch({ headless: true });
+    const context = await browser.newContext({ userAgent: USER_AGENT });
+
+    let added = 0, skipped = 0, failed = 0;
+
+    try {
+        for (let i = 0; i < urls.length; i++) {
+            const raw = urls[i];
+            const url = normalizeUrl(raw);
+            const tid = extractTournamentId(url);
+            console.log(`\n[${i + 1}/${urls.length}] ${url}`);
+
+            if (!force && tid && existingIds.has(tid)) {
+                console.log(`  ⏭️ Уже в базе, пропускаем`);
+                skipped++;
+                continue;
+            }
+
+            const result = await scrapeTournament(context, url);
+            if (!result) { failed++; continue; }
+
+            if (force && result.id && existingIds.has(result.id)) {
+                db = db.filter(t => t.id !== result.id);
+            }
+            db.push(result);
+            if (result.id) existingIds.add(result.id);
+            added++;
+            saveDb();
+            console.log(`  💾 Сохранено (всего: ${db.length})`);
+        }
+    } finally {
+        await browser.close();
+        saveDb();
+    }
+
+    console.log(`\n${'='.repeat(50)}`);
+    console.log(`✅ Готово`);
+    console.log(`   Добавлено: ${added}`);
+    console.log(`   Пропущено: ${skipped}`);
+    console.log(`   Ошибок:   ${failed}`);
+    console.log(`   Всего в базе: ${db.length}`);
+    console.log(`   Файл: ${DB_FILE}`);
+
+    reportEloStats();
+}
+
+// ============ INPUT (CLI only) ============
 async function getInputUrls() {
     const args = process.argv.slice(2);
     const flags = new Set(args.filter(a => a.startsWith('--')));
@@ -395,26 +471,19 @@ async function getInputUrls() {
 
     if (positional.length > 0) return positional;
 
-    const auto = path.join(__dirname, 'tournaments.txt');
-    if (fs.existsSync(auto)) {
-        console.log(`📁 Найден tournaments.txt — читаем из него`);
+    if (args.includes('--auto')) {
+        const auto = path.join(__dirname, 'tournaments.txt');
+        if (!fs.existsSync(auto)) {
+            console.error(`❌ --auto: файл не найден: ${auto}`);
+            process.exit(1);
+        }
+        console.log(`📁 --auto: читаем ${auto}`);
         return fs.readFileSync(auto, 'utf-8')
             .split(/\r?\n/).map(l => l.trim())
             .filter(l => l && !l.startsWith('#') && !l.startsWith('//'));
     }
 
-    const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
-    const question = (q) => new Promise(r => rl.question(q, r));
-    console.log('📝 Введите ID или ссылки на турниры (пустая строка = конец):');
-    const list = [];
-    while (true) {
-        const line = (await question('> ')).trim();
-        if (!line) break;
-        if (line.startsWith('#') || line.startsWith('//')) continue;
-        list.push(line);
-    }
-    rl.close();
-    return list;
+    return [];
 }
 
 // ============ ENRICH EXISTING DB ============
@@ -508,6 +577,212 @@ function fixUnplayedTables() {
     console.log(`   ℹ️ averageElo у несыгранных сохранён — запустите --enrich-only, если нужно пересчитать.`);
 }
 
+// ============ LIST TOURNAMENTS IN DB ============
+function listTournaments() {
+    if (!fs.existsSync(DB_FILE)) {
+        console.error(`❌ База не найдена: ${DB_FILE}`);
+        return;
+    }
+    let db;
+    try {
+        db = JSON.parse(fs.readFileSync(DB_FILE, 'utf-8'));
+    } catch (e) {
+        console.error(`❌ Не удалось прочитать ${DB_FILE}: ${e.message}`);
+        return;
+    }
+    if (!Array.isArray(db) || db.length === 0) {
+        console.log(`📭 База пуста: ${DB_FILE}`);
+        return;
+    }
+
+    const sorted = [...db].sort((a, b) => (a.id ?? 0) - (b.id ?? 0));
+    const idW = Math.max(4, ...sorted.map(t => String(t.id ?? '?').length));
+
+    console.log(`📂 Турниров в базе: ${db.length} (${DB_FILE})\n`);
+    console.log(`  ${'ID'.padEnd(idW)}  ${'Начало'.padEnd(10)}  ${'Конец'.padEnd(10)}  Название`);
+    console.log(`  ${'─'.repeat(idW)}  ${'─'.repeat(10)}  ${'─'.repeat(10)}  ${'─'.repeat(30)}`);
+    for (const t of sorted) {
+        const id   = String(t.id ?? '?').padEnd(idW);
+        const ds   = (t.dateStart || '—').slice(0, 10).padEnd(10);
+        const de   = (t.dateEnd   || '—').slice(0, 10).padEnd(10);
+        const name = t.tournament || '(без названия)';
+        console.log(`  ${id}  ${ds}  ${de}  ${name}`);
+    }
+}
+
+// ============ REMOVE TOURNAMENTS FROM DB ============
+function parseRemoveIds(args) {
+    const ids = new Set();
+    const addFrom = (s) => {
+        if (!s) return;
+        for (const part of String(s).split(',')) {
+            const p = part.trim();
+            if (!p) continue;
+            const id = extractTournamentId(p) ?? int(p);
+            if (id != null) ids.add(id);
+        }
+    };
+    for (let i = 0; i < args.length; i++) {
+        const a = args[i];
+        if (a === '--remove') {
+            let j = i + 1;
+            while (j < args.length && !args[j].startsWith('--')) {
+                addFrom(args[j]);
+                j++;
+            }
+            i = j - 1;
+        } else if (a.startsWith('--remove=')) {
+            addFrom(a.slice('--remove='.length));
+        }
+    }
+    return ids;
+}
+
+function removeTournaments(ids) {
+    if (!ids || ids.size === 0) {
+        console.error('❌ Укажите ID: --remove <id> [<id> ...] или --remove=id1,id2');
+        return;
+    }
+    if (!fs.existsSync(DB_FILE)) {
+        console.error(`❌ База не найдена: ${DB_FILE}`);
+        return;
+    }
+    let db;
+    try {
+        db = JSON.parse(fs.readFileSync(DB_FILE, 'utf-8'));
+    } catch (e) {
+        console.error(`❌ Не удалось прочитать ${DB_FILE}: ${e.message}`);
+        return;
+    }
+    if (!Array.isArray(db)) {
+        console.error('❌ База не является массивом');
+        return;
+    }
+
+    const before = db.length;
+    const removedIds = [];
+    const notFound = new Set(ids);
+    const kept = [];
+
+    for (const t of db) {
+        if (t.id != null && ids.has(t.id)) {
+            removedIds.push(t.id);
+            notFound.delete(t.id);
+        } else {
+            kept.push(t);
+        }
+    }
+
+    if (removedIds.length === 0) {
+        console.log(`⚠️ Ни один из указанных ID не найден в базе: ${[...ids].join(', ')}`);
+        return;
+    }
+
+    fs.writeFileSync(DB_FILE, JSON.stringify(kept, null, 2), 'utf-8');
+    console.log(`\n🗑️ Удалено турниров: ${removedIds.length}`);
+    console.log(`   ID: ${removedIds.join(', ')}`);
+    console.log(`   Было: ${before} → стало: ${kept.length}`);
+    if (notFound.size > 0) {
+        console.log(`   ⚠️ Не найдены в базе: ${[...notFound].join(', ')}`);
+    }
+    console.log(`   💾 Сохранено в ${DB_FILE}`);
+}
+
+// ============ INTERACTIVE MENU ============
+async function menuScrape(ask) {
+    console.log('\n📝 Введите ID или ссылки на турниры (пустая строка = конец):');
+    const list = [];
+    while (true) {
+        const line = (await ask('> ')).trim();
+        if (!line) break;
+        if (line.startsWith('#') || line.startsWith('//')) continue;
+        list.push(line);
+    }
+    if (list.length === 0) {
+        console.log('⚠️ Список пуст — возвращаемся в меню.');
+        return;
+    }
+
+    let force = process.argv.includes('--force');
+    if (!force) {
+        const ans = (await ask('Перезаписать уже существующие турниры? [y/N]: ')).trim().toLowerCase();
+        force = ans === 'y' || ans === 'yes' || ans === 'д' || ans === 'да';
+    }
+
+    await runScrape(list, { force });
+}
+
+async function menuRemove(ask) {
+    console.log('\n🗑️  Введите ID турниров для удаления (пустая строка = конец):');
+    console.log('    Можно по одному в строке или через запятую.');
+    const ids = new Set();
+    while (true) {
+        const line = (await ask('> ')).trim();
+        if (!line) break;
+        if (line.startsWith('#') || line.startsWith('//')) continue;
+        for (const part of line.split(',')) {
+            const p = part.trim();
+            if (!p) continue;
+            const id = extractTournamentId(p) ?? int(p);
+            if (id != null) ids.add(id);
+        }
+    }
+    if (ids.size === 0) {
+        console.log('⚠️ Не введено ни одного ID — возвращаемся в меню.');
+        return;
+    }
+    removeTournaments(ids);
+}
+
+async function interactiveMenu() {
+    const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
+    const ask = (q) => new Promise(r => rl.question(q, r));
+
+    try {
+        while (true) {
+            console.log('\n╔════════════════ МЕНЮ ════════════════╗');
+            console.log('║  1. 📥 Парсить турниры               ║');
+            console.log('║  2. 📋 Список турниров в базе        ║');
+            console.log('║  3. 🗑️  Удалить турниры из базы       ║');
+            console.log('║  4. ✨ Обогатить ELO в базе          ║');
+            console.log('║  5. 🧹 Очистить несыгранные столы    ║');
+            console.log('║  0. 🚪 Выход                          ║');
+            console.log('╚═══════════════════════════════════════╝');
+
+            const choice = (await ask('Выбор [1]: ')).trim() || '1';
+
+            try {
+                switch (choice) {
+                    case '0':
+                        console.log('👋 До встречи!');
+                        return;
+                    case '1':
+                        await menuScrape(ask);
+                        break;
+                    case '2':
+                        listTournaments();
+                        break;
+                    case '3':
+                        await menuRemove(ask);
+                        break;
+                    case '4':
+                        enrichExistingDatabase();
+                        break;
+                    case '5':
+                        fixUnplayedTables();
+                        break;
+                    default:
+                        console.log(`❓ Неизвестный пункт: ${choice}`);
+                }
+            } catch (e) {
+                console.error(`❌ Ошибка выполнения пункта меню: ${e.message}`);
+            }
+        }
+    } finally {
+        rl.close();
+    }
+}
+
 function reportEloStats() {
     if (!GLOBAL_ELO_CACHE) return;
     const pct = GLOBAL_ELO_STATS.total > 0
@@ -530,81 +805,47 @@ async function main() {
 
     loadGlobalEloCache();
 
+    // 1) Одиночные CLI-действия без меню
+    if (process.argv.includes('--list')) {
+        listTournaments();
+        return;
+    }
+    if (process.argv.includes('--remove') || process.argv.some(a => a.startsWith('--remove='))) {
+        const ids = parseRemoveIds(process.argv.slice(2));
+        if (ids.size === 0) {
+            console.log('⚠️ --remove без ID — открываем интерактивное меню удаления.\n');
+            const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
+            const ask = (q) => new Promise(r => rl.question(q, r));
+            try { await menuRemove(ask); } finally { rl.close(); }
+        } else {
+            removeTournaments(ids);
+        }
+        return;
+    }
     if (process.argv.includes('--enrich-only')) {
         enrichExistingDatabase();
         return;
     }
-
     if (process.argv.includes('--fix-unplayed')) {
         fixUnplayedTables();
         return;
     }
 
-    const urls = await getInputUrls();
-    if (!urls.length) { console.log('⚠️ Нет входных данных.'); return; }
-    console.log(`📋 К обработке: ${urls.length}`);
+    // 2) Если есть явные входные данные (позиционные / --file / --auto) — прямой скрейп
+    const args = process.argv.slice(2);
+    const positional = args.filter(a => !a.startsWith('--'));
+    const hasFile = args.includes('--file') || args.some(a => a.startsWith('--file='));
+    const hasAuto = args.includes('--auto');
 
-    const force = process.argv.includes('--force');
-
-    let db = [];
-    if (fs.existsSync(DB_FILE)) {
-        try {
-            const parsed = JSON.parse(fs.readFileSync(DB_FILE, 'utf-8'));
-            if (Array.isArray(parsed)) {
-                db = parsed;
-                console.log(`📂 Существующая база: ${db.length} турниров (${DB_FILE})`);
-            }
-        } catch (e) {
-            console.warn(`⚠️ Не удалось прочитать ${DB_FILE}, начинаем с нуля`);
-        }
-    } else {
-        console.log(`📂 База не найдена, создаём: ${DB_FILE}`);
-    }
-    const existingIds = new Set(db.map(t => t.id).filter(v => v != null));
-    const saveDb = () => fs.writeFileSync(DB_FILE, JSON.stringify(db, null, 2), 'utf-8');
-
-    const browser = await chromium.launch({ headless: true });
-    const context = await browser.newContext({ userAgent: USER_AGENT });
-
-    let added = 0, skipped = 0, failed = 0;
-
-    for (let i = 0; i < urls.length; i++) {
-        const raw = urls[i];
-        const url = normalizeUrl(raw);
-        const tid = extractTournamentId(url);
-        console.log(`\n[${i + 1}/${urls.length}] ${url}`);
-
-        if (!force && tid && existingIds.has(tid)) {
-            console.log(`  ⏭️ Уже в базе, пропускаем`);
-            skipped++;
-            continue;
-        }
-
-        const result = await scrapeTournament(context, url);
-        if (!result) { failed++; continue; }
-
-        if (force && result.id && existingIds.has(result.id)) {
-            db = db.filter(t => t.id !== result.id);
-        }
-        db.push(result);
-        if (result.id) existingIds.add(result.id);
-        added++;
-        saveDb();
-        console.log(`  💾 Сохранено (всего: ${db.length})`);
+    if (positional.length > 0 || hasFile || hasAuto) {
+        const urls = await getInputUrls();
+        const force = process.argv.includes('--force');
+        await runScrape(urls, { force });
+        return;
     }
 
-    await browser.close();
-    saveDb();
-
-    console.log(`\n${'='.repeat(50)}`);
-    console.log(`✅ Готово`);
-    console.log(`   Добавлено: ${added}`);
-    console.log(`   Пропущено: ${skipped}`);
-    console.log(`   Ошибок:   ${failed}`);
-    console.log(`   Всего в базе: ${db.length}`);
-    console.log(`   Файл: ${DB_FILE}`);
-
-    reportEloStats();
+    // 3) Иначе — интерактивное меню
+    await interactiveMenu();
 }
 
 main().catch(err => { console.error('❌ Фатальная ошибка:', err); process.exit(1); });

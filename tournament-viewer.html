@@ -74,6 +74,33 @@ h1 { font-size: 2.2rem; font-weight: 800; letter-spacing: -.03em; margin-bottom:
 .file-upload input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
 .upload-btn { display: inline-flex; align-items: center; gap: .5rem; background: var(--accent); color: #fff; padding: .65rem 1.4rem; border-radius: var(--radius-md); font-weight: 600; font-size: .9rem; border: none; cursor: pointer; transition: all .2s; box-shadow: 0 4px 14px rgba(59,130,246,.35); }
 .upload-btn:hover { background: var(--accent-hover); transform: translateY(-1px); }
+
+/* ===== Новые элементы: источник данных ===== */
+.db-url-group { display: inline-flex; gap: .4rem; align-items: center; }
+.db-url-input {
+  height: 42px; padding: .55rem .85rem;
+  border-radius: var(--radius-md); border: 1px solid var(--border-color);
+  background: var(--card-bg); color: var(--text-primary);
+  font-family: inherit; font-size: .85rem;
+  min-width: 240px; max-width: 320px;
+  box-shadow: var(--shadow-sm);
+}
+.db-url-input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+.db-source-info {
+  margin-top: .85rem;
+  font-size: .8rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: .4rem;
+  padding: .35rem .8rem;
+  border-radius: 9999px;
+  background: var(--card-bg-subtle);
+  border: 1px solid var(--border-color);
+}
+.db-source-info b { color: var(--accent); font-weight: 700; }
+
 .error-msg { color: var(--danger); background: var(--danger-soft); border: 1px solid rgba(239,68,68,.25); padding: .9rem 1.25rem; border-radius: var(--radius-md); text-align: center; margin-top: 1rem; font-weight: 500; }
 .error-msg code { background: rgba(0,0,0,.08); padding: .1rem .4rem; border-radius: 4px; font-family: ui-monospace, monospace; font-size: .85em; }
 body.dark-mode .error-msg code { background: rgba(255,255,255,.12); }
@@ -96,13 +123,7 @@ body.dark-mode .error-msg code { background: rgba(255,255,255,.12); }
   gap: 1rem;
   align-items: flex-end;
 }
-.filter-group {
-  display: flex;
-  flex-direction: column;
-  gap: .4rem;
-  min-width: 0;
-  grid-column: span 3;
-}
+.filter-group { display: flex; flex-direction: column; gap: .4rem; min-width: 0; grid-column: span 3; }
 .filter-group.span-6 { grid-column: span 6; }
 .filter-group.span-4 { grid-column: span 4; }
 .filter-group.span-3 { grid-column: span 3; }
@@ -121,217 +142,63 @@ body.dark-mode .error-msg code { background: rgba(255,255,255,.12); }
 .filter-select:focus, .search-input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
 
 .filter-reset-btn {
-  padding: .65rem 1.2rem;
-  border-radius: var(--radius-md);
-  border: 1px solid var(--border-color);
-  background: var(--card-bg);
-  color: var(--text-secondary);
-  font-family: inherit;
-  font-size: .88rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all .2s;
-  box-shadow: var(--shadow-sm);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: .4rem;
-  width: 100%;
-  height: 42px;
-  white-space: nowrap;
+  padding: .65rem 1.2rem; border-radius: var(--radius-md);
+  border: 1px solid var(--border-color); background: var(--card-bg);
+  color: var(--text-secondary); font-family: inherit; font-size: .88rem;
+  font-weight: 600; cursor: pointer; transition: all .2s;
+  box-shadow: var(--shadow-sm); display: inline-flex; align-items: center;
+  justify-content: center; gap: .4rem; width: 100%; height: 42px; white-space: nowrap;
 }
-.filter-reset-btn:hover {
-  background: var(--card-bg-subtle);
-  border-color: var(--accent);
-  color: var(--accent);
-  transform: translateY(-1px);
-}
+.filter-reset-btn:hover { background: var(--card-bg-subtle); border-color: var(--accent); color: var(--accent); transform: translateY(-1px); }
 
-.toggle-switch-container {
-  position: relative;
-  display: flex;
-  background: var(--card-bg-subtle);
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-md);
-  height: 42px;
-  padding: 3px;
-  box-sizing: border-box;
-  overflow: hidden;
-  box-shadow: var(--shadow-sm);
-}
+.toggle-switch-container { position: relative; display: flex; background: var(--card-bg-subtle); border: 1px solid var(--border-color); border-radius: var(--radius-md); height: 42px; padding: 3px; box-sizing: border-box; overflow: hidden; box-shadow: var(--shadow-sm); }
 .toggle-switch-container input { display: none; }
-.toggle-switch-container label {
-  flex: 1; display: flex; align-items: center; justify-content: center;
-  font-size: 0.75rem; font-weight: 600; color: var(--text-secondary);
-  cursor: pointer; z-index: 2; transition: color 0.25s ease; user-select: none; white-space: nowrap;
-}
+.toggle-switch-container label { flex: 1; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 600; color: var(--text-secondary); cursor: pointer; z-index: 2; transition: color 0.25s ease; user-select: none; white-space: nowrap; }
 .toggle-switch-container input:checked + label { color: #fff; }
-.toggle-switch-slider {
-  position: absolute; top: 3px; bottom: 3px; width: calc(50% - 3px);
-  background: var(--accent); border-radius: calc(var(--radius-md) - 4px);
-  z-index: 1;
-  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), clip-path 0.4s ease;
-  box-shadow: 0 2px 10px rgba(59, 130, 246, 0.4);
-  clip-path: polygon(0 0, 100% 0, 84% 100%, 0% 100%);
-}
+.toggle-switch-slider { position: absolute; top: 3px; bottom: 3px; width: calc(50% - 3px); background: var(--accent); border-radius: calc(var(--radius-md) - 4px); z-index: 1; transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), clip-path 0.4s ease; box-shadow: 0 2px 10px rgba(59, 130, 246, 0.4); clip-path: polygon(0 0, 100% 0, 84% 100%, 0% 100%); }
 #pmAll:checked ~ .player-mode-slider,
-#hrHide:checked ~ .role-toggle-slider {
-  transform: translateX(100%);
-  clip-path: polygon(16% 0, 100% 0, 100% 100%, 0% 100%);
-}
+#hrHide:checked ~ .role-toggle-slider { transform: translateX(100%); clip-path: polygon(16% 0, 100% 0, 100% 100%, 0% 100%); }
 
 .multi-select-dropdown { position: relative; width: 100%; }
-.multi-select-btn {
-  width: 100%; height: 42px; padding: .65rem .9rem;
-  border-radius: var(--radius-md); border: 1px solid var(--border-color);
-  background: var(--card-bg); color: var(--text-primary);
-  font-family: inherit; font-size: .88rem; font-weight: 500;
-  text-align: left; cursor: pointer;
-  display: flex; justify-content: space-between; align-items: center;
-  box-shadow: var(--shadow-sm);
-}
-.multi-select-content {
-  display: none; position: absolute; top: calc(100% + 4px); left: 0; right: 0;
-  background: var(--card-bg); border: 1px solid var(--border-color);
-  border-radius: var(--radius-md); box-shadow: var(--shadow-lg);
-  z-index: 100; max-height: 260px; overflow-y: auto; padding: .5rem;
-}
+.multi-select-btn { width: 100%; height: 42px; padding: .65rem .9rem; border-radius: var(--radius-md); border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-primary); font-family: inherit; font-size: .88rem; font-weight: 500; text-align: left; cursor: pointer; display: flex; justify-content: space-between; align-items: center; box-shadow: var(--shadow-sm); }
+.multi-select-content { display: none; position: absolute; top: calc(100% + 4px); left: 0; right: 0; background: var(--card-bg); border: 1px solid var(--border-color); border-radius: var(--radius-md); box-shadow: var(--shadow-lg); z-index: 100; max-height: 260px; overflow-y: auto; padding: .5rem; }
 .multi-select-dropdown.open .multi-select-content { display: block; }
-.multi-select-search {
-  width: 100%; padding: .4rem .6rem; margin-bottom: .4rem;
-  border-radius: 4px; border: 1px solid var(--border-color);
-  background: var(--card-bg-subtle); color: var(--text-primary); font-size: .8rem;
-}
+.multi-select-search { width: 100%; padding: .4rem .6rem; margin-bottom: .4rem; border-radius: 4px; border: 1px solid var(--border-color); background: var(--card-bg-subtle); color: var(--text-primary); font-size: .8rem; }
 .multi-select-options { display: flex; flex-direction: column; gap: .25rem; }
-.multi-select-option {
-  display: flex; align-items: center; gap: .5rem;
-  padding: .35rem .5rem; border-radius: 4px; font-size: .82rem;
-  cursor: pointer; user-select: none;
-}
+.multi-select-option { display: flex; align-items: center; gap: .5rem; padding: .35rem .5rem; border-radius: 4px; font-size: .82rem; cursor: pointer; user-select: none; }
 .multi-select-option:hover { background: var(--card-bg-subtle); }
 
-/* ======================================================
-   БЛОК «Статистика по игрокам из фильтра»
-   ====================================================== */
-.filter-stats {
-  background: var(--card-bg);
-  border: 1px solid var(--accent);
-  border-left: 5px solid var(--accent);
-  border-radius: var(--radius-lg);
-  padding: 1rem 1.25rem 1.1rem;
-  margin-bottom: 1.5rem;
-  box-shadow: var(--shadow-sm);
-}
-.filter-stats-header {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: .5rem 1rem;
-  margin-bottom: .85rem;
-}
-.filter-stats-title {
-  font-size: .72rem;
-  font-weight: 800;
-  color: var(--accent);
-  text-transform: uppercase;
-  letter-spacing: .06em;
-}
-.filter-stats-meta {
-  margin-left: auto;
-  display: inline-flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: .5rem;
-  font-size: .72rem;
-  font-weight: 600;
-  color: var(--text-secondary);
-}
-.filter-stats-meta .mode-tag {
-  display: inline-block;
-  background: var(--accent-soft);
-  color: var(--accent);
-  padding: .1rem .55rem;
-  border-radius: 9999px;
-  font-size: .7rem;
-  font-weight: 700;
-}
+.filter-stats { background: var(--card-bg); border: 1px solid var(--accent); border-left: 5px solid var(--accent); border-radius: var(--radius-lg); padding: 1rem 1.25rem 1.1rem; margin-bottom: 1.5rem; box-shadow: var(--shadow-sm); }
+.filter-stats-header { display: flex; flex-wrap: wrap; align-items: baseline; gap: .5rem 1rem; margin-bottom: .85rem; }
+.filter-stats-title { font-size: .72rem; font-weight: 800; color: var(--accent); text-transform: uppercase; letter-spacing: .06em; }
+.filter-stats-meta { margin-left: auto; display: inline-flex; flex-wrap: wrap; align-items: center; gap: .5rem; font-size: .72rem; font-weight: 600; color: var(--text-secondary); }
+.filter-stats-meta .mode-tag { display: inline-block; background: var(--accent-soft); color: var(--accent); padding: .1rem .55rem; border-radius: 9999px; font-size: .7rem; font-weight: 700; }
 .filter-stats-meta .sort-hint { color: var(--text-muted); font-weight: 500; }
-.filter-stats-meta .bracket-hint {
-  color: var(--text-muted); font-weight: 500;
-  padding: .1rem .5rem;
-  border: 1px dashed var(--border-color);
-  border-radius: 9999px;
-  font-size: .68rem;
-}
+.filter-stats-meta .bracket-hint { color: var(--text-muted); font-weight: 500; padding: .1rem .5rem; border: 1px dashed var(--border-color); border-radius: 9999px; font-size: .68rem; }
 
-.fs-table-wrap {
-  overflow-x: auto;
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-md);
-  background: var(--card-bg);
-}
-.fs-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: .82rem;
-}
-.fs-table th {
-  background: var(--card-bg-subtle);
-  font-size: .68rem;
-  text-transform: uppercase;
-  letter-spacing: .05em;
-  color: var(--text-secondary);
-  font-weight: 700;
-  padding: .55rem .7rem;
-  text-align: center;
-  white-space: nowrap;
-  border-bottom: 1px solid var(--border-color);
-  position: relative;
-}
+.fs-table-wrap { overflow-x: auto; border: 1px solid var(--border-color); border-radius: var(--radius-md); background: var(--card-bg); }
+.fs-table { width: 100%; border-collapse: collapse; font-size: .82rem; }
+.fs-table th { background: var(--card-bg-subtle); font-size: .68rem; text-transform: uppercase; letter-spacing: .05em; color: var(--text-secondary); font-weight: 700; padding: .55rem .7rem; text-align: center; white-space: nowrap; border-bottom: 1px solid var(--border-color); position: relative; }
 .fs-table th.sortable { cursor: pointer; user-select: none; padding-right: 1.15rem; }
-.fs-table th.sortable::after {
-  content: "⇅";
-  position: absolute;
-  right: .45rem; top: 50%;
-  transform: translateY(-50%);
-  font-size: .75rem;
-  opacity: .35;
-  font-weight: 700;
-}
+.fs-table th.sortable::after { content: "⇅"; position: absolute; right: .45rem; top: 50%; transform: translateY(-50%); font-size: .75rem; opacity: .35; font-weight: 700; }
 .fs-table th.sortable:hover { color: var(--accent); }
 .fs-table th.sortable:hover::after { opacity: .7; color: var(--accent); }
 .fs-table th.sorted-desc::after { content: "▼"; opacity: 1; color: var(--accent); font-size: .6rem; }
 .fs-table th.sorted-asc::after { content: "▲"; opacity: 1; color: var(--accent); font-size: .6rem; }
-
-.fs-table td {
-  padding: .5rem .7rem;
-  border-bottom: 1px solid var(--border-subtle);
-  text-align: center;
-  white-space: nowrap;
-}
+.fs-table td { padding: .5rem .7rem; border-bottom: 1px solid var(--border-subtle); text-align: center; white-space: nowrap; }
 .fs-table tbody tr:last-child td { border-bottom: none; }
 .fs-table tbody tr:hover { background: var(--card-bg-subtle); }
-
 .fs-table .fs-col-rank { width: 42px; color: var(--text-muted); font-weight: 700; font-variant-numeric: tabular-nums; }
 .fs-table .fs-col-name { text-align: left; font-weight: 600; min-width: 120px; }
 .fs-table .fs-col-games, .fs-table .fs-col-wins { font-variant-numeric: tabular-nums; font-weight: 600; }
 .fs-table .fs-col-wr { min-width: 175px; }
 .fs-table .fs-col-avg { font-weight: 700; color: var(--accent); font-variant-numeric: tabular-nums; }
 .fs-table .fs-col-roles { text-align: left; }
-
-.fs-dim {
-  color: var(--text-muted);
-  font-weight: 500;
-  font-size: 0.82em;
-}
+.fs-dim { color: var(--text-muted); font-weight: 500; font-size: 0.82em; }
 .fs-table .fs-col-avg .fs-dim { color: var(--text-muted); font-weight: 500; }
 
 .fs-wr-wrap { display: flex; align-items: center; gap: .5rem; justify-content: center; }
-.fs-wr-bar {
-  width: 55px; height: 6px; border-radius: 9999px;
-  background: var(--card-bg-subtle); overflow: hidden;
-  border: 1px solid var(--border-color); flex-shrink: 0;
-}
+.fs-wr-bar { width: 55px; height: 6px; border-radius: 9999px; background: var(--card-bg-subtle); overflow: hidden; border: 1px solid var(--border-color); flex-shrink: 0; }
 .fs-wr-fill { height: 100%; transition: width .3s; border-radius: 9999px; }
 .fs-wr-fill.fs-wr-high { background: var(--success); }
 .fs-wr-fill.fs-wr-mid { background: var(--warning); }
@@ -339,18 +206,13 @@ body.dark-mode .error-msg code { background: rgba(255,255,255,.12); }
 .fs-wr-val { font-variant-numeric: tabular-nums; font-weight: 700; font-size: .78rem; text-align: right; }
 
 .fs-role-list { display: flex; flex-wrap: wrap; gap: .3rem; }
-.fs-role-chip {
-  display: inline-flex; align-items: center; gap: .2rem;
-  padding: .12rem .5rem; border-radius: 9999px;
-  font-size: .68rem; font-weight: 700; white-space: nowrap; line-height: 1.3;
-}
+.fs-role-chip { display: inline-flex; align-items: center; gap: .2rem; padding: .12rem .5rem; border-radius: 9999px; font-size: .68rem; font-weight: 700; white-space: nowrap; line-height: 1.3; }
 .fs-role-peaceful { background: var(--role-red-bg); color: var(--role-red-text); }
 .fs-role-sheriff { background: var(--role-sheriff-bg); color: var(--role-sheriff-text); }
 .fs-role-mafia { background: var(--role-mafia-bg); color: var(--role-mafia-text); }
 .fs-role-don { background: var(--role-don-bg); color: var(--role-don-text); }
 .fs-role-other { background: var(--card-bg-subtle); color: var(--text-secondary); }
 .fs-role-chip .fs-dim { color: inherit; opacity: .65; }
-
 .fs-empty { color: var(--text-muted); font-size: .8rem; padding: 1rem; text-align: center; }
 
 .result-info { text-align: center; font-weight: 600; color: var(--text-secondary); font-size: .9rem; padding: .25rem 0 1.25rem; }
@@ -416,46 +278,21 @@ body.dark-mode .error-msg code { background: rgba(255,255,255,.12); }
   transition: color .15s, background .15s, border-color .15s;
 }
 .standings-table .player-select:hover { color: var(--accent); border-bottom-color: var(--accent); }
-.standings-table .player-select.is-selected {
-  color: var(--accent); background: var(--accent-soft);
-  border-bottom-color: transparent; border-radius: 4px; padding: 0 .35rem;
-}
+.standings-table .player-select.is-selected { color: var(--accent); background: var(--accent-soft); border-bottom-color: transparent; border-radius: 4px; padding: 0 .35rem; }
 .standings-table .cell-empty { color: var(--text-muted); }
 
 .table-filter { margin: .75rem 0 1rem; background: var(--card-bg-subtle); border: 1px solid var(--border-color); border-radius: var(--radius-md); overflow: hidden; }
-.table-filter-toggle {
-  width: 100%; text-align: left; padding: .55rem .85rem;
-  background: transparent; border: none; cursor: pointer;
-  font-family: inherit; font-weight: 600; font-size: .82rem;
-  color: var(--text-secondary);
-  display: flex; align-items: center; gap: .5rem;
-  transition: background .15s, color .15s;
-}
+.table-filter-toggle { width: 100%; text-align: left; padding: .55rem .85rem; background: transparent; border: none; cursor: pointer; font-family: inherit; font-weight: 600; font-size: .82rem; color: var(--text-secondary); display: flex; align-items: center; gap: .5rem; transition: background .15s, color .15s; }
 .table-filter-toggle:hover { background: var(--card-bg); color: var(--accent); }
-.table-filter-toggle .tf-count {
-  background: var(--danger-soft); color: var(--danger);
-  padding: .1rem .5rem; border-radius: 9999px;
-  font-size: .68rem; font-weight: 700;
-}
+.table-filter-toggle .tf-count { background: var(--danger-soft); color: var(--danger); padding: .1rem .5rem; border-radius: 9999px; font-size: .68rem; font-weight: 700; }
 .table-filter-toggle .tf-arrow { margin-left: auto; font-size: .68rem; opacity: .7; }
 .table-filter-panel { padding: .7rem .85rem .85rem; border-top: 1px solid var(--border-color); background: var(--card-bg); }
 .table-filter-actions { display: flex; gap: .4rem; flex-wrap: wrap; margin-bottom: .6rem; }
-.table-filter-action-btn {
-  padding: .28rem .7rem; background: var(--card-bg-subtle);
-  border: 1px solid var(--border-color); border-radius: var(--radius-sm);
-  font-family: inherit; font-size: .72rem; font-weight: 600;
-  cursor: pointer; color: var(--text-secondary); transition: all .15s;
-}
+.table-filter-action-btn { padding: .28rem .7rem; background: var(--card-bg-subtle); border: 1px solid var(--border-color); border-radius: var(--radius-sm); font-family: inherit; font-size: .72rem; font-weight: 600; cursor: pointer; color: var(--text-secondary); transition: all .15s; }
 .table-filter-action-btn:hover { border-color: var(--accent); color: var(--accent); }
 .table-filter-action-btn.danger:hover { border-color: var(--danger); color: var(--danger); }
 .table-filter-options { display: flex; flex-wrap: wrap; gap: .35rem .6rem; max-height: 260px; overflow-y: auto; padding-right: .25rem; }
-.table-filter-option {
-  display: inline-flex; align-items: center; gap: .35rem;
-  font-size: .78rem; cursor: pointer;
-  padding: .25rem .55rem; border: 1px solid var(--border-color);
-  border-radius: var(--radius-sm); background: var(--card-bg-subtle);
-  transition: all .15s; user-select: none;
-}
+.table-filter-option { display: inline-flex; align-items: center; gap: .35rem; font-size: .78rem; cursor: pointer; padding: .25rem .55rem; border: 1px solid var(--border-color); border-radius: var(--radius-sm); background: var(--card-bg-subtle); transition: all .15s; user-select: none; }
 .table-filter-option:hover { border-color: var(--accent); }
 .table-filter-option input { cursor: pointer; margin: 0; }
 .table-filter-option.is-hidden { background: var(--danger-soft); border-color: rgba(239,68,68,.35); color: var(--danger); }
@@ -465,21 +302,14 @@ body.dark-mode .error-msg code { background: rgba(255,255,255,.12); }
 .tour-block { background: var(--card-bg-subtle); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: .9rem 1rem 1rem; }
 .tour-header { display: flex; align-items: center; gap: .65rem; margin-bottom: .75rem; padding-bottom: .6rem; border-bottom: 1px solid var(--border-color); flex-wrap: wrap; }
 .tour-title { font-weight: 800; font-size: .95rem; color: var(--text-primary); }
-.tour-round-badge {
-  padding: .18rem .6rem; border-radius: 9999px; font-size: .68rem; font-weight: 700;
-  background: var(--accent-soft); color: var(--accent);
-  text-transform: uppercase; letter-spacing: .04em;
-}
+.tour-round-badge { padding: .18rem .6rem; border-radius: 9999px; font-size: .68rem; font-weight: 700; background: var(--accent-soft); color: var(--accent); text-transform: uppercase; letter-spacing: .04em; }
 .tour-round-badge.round-final { background: rgba(245,158,11,.15); color: #b45309; }
 .tour-round-badge.round-semi { background: rgba(139,92,246,.15); color: #6d28d9; }
 body.dark-mode .tour-round-badge.round-final { background: rgba(245,158,11,.22); color: #fcd34d; }
 body.dark-mode .tour-round-badge.round-semi { background: rgba(139,92,246,.25); color: #d8b4fe; }
 .tour-tables-count { margin-left: auto; font-size: .78rem; font-weight: 600; color: var(--text-secondary); }
 
-.tour-tables-scroll {
-  display: flex; gap: .85rem; overflow-x: auto; padding-bottom: .55rem;
-  scroll-snap-type: x proximity; scroll-behavior: smooth;
-}
+.tour-tables-scroll { display: flex; gap: .85rem; overflow-x: auto; padding-bottom: .55rem; scroll-snap-type: x proximity; scroll-behavior: smooth; }
 .tour-tables-scroll::-webkit-scrollbar { height: 8px; }
 .tour-tables-scroll::-webkit-scrollbar-track { background: var(--card-bg); border-radius: 4px; }
 .tour-tables-scroll::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 4px; }
@@ -490,22 +320,13 @@ body.dark-mode .tour-round-badge.round-semi { background: rgba(139,92,246,.25); 
 .tour-singles-header { display: flex; align-items: center; gap: .65rem; margin-bottom: .75rem; padding-bottom: .6rem; border-bottom: 1px solid var(--border-color); flex-wrap: wrap; }
 .tour-singles-title { font-weight: 800; font-size: .95rem; color: var(--text-primary); }
 
-.game-card {
-  flex: 0 0 285px; min-width: 285px; background: var(--card-bg);
-  border: 1px solid var(--border-color); border-radius: var(--radius-md);
-  padding: .85rem; transition: transform .2s, box-shadow .2s, opacity .2s;
-  box-shadow: var(--shadow-sm); scroll-snap-align: start;
-}
+.game-card { flex: 0 0 285px; min-width: 285px; background: var(--card-bg); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: .85rem; transition: transform .2s, box-shadow .2s, opacity .2s; box-shadow: var(--shadow-sm); scroll-snap-align: start; }
 .game-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
 
 .game-meta { display: flex; justify-content: space-between; align-items: center; margin-bottom: .55rem; flex-wrap: wrap; gap: .35rem; font-size: .78rem; color: var(--text-secondary); font-weight: 600; }
 .game-meta-left { display: inline-flex; align-items: center; gap: .35rem; flex-wrap: wrap; }
 .game-meta-right { display: inline-flex; align-items: center; gap: .25rem; }
-.game-meta .inline-round-badge {
-  padding: .1rem .45rem; border-radius: 9999px;
-  font-size: .6rem; font-weight: 700; text-transform: uppercase; letter-spacing: .04em;
-  background: var(--accent-soft); color: var(--accent);
-}
+.game-meta .inline-round-badge { padding: .1rem .45rem; border-radius: 9999px; font-size: .6rem; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; background: var(--accent-soft); color: var(--accent); }
 .game-meta .inline-round-badge.round-final { background: rgba(245,158,11,.15); color: #b45309; }
 .game-meta .inline-round-badge.round-semi { background: rgba(139,92,246,.15); color: #6d28d9; }
 body.dark-mode .game-meta .inline-round-badge.round-final { background: rgba(245,158,11,.22); color: #fcd34d; }
@@ -522,13 +343,7 @@ body.dark-mode .game-meta .inline-round-badge.round-semi { background: rgba(139,
 body.dark-mode .badge-win { background: rgba(16,185,129,.25); color: #86efac; }
 body.dark-mode .badge-loss { background: rgba(239,68,68,.25); color: #fca5a5; }
 
-.elo-badge {
-  display: inline-flex; align-items: center; gap: .2rem;
-  padding: .12rem .5rem; border-radius: 9999px;
-  font-size: .68rem; font-weight: 700;
-  background: var(--accent-soft); color: var(--accent);
-  letter-spacing: .02em; font-variant-numeric: tabular-nums;
-}
+.elo-badge { display: inline-flex; align-items: center; gap: .2rem; padding: .12rem .5rem; border-radius: 9999px; font-size: .68rem; font-weight: 700; background: var(--accent-soft); color: var(--accent); letter-spacing: .02em; font-variant-numeric: tabular-nums; }
 .elo-badge.elo-low { background: var(--danger-soft); color: var(--danger); }
 .elo-badge.elo-mid { background: var(--warning-soft); color: var(--warning); }
 .elo-badge.elo-high { background: var(--success-soft); color: var(--success); }
@@ -552,21 +367,9 @@ body.dark-mode .badge-loss { background: rgba(239,68,68,.25); color: #fca5a5; }
 .comp-player.role-don { background: var(--role-don-bg); color: var(--role-don-text); border-color: transparent; }
 .comp-player.role-none { background: var(--card-bg); color: var(--text-primary); border-color: var(--border-color); }
 
-.comp-player.play-lg-partial {
-  background: var(--role-lg-partial-bg) !important;
-  color: var(--role-lg-partial-text) !important;
-  font-weight: 600; border-color: transparent;
-}
-.comp-player.play-lg-full {
-  background: var(--role-lg-full-bg) !important;
-  color: var(--role-lg-full-text) !important;
-  font-weight: 700; border-color: transparent;
-}
-.comp-player.play-lg-zero {
-  background: var(--role-lg-zero-bg) !important;
-  color: var(--role-lg-zero-text) !important;
-  font-weight: 600; border: 1.5px dashed var(--role-lg-zero-border) !important;
-}
+.comp-player.play-lg-partial { background: var(--role-lg-partial-bg) !important; color: var(--role-lg-partial-text) !important; font-weight: 600; border-color: transparent; }
+.comp-player.play-lg-full { background: var(--role-lg-full-bg) !important; color: var(--role-lg-full-text) !important; font-weight: 700; border-color: transparent; }
+.comp-player.play-lg-zero { background: var(--role-lg-zero-bg) !important; color: var(--role-lg-zero-text) !important; font-weight: 600; border: 1.5px dashed var(--role-lg-zero-border) !important; }
 
 .comp-player.highlight { box-shadow: 0 0 0 2px var(--warning); font-weight: 700; }
 .comp-player.hidden-role { background: var(--card-bg-subtle) !important; color: var(--text-secondary) !important; border-color: var(--border-color) !important; border-style: dashed; }
@@ -582,14 +385,7 @@ body.dark-mode .badge-loss { background: rgba(239,68,68,.25); color: #fca5a5; }
 .watched-btn.is-watched { background: var(--success-soft); border-color: var(--success); color: var(--success); }
 .watched-btn.is-watched:hover { background: var(--danger-soft); border-color: var(--danger); color: var(--danger); }
 
-.fav-btn {
-  background: var(--card-bg); border: 1px solid var(--border-color);
-  color: var(--text-secondary); border-radius: var(--radius-md);
-  padding: 0.28rem 0.55rem; font-size: 0.72rem; font-weight: 600;
-  display: inline-flex; align-items: center; gap: 0.25rem;
-  cursor: pointer; transition: all 0.15s ease;
-  box-shadow: var(--shadow-sm); white-space: nowrap; line-height: 1.2;
-}
+.fav-btn { background: var(--card-bg); border: 1px solid var(--border-color); color: var(--text-secondary); border-radius: var(--radius-md); padding: 0.28rem 0.55rem; font-size: 0.72rem; font-weight: 600; display: inline-flex; align-items: center; gap: 0.25rem; cursor: pointer; transition: all 0.15s ease; box-shadow: var(--shadow-sm); white-space: nowrap; line-height: 1.2; }
 .fav-btn:hover { border-color: var(--warning); color: var(--warning); transform: translateY(-1px); }
 .fav-btn.is-favorite { background: var(--warning-soft); border-color: var(--warning); color: var(--warning); }
 .fav-btn.is-favorite:hover { background: var(--danger-soft); border-color: var(--danger); color: var(--danger); }
@@ -608,6 +404,7 @@ body.dark-mode .game-card.watched { background: linear-gradient(90deg, rgba(16,1
   h1 { font-size: 1.6rem; }
   .game-card { flex: 0 0 250px; min-width: 250px; }
   .fs-wr-bar { width: 40px; }
+  .db-url-input { min-width: 0; flex: 1 1 auto; }
 }
 </style>
 </head>
@@ -615,9 +412,14 @@ body.dark-mode .game-card.watched { background: linear-gradient(90deg, rgba(16,1
 <div class="container">
   <header>
     <h1>🏆 Tournament Games Viewer</h1>
-    <p class="header-sub">Загрузите базу турниров — фильтры по игрокам, ELO стола, скрытие ролей и выборочный показ турниров</p>
+    <p class="header-sub">База подгружается из репозитория автоматически · фильтры по игрокам, ELO, скрытие ролей</p>
     <div class="header-controls">
       <button id="themeToggle" class="theme-btn">🌙 Тёмная тема</button>
+      <button id="loadFromRepoBtn" class="theme-btn" title="Загрузить tournaments-db.json из репозитория (без ввода URL)">🔄 Из репозитория</button>
+      <div class="db-url-group">
+        <input type="text" id="dbUrlInput" class="db-url-input" placeholder="https://…/tournaments-db.json" />
+        <button id="loadFromUrlBtn" class="theme-btn" title="Загрузить JSON по ссылке">🌐 По ссылке</button>
+      </div>
       <div class="file-upload">
         <button class="upload-btn">📁 Загрузить базу (JSON)</button>
         <input type="file" id="fileInput" accept=".json" />
@@ -630,6 +432,7 @@ body.dark-mode .game-card.watched { background: linear-gradient(90deg, rgba(16,1
       <button id="clearWatchedBtn" class="theme-btn">🧹 Сбросить просмотры</button>
       <button id="showAllTablesBtn" class="theme-btn hidden" title="Показать все скрытые столы во всех турнирах" onclick="clearAllHiddenTables()">🔄 Показать все столы</button>
     </div>
+    <div id="dbSourceInfo" class="db-source-info">💡 Инициализация источника данных…</div>
     <div id="errorContainer"></div>
   </header>
 
@@ -816,10 +619,7 @@ function getRoleKey(role) {
 function getRoleCompClass(role) {
   if (!role) return 'role-none';
   const k = getRoleKey(role);
-  return {
-    peaceful: 'role-red', sheriff: 'role-sheriff',
-    mafia: 'role-mafia', don: 'role-don', other: 'role-red'
-  }[k];
+  return { peaceful: 'role-red', sheriff: 'role-sheriff', mafia: 'role-mafia', don: 'role-don', other: 'role-red' }[k];
 }
 function isCityPlayer(role) {
   const k = getRoleKey(role);
@@ -1124,7 +924,7 @@ function importWatched(file) {
 }
 
 // =====================================================================
-// FILE LOAD
+// FILE LOAD (локальный файл)
 // =====================================================================
 document.getElementById('fileInput').addEventListener('change', (e) => {
   const file = e.target.files[0];
@@ -1137,12 +937,16 @@ document.getElementById('fileInput').addEventListener('change', (e) => {
       state.db = parsed;
       state.tournamentDisplayCount = 10;
       state.selectedTournaments = new Set(parsed.map(t => String(t.id ?? t.url)));
+      // Забываем URL-источник — при следующем открытии снова грузим репозиторий
+      try { localStorage.removeItem(DB_SOURCE_KEY); } catch {}
+      setDbSourceInfo(`📁 Источник: <b>локальный файл</b> · ${escapeHtml(file.name)}`, '');
       initAfterLoad();
     } catch (err) {
       document.getElementById('errorContainer').innerHTML = `<div class="error-msg">${escapeHtml(err.message)}</div>`;
     }
   };
   reader.readAsText(file);
+  e.target.value = '';
 });
 document.getElementById('importWatchedInput').addEventListener('change', (e) => {
   const f = e.target.files[0];
@@ -1177,7 +981,6 @@ function checkEloAvailability() {
 
   if (state.db.length === 0 || totalTables === 0) return;
 
-  // Реальная проблема: у игроков ELO есть, а средние не посчитаны
   if (tablesWithPlayersElo > 0 && tablesWithAverageElo === 0) {
     const note = document.createElement('div');
     note.className = 'error-msg';
@@ -1189,7 +992,6 @@ function checkEloAvailability() {
     return;
   }
 
-  // Другая проблема: ELO игроков вообще нет в базе (пустой кэш)
   if (tablesWithPlayersElo === 0) {
     const note = document.createElement('div');
     note.className = 'error-msg';
@@ -1199,8 +1001,6 @@ function checkEloAvailability() {
     note.innerHTML = `⚠️ В базе нет ELO игроков (${totalTables} столов без ELO). Наполните <code>elo-cache.json</code> и запустите: <code>node tournament-parser.js --enrich-only</code>.`;
     document.getElementById('errorContainer').appendChild(note);
   }
-
-  // Иначе всё ок — средние ELO есть, либо игроков без ELO не встретилось.
 }
 
 function populateTournamentCheckboxes() {
@@ -1745,12 +1545,6 @@ function buildStandingsSection(t, filters) {
   return body;
 }
 
-/**
- * Если у турнира нет готовой таблицы результатов (standings),
- * но в играх есть данные о набранных баллах игроков,
- * рассчитываем суммарные баллы по всем играм турнира
- * и отображаем компактную таблицу: №, Игрок и Баллы (Σ).
- */
 function buildPlayersListSection(t, filters) {
   const map = new Map();
   let hasAnyPoints = false;
@@ -2146,6 +1940,111 @@ themeToggle.addEventListener('click', () => {
 
 document.getElementById('clearWatchedBtn').addEventListener('click', clearWatched);
 document.getElementById('exportWatchedBtn').addEventListener('click', exportWatched);
+
+// =====================================================================
+// ЗАГРУЗКА БАЗЫ: репозиторий / по ссылке / из файла
+// =====================================================================
+const REPO_DB_URL = './tournaments-db.json';
+const DB_SOURCE_KEY = 'mafia-db-source-v1';
+
+function setDbSourceInfo(html, title) {
+  const el = document.getElementById('dbSourceInfo');
+  if (!el) return;
+  el.innerHTML = html;
+  if (title !== undefined) el.title = title;
+}
+
+async function loadDatabaseFromUrl(url, opts) {
+  opts = opts || {};
+  const noCache = !!opts.noCache;
+  const silent = !!opts.silent;
+  if (!url) return false;
+
+  setDbSourceInfo(`⏳ Загрузка: <b>${escapeHtml(url)}</b>…`, url);
+
+  try {
+    const resp = await fetch(url, { cache: noCache ? 'reload' : 'default' });
+    if (!resp.ok) throw new Error(`HTTP ${resp.status} ${resp.statusText}`);
+    const data = await resp.json();
+    if (!Array.isArray(data)) throw new Error('Ожидался массив турниров');
+
+    state.db = data;
+    state.tournamentDisplayCount = 10;
+    state.selectedTournaments = new Set(data.map(t => String(t.id ?? t.url)));
+    try { localStorage.setItem(DB_SOURCE_KEY, url); } catch {}
+
+    const isRepo = url === REPO_DB_URL;
+    setDbSourceInfo(
+      isRepo
+        ? `📦 Источник: <b>репозиторий</b> · ${escapeHtml(url)}`
+        : `🌐 Источник: ${escapeHtml(url)}`,
+      url
+    );
+
+    const inp = document.getElementById('dbUrlInput');
+    if (inp) inp.value = url;
+
+    initAfterLoad();
+    return true;
+  } catch (err) {
+    if (!silent) {
+      document.getElementById('errorContainer').innerHTML =
+        `<div class="error-msg">Не удалось загрузить базу «${escapeHtml(url)}»: ${escapeHtml(err.message)}</div>`;
+    }
+    setDbSourceInfo(`❌ Ошибка загрузки: <b>${escapeHtml(url)}</b>`, url);
+    return false;
+  }
+}
+
+document.getElementById('loadFromRepoBtn').addEventListener('click', () => {
+  loadDatabaseFromUrl(REPO_DB_URL, { noCache: true });
+});
+
+document.getElementById('loadFromUrlBtn').addEventListener('click', () => {
+  const url = (document.getElementById('dbUrlInput').value || '').trim();
+  if (!url) {
+    document.getElementById('errorContainer').innerHTML =
+      `<div class="error-msg">Укажите URL к JSON-файлу</div>`;
+    return;
+  }
+  loadDatabaseFromUrl(url, { noCache: true });
+});
+
+document.getElementById('dbUrlInput').addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') {
+    e.preventDefault();
+    document.getElementById('loadFromUrlBtn').click();
+  }
+});
+
+// Автозагрузка при открытии страницы.
+//   Приоритет:  ?db=…  →  сохранённый URL  →  ./tournaments-db.json
+//   При file:// пропускаем (CORS), но подсказываем про кнопки.
+(async function autoLoadDatabase() {
+  if (location.protocol === 'file:') {
+    setDbSourceInfo('💡 Локально из file:// автозагрузка недоступна — используйте кнопки «🔄 Из репозитория», «🌐 По ссылке» или «📁 Загрузить базу».', '');
+    return;
+  }
+
+  const params = new URLSearchParams(location.search);
+  const urlParam = params.get('db');
+  const saved = (() => { try { return localStorage.getItem(DB_SOURCE_KEY); } catch { return null; } })();
+  const url = urlParam || saved || REPO_DB_URL;
+
+  const inp = document.getElementById('dbUrlInput');
+  if (inp) inp.value = url;
+
+  try {
+    const head = await fetch(url, { method: 'HEAD', cache: 'no-cache' });
+    if (!head.ok) throw new Error(`HTTP ${head.status}`);
+    await loadDatabaseFromUrl(url, { silent: !!urlParam ? false : true });
+  } catch (err) {
+    setDbSourceInfo(
+      `💡 Автозагрузка недоступна (${escapeHtml(err.message)}). Используйте «🔄 Из репозитория» / «🌐 По ссылке» / «📁 Загрузить базу».`,
+      ''
+    );
+  }
+})();
 </script>
 </body>
 </html>
