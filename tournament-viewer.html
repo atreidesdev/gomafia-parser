@@ -75,30 +75,10 @@ h1 { font-size: 2.2rem; font-weight: 800; letter-spacing: -.03em; margin-bottom:
 .upload-btn { display: inline-flex; align-items: center; gap: .5rem; background: var(--accent); color: #fff; padding: .65rem 1.4rem; border-radius: var(--radius-md); font-weight: 600; font-size: .9rem; border: none; cursor: pointer; transition: all .2s; box-shadow: 0 4px 14px rgba(59,130,246,.35); }
 .upload-btn:hover { background: var(--accent-hover); transform: translateY(-1px); }
 
-/* ===== Новые элементы: источник данных ===== */
 .db-url-group { display: inline-flex; gap: .4rem; align-items: center; }
-.db-url-input {
-  height: 42px; padding: .55rem .85rem;
-  border-radius: var(--radius-md); border: 1px solid var(--border-color);
-  background: var(--card-bg); color: var(--text-primary);
-  font-family: inherit; font-size: .85rem;
-  min-width: 240px; max-width: 320px;
-  box-shadow: var(--shadow-sm);
-}
+.db-url-input { height: 42px; padding: .55rem .85rem; border-radius: var(--radius-md); border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-primary); font-family: inherit; font-size: .85rem; min-width: 240px; max-width: 320px; box-shadow: var(--shadow-sm); }
 .db-url-input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
-.db-source-info {
-  margin-top: .85rem;
-  font-size: .8rem;
-  color: var(--text-secondary);
-  font-weight: 500;
-  display: inline-flex;
-  align-items: center;
-  gap: .4rem;
-  padding: .35rem .8rem;
-  border-radius: 9999px;
-  background: var(--card-bg-subtle);
-  border: 1px solid var(--border-color);
-}
+.db-source-info { margin-top: .85rem; font-size: .8rem; color: var(--text-secondary); font-weight: 500; display: inline-flex; align-items: center; gap: .4rem; padding: .35rem .8rem; border-radius: 9999px; background: var(--card-bg-subtle); border: 1px solid var(--border-color); }
 .db-source-info b { color: var(--accent); font-weight: 700; }
 
 .error-msg { color: var(--danger); background: var(--danger-soft); border: 1px solid rgba(239,68,68,.25); padding: .9rem 1.25rem; border-radius: var(--radius-md); text-align: center; margin-top: 1rem; font-weight: 500; }
@@ -111,44 +91,20 @@ body.dark-mode .error-msg code { background: rgba(255,255,255,.12); }
 .stat-value { font-size: 2rem; font-weight: 800; color: var(--accent); line-height: 1.1; letter-spacing: -.02em; }
 .stat-label { color: var(--text-secondary); font-size: .72rem; text-transform: uppercase; letter-spacing: .08em; font-weight: 700; margin-top: .35rem; }
 
-.filter-panel {
-  background: var(--card-bg);
-  border: 1px solid var(--border-color);
-  padding: 1.5rem;
-  border-radius: var(--radius-lg);
-  margin-bottom: 1.5rem;
-  box-shadow: var(--shadow-sm);
-  display: grid;
-  grid-template-columns: repeat(12, minmax(0, 1fr));
-  gap: 1rem;
-  align-items: flex-end;
-}
+.filter-panel { background: var(--card-bg); border: 1px solid var(--border-color); padding: 1.5rem; border-radius: var(--radius-lg); margin-bottom: 1.5rem; box-shadow: var(--shadow-sm); display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 1rem; align-items: flex-end; }
 .filter-group { display: flex; flex-direction: column; gap: .4rem; min-width: 0; grid-column: span 3; }
 .filter-group.span-6 { grid-column: span 6; }
 .filter-group.span-4 { grid-column: span 4; }
 .filter-group.span-3 { grid-column: span 3; }
 .filter-group.span-12 { grid-column: span 12; }
-
-@media (max-width: 1100px) {
-  .filter-group { grid-column: span 6 !important; }
-  .filter-group.span-12 { grid-column: span 12 !important; }
-}
-@media (max-width: 700px) {
-  .filter-group { grid-column: span 12 !important; }
-}
+@media (max-width: 1100px) { .filter-group { grid-column: span 6 !important; } .filter-group.span-12 { grid-column: span 12 !important; } }
+@media (max-width: 700px) { .filter-group { grid-column: span 12 !important; } }
 
 .filter-label { font-size: .7rem; font-weight: 700; color: var(--text-secondary); text-transform: uppercase; letter-spacing: .05em; }
 .filter-select, .search-input { padding: .65rem .9rem; border-radius: var(--radius-md); border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-primary); font-family: inherit; font-size: .88rem; font-weight: 500; transition: all .2s; box-shadow: var(--shadow-sm); width: 100%; min-width: 0; height: 42px; }
 .filter-select:focus, .search-input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
 
-.filter-reset-btn {
-  padding: .65rem 1.2rem; border-radius: var(--radius-md);
-  border: 1px solid var(--border-color); background: var(--card-bg);
-  color: var(--text-secondary); font-family: inherit; font-size: .88rem;
-  font-weight: 600; cursor: pointer; transition: all .2s;
-  box-shadow: var(--shadow-sm); display: inline-flex; align-items: center;
-  justify-content: center; gap: .4rem; width: 100%; height: 42px; white-space: nowrap;
-}
+.filter-reset-btn { padding: .65rem 1.2rem; border-radius: var(--radius-md); border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-secondary); font-family: inherit; font-size: .88rem; font-weight: 600; cursor: pointer; transition: all .2s; box-shadow: var(--shadow-sm); display: inline-flex; align-items: center; justify-content: center; gap: .4rem; width: 100%; height: 42px; white-space: nowrap; }
 .filter-reset-btn:hover { background: var(--card-bg-subtle); border-color: var(--accent); color: var(--accent); transform: translateY(-1px); }
 
 .toggle-switch-container { position: relative; display: flex; background: var(--card-bg-subtle); border: 1px solid var(--border-color); border-radius: var(--radius-md); height: 42px; padding: 3px; box-sizing: border-box; overflow: hidden; box-shadow: var(--shadow-sm); }
@@ -270,13 +226,7 @@ body.dark-mode .error-msg code { background: rgba(255,255,255,.12); }
 .standings-table tbody tr.row-highlight .col-name { color: var(--warning); }
 .standings-table tbody tr:hover { background: var(--card-bg-subtle); }
 
-.standings-table .player-select {
-  background: transparent; border: none;
-  border-bottom: 1px dashed var(--border-color);
-  padding: 0; margin: 0; font: inherit; font-weight: 600;
-  color: var(--text-primary); cursor: pointer; text-align: left;
-  transition: color .15s, background .15s, border-color .15s;
-}
+.standings-table .player-select { background: transparent; border: none; border-bottom: 1px dashed var(--border-color); padding: 0; margin: 0; font: inherit; font-weight: 600; color: var(--text-primary); cursor: pointer; text-align: left; transition: color .15s, background .15s, border-color .15s; }
 .standings-table .player-select:hover { color: var(--accent); border-bottom-color: var(--accent); }
 .standings-table .player-select.is-selected { color: var(--accent); background: var(--accent-soft); border-bottom-color: transparent; border-radius: 4px; padding: 0 .35rem; }
 .standings-table .cell-empty { color: var(--text-muted); }
@@ -937,7 +887,6 @@ document.getElementById('fileInput').addEventListener('change', (e) => {
       state.db = parsed;
       state.tournamentDisplayCount = 10;
       state.selectedTournaments = new Set(parsed.map(t => String(t.id ?? t.url)));
-      // Забываем URL-источник — при следующем открытии снова грузим репозиторий
       try { localStorage.removeItem(DB_SOURCE_KEY); } catch {}
       setDbSourceInfo(`📁 Источник: <b>локальный файл</b> · ${escapeHtml(file.name)}`, '');
       initAfterLoad();
@@ -1853,7 +1802,7 @@ function buildGameCard(tournament, game, table, filters, opts) {
     ? `<button class="copy-btn" type="button" title="Скопировать" data-copy="${escapeHtml(copyText)}" onclick="event.preventDefault();event.stopPropagation();copyToClipboard(this.dataset.copy,this);return false;">📋</button>`
     : '';
   const searchBtn = copyText
-    ? `<button class="copy-btn" type="button" title="Найти в браузере" data-copy="${escapeHtml(copyText)}" onclick="event.preventDefault();event.stopPropagation();copyToClipboard(this.dataset.copy,this);window.open('https://yandex.ru/search/?text='+encodeURIComponent(this.dataset.copy),'_blank','noopener');return false;">🔍</button>`
+    ? `<button class="copy-btn" type="button" title="Найти видео в VK" data-copy="${escapeHtml(copyText)}" onclick="event.preventDefault();event.stopPropagation();searchVkVideo(this);return false;">🔍</button>`
     : '';
   const openBtn = tournament.url
     ? `<button class="copy-btn" type="button" title="Открыть турнир" onclick="event.preventDefault();event.stopPropagation();window.open('${escapeHtml(tournament.url.split('#')[0])}?tab=games&round=${encodeURIComponent(game.round||'')}','_blank','noopener');return false;">🔗</button>`
@@ -1920,7 +1869,73 @@ function buildGameCard(tournament, game, table, filters, opts) {
       ${favoriteBtnHtml(gameKey, isFavorite)}
     </div>
   `;
+
+  card._vkContext = { tournament, game, table };
   return card;
+}
+
+// =====================================================================
+// VK-ПОИСК (простой, без токена)
+// =====================================================================
+/**
+ * Собирает поисковый запрос для VK:
+ *   gomafia.pro <название турнира> <дата> Стол <N>
+ *
+ * Название турнира чистится от разделителей (|, запятые и т.п.)
+ * и брендового шума («gomafia», «мафия», «mafia»), чтобы запрос
+ * не превращался в «кашу». Номер тура НЕ добавляется.
+ */
+function buildVkSearchQuery(tournament, game, table) {
+  // 1) Название турнира — оставляем как есть, но убираем хвостовые брендовые токены
+  let t = String(tournament.tournament || '').trim();
+  t = t.replace(/(?:[\s|,]+(?:gomafia(?:\.pro)?|мафия|mafia))+\s*$/gi, '').trim();
+
+  // 2) Стол в формате СТОЛ N
+  let tbl = String(table.tableNumber || '').trim();
+  tbl = tbl ? 'СТОЛ ' + tbl.replace(/^стол\s*/i, '') : '';
+
+  // 3) Дата в формате dd.mm
+  const totalGames = Array.isArray(tournament.games) ? tournament.games.length : null;
+  const dateStr = getGameDate(
+    game.gameNumber,
+    tournament.dateStart,
+    tournament.dateEnd,
+    totalGames,
+    tournament.hasFinalStage
+  );
+
+  // 4) Склейка: «название, СТОЛ N, dd.mm»
+  const parts = [t, tbl, dateStr].filter(Boolean);
+  const base = parts.join(', ');
+
+  // 5) В начале — gomafia.pro
+  return base ? 'gomafia.pro ' + base : 'gomafia.pro';
+}
+
+function searchVkVideo(btn) {
+  const card = btn.closest('.game-card');
+  if (!card) return;
+
+  const ctx = card._vkContext || {};
+  const { tournament, game, table } = ctx;
+
+  // Fallback — если контекст почему-то отсутствует, ищем по copy-тексту
+  if (!tournament || !game || !table) {
+    const fallback = btn.dataset.copy || '';
+    copyToClipboard(fallback, btn);
+    window.open('https://vk.com/video?q=' + encodeURIComponent(fallback), '_blank', 'noopener');
+    return;
+  }
+
+  const query = buildVkSearchQuery(tournament, game, table);
+
+  // Копируем запрос в буфер — на случай, если понадобится вставить вручную
+  copyToClipboard(query, btn);
+
+  // Открываем страницу поиска VK
+  window.open('https://vk.com/video?q=' + encodeURIComponent(query), '_blank', 'noopener');
+
+  console.log('[VK search] query:', query);
 }
 
 // =====================================================================
@@ -2017,9 +2032,6 @@ document.getElementById('dbUrlInput').addEventListener('keydown', (e) => {
   }
 });
 
-// Автозагрузка при открытии страницы.
-//   Приоритет:  ?db=…  →  сохранённый URL  →  ./tournaments-db.json
-//   При file:// пропускаем (CORS), но подсказываем про кнопки.
 (async function autoLoadDatabase() {
   if (location.protocol === 'file:') {
     setDbSourceInfo('💡 Локально из file:// автозагрузка недоступна — используйте кнопки «🔄 Из репозитория», «🌐 По ссылке» или «📁 Загрузить базу».', '');
