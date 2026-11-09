@@ -5,9 +5,11 @@
   "main": "index.html",
   "scripts": {
     "start": "node scraper.js",
+    "launcher": "node run.js",
     "parse:tournaments": "node tournament-parser.js",
     "elo:cache": "node buildEloCache.js",
-    "elo:enrich": "node enrichTournaments.js"
+    "elo:enrich": "node enrichTournaments.js",
+    "merge": "node merge-for-viewer.js"
   },
   "dependencies": {
     "playwright": "^1.40.0"

@@ -1879,22 +1879,28 @@ function buildGameCard(tournament, game, table, filters, opts) {
 // =====================================================================
 /**
  * Собирает поисковый запрос для VK:
- *   gomafia.pro <название турнира> <дата> Стол <N>
+ *   gomafia.pro <название турнира> СТОЛ <N> <dd.mm>
  *
- * Название турнира чистится от разделителей (|, запятые и т.п.)
- * и брендового шума («gomafia», «мафия», «mafia»), чтобы запрос
- * не превращался в «кашу». Номер тура НЕ добавляется.
+ * Правила:
+ *  - Убираем брендовые хвосты из названия турнира.
+ *  - Заменяем «поисковые операторы» и шумную пунктуацию (| , ; :) на пробелы,
+ *    чтобы VK-поиск не дробил запрос и не терял релевантность.
+ *  - Склеиваем части через пробел (без запятых — на мобиле они превращаются
+ *    в литеральные символы и ломают ранжирование).
+ *  - Номер тура НЕ добавляется.
  */
 function buildVkSearchQuery(tournament, game, table) {
-  // 1) Название турнира — оставляем как есть, но убираем хвостовые брендовые токены
+  // 1) Название турнира — убираем брендовые хвосты
   let t = String(tournament.tournament || '').trim();
   t = t.replace(/(?:[\s|,]+(?:gomafia(?:\.pro)?|мафия|mafia))+\s*$/gi, '').trim();
+  // 2) Чистим поисковые операторы и шумную пунктуацию
+  t = t.replace(/[|,;:]+/g, ' ').replace(/\s+/g, ' ').trim();
 
-  // 2) Стол в формате СТОЛ N
+  // 3) Стол в формате СТОЛ N
   let tbl = String(table.tableNumber || '').trim();
   tbl = tbl ? 'СТОЛ ' + tbl.replace(/^стол\s*/i, '') : '';
 
-  // 3) Дата в формате dd.mm
+  // 4) Дата в формате dd.mm
   const totalGames = Array.isArray(tournament.games) ? tournament.games.length : null;
   const dateStr = getGameDate(
     game.gameNumber,
@@ -1904,12 +1910,22 @@ function buildVkSearchQuery(tournament, game, table) {
     tournament.hasFinalStage
   );
 
-  // 4) Склейка: «название, СТОЛ N, dd.mm»
-  const parts = [t, tbl, dateStr].filter(Boolean);
-  const base = parts.join(', ');
+  // 5) Склейка через пробел + префикс gomafia.pro
+  return ['gomafia.pro', t, tbl, dateStr].filter(Boolean).join(' ');
+}
 
-  // 5) В начале — gomafia.pro
-  return base ? 'gomafia.pro ' + base : 'gomafia.pro';
+/**
+ * Формирует URL для поиска видео в VK.
+ * На мобильных устройствах сразу открываем m.vkvideo.ru,
+ * чтобы избежать редиректа с перекодировкой параметров в cp1251
+ * (из-за этого поиск на планшете/телефоне возвращал пусто).
+ */
+function buildVkSearchUrl(query) {
+  const isMobile = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
+  const q = encodeURIComponent(query);
+  return isMobile
+    ? `https://m.vkvideo.ru/?q=${q}&action=search`
+    : `https://vk.com/video?q=${q}`;
 }
 
 function searchVkVideo(btn) {
@@ -1923,7 +1939,7 @@ function searchVkVideo(btn) {
   if (!tournament || !game || !table) {
     const fallback = btn.dataset.copy || '';
     copyToClipboard(fallback, btn);
-    window.open('https://vk.com/video?q=' + encodeURIComponent(fallback), '_blank', 'noopener');
+    window.open(buildVkSearchUrl(fallback), '_blank', 'noopener');
     return;
   }
 
@@ -1933,7 +1949,8 @@ function searchVkVideo(btn) {
   copyToClipboard(query, btn);
 
   // Открываем страницу поиска VK
-  window.open('https://vk.com/video?q=' + encodeURIComponent(query), '_blank', 'noopener');
+  // (на мобиле — m.vkvideo.ru, чтобы не было cp1251-редиректа)
+  window.open(buildVkSearchUrl(query), '_blank', 'noopener');
 
   console.log('[VK search] query:', query);
 }
