@@ -1,3 +1,20 @@
 # Одна ссылка на строку.
 # Строки с # или // — комментарии, игнорируются.
 # Пустые строки тоже игнорируются.
+
+https://gomafia.pro/stats/159
+https://gomafia.pro/stats/264
+https://gomafia.pro/stats/1115
+https://gomafia.pro/stats/67
+https://gomafia.pro/stats/2129
+https://gomafia.pro/stats/91
+https://gomafia.pro/stats/5848
+https://gomafia.pro/stats/1401
+https://gomafia.pro/stats/999
+https://gomafia.pro/stats/972
+https://gomafia.pro/stats/333
+https://gomafia.pro/stats/279
+https://gomafia.pro/stats/1544
+https://gomafia.pro/stats/575
+https://gomafia.pro/stats/1373
+https://gomafia.pro/stats/17

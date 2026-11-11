@@ -1,6 +1,4 @@
 node_modules/
-results/
 elo-cache.json
 missing-elo-players.txt
-players.txt
 viewer-db.json

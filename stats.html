@@ -2086,6 +2086,22 @@
                   <button class="upload-btn">📁 Загрузить JSON</button>
                   <input type="file" id="jsonInput" accept=".json" />
                </div>
+               <select
+                  id="repoFileSelect"
+                  class="filter-select"
+                  style="min-width: 240px; max-width: 360px"
+                  title="Загрузить JSON из репозитория"
+               >
+                  <option value="">— из репозитория —</option>
+               </select>
+               <button
+                  id="repoLoadBtn"
+                  class="theme-btn"
+                  onclick="loadFromRepo()"
+                  disabled
+               >
+                  📥 Из репозитория
+               </button>
             </div>
             <div id="loadingIndicator" class="loading hidden">
                <div class="spinner"></div>
@@ -4319,6 +4335,79 @@
                r.readAsText(file);
             });
          }
+
+ // =====================================================================
+         // LOAD FROM REPOSITORY (results/index.json manifest)
+         // =====================================================================
+         const REPO_MANIFEST_URL = "results/index.json";
+
+         async function loadManifest() {
+            const sel = document.getElementById("repoFileSelect");
+            if (!sel) return;
+            try {
+               const res = await fetch(REPO_MANIFEST_URL, {
+                  cache: "no-cache",
+               });
+               if (!res.ok) throw new Error("HTTP " + res.status);
+               const data = await res.json();
+               if (!data || !Array.isArray(data.files) || data.files.length === 0) {
+                  sel.innerHTML = '<option value="">— манифест пуст —</option>';
+                  return;
+               }
+               sel.innerHTML =
+                  '<option value="">— выберите из репозитория —</option>' +
+                  data.files
+                     .map((f) => {
+                        const sizeKB = (f.size / 1024).toFixed(1);
+                        const date = f.modified
+                           ? new Date(f.modified).toLocaleDateString("ru-RU")
+                           : "";
+                        const label = `${f.playerName || f.filename} · ${sizeKB} КБ${date ? " · " + date : ""}`;
+                        return `<option value="results/${escapeHtml(f.filename)}">${escapeHtml(label)}</option>`;
+                     })
+                     .join("");
+            } catch (e) {
+               console.warn("Manifest unavailable:", e);
+               sel.innerHTML =
+                  '<option value="">— репозиторий недоступен —</option>';
+            }
+         }
+
+         async function loadFromRepo() {
+            const sel = document.getElementById("repoFileSelect");
+            if (!sel) return;
+            const url = sel.value;
+            if (!url) {
+               alert("Выберите файл из списка");
+               return;
+            }
+            document.getElementById("errorContainer").innerHTML = "";
+            showLoading("Загрузка из репозитория...");
+            try {
+               const res = await fetch(url, { cache: "no-cache" });
+               if (!res.ok) throw new Error(`HTTP ${res.status}`);
+               showLoading("Парсинг JSON...");
+               const data = await res.json();
+               await processData(data);
+               hideLoading();
+               document.getElementById("tabsNav").classList.remove("hidden");
+               switchTab("viz");
+            } catch (err) {
+               hideLoading();
+               showError("Ошибка загрузки: " + err.message);
+               console.error(err);
+            }
+         }
+
+         document
+            .getElementById("repoFileSelect")
+            ?.addEventListener("change", (e) => {
+               const btn = document.getElementById("repoLoadBtn");
+               if (btn) btn.disabled = !e.target.value;
+            });
+
+         // Автозагрузка списка файлов при открытии страницы
+         loadManifest();
 
          async function processData(data) {
             if (!Array.isArray(data))
