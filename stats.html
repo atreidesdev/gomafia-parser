@@ -3188,8 +3188,7 @@
                         onchange="applyAnalyticsDateFilter()"
                         title="Дата с"
                      />
-                     <span
-                        style="font-size: 0.8rem; color: var(--text-secondary)"
+                     <span style="font-size: 0.8rem; color: var(--text-secondary)"
                         >—</span
                      >
                      <input
@@ -4168,6 +4167,59 @@
                "noopener,noreferrer",
             );
          }
+
+         // ==== VK-ПОИСК (как в tournament-viewer) ==========================
+         function buildVkSearchQuery(
+            tournamentName,
+            tableNumber,
+            gameNumber,
+            dateStart,
+            dateEnd,
+            totalGames,
+            hasFinalStage,
+         ) {
+            let t = String(tournamentName || "").trim();
+            // Убираем брендовые хвосты gomafia.pro / мафия / mafia
+            t = t
+               .replace(/(?:[\s|,]+(?:gomafia(?:\.pro)?|мафия|mafia))+\s*$/gi, "")
+               .trim();
+            // Чистим поисковые операторы и шумную пунктуацию
+            t = t.replace(/[|,;:]+/g, " ").replace(/\s+/g, " ").trim();
+
+            // Стол в формате "СТОЛ N"
+            let tbl = String(tableNumber || "").trim();
+            if (tbl) {
+               if (/стол/i.test(tbl)) tbl = tbl.replace(/^стол\s*/i, "СТОЛ ");
+               else tbl = "СТОЛ " + tbl;
+            }
+
+            // Дата dd.mm через getGameDate
+            const dateStr = getGameDate(
+               gameNumber,
+               dateStart,
+               dateEnd,
+               totalGames,
+               hasFinalStage,
+            );
+
+            return ["gomafia.pro", t, tbl, dateStr].filter(Boolean).join(" ");
+         }
+
+         function buildVkSearchUrl(query) {
+            const isMobile =
+               /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
+            const q = encodeURIComponent(query);
+            return isMobile
+               ? `https://m.vkvideo.ru/?q=${q}&action=search`
+               : `https://vk.com/video?q=${q}`;
+         }
+
+         function searchVkVideo(query, btn) {
+            if (!query) return;
+            copyGameInfo(query, btn);
+            window.open(buildVkSearchUrl(query), "_blank", "noopener,noreferrer");
+         }
+
          function openGameInTournament(url, gameNumber) {
             if (!url) return;
             const base = String(url).split("#")[0].split("?")[0];
@@ -5469,6 +5521,18 @@ function renderGameCard(game, tournament) {
    const linkBtn = tournament.url
       ? `<button class="copy-btn game-copy-btn" type="button" title="Открыть турнир" data-tourn-url="${escapeHtml(tournament.url)}" data-game-num="${escapeHtml(String(game.gameNumber || ""))}" onclick="event.preventDefault();event.stopPropagation();openGameInTournament(this.dataset.tournUrl, this.dataset.gameNum);return false;">🔗</button>`
       : "";
+   const vkQuery = buildVkSearchQuery(
+      tournament.tournament,
+      game.tableNumber,
+      game.gameNumber,
+      tournament.dateStart,
+      tournament.dateEnd,
+      totalGamesInTournament,
+      hasFinalStage,
+   );
+   const vkBtn = vkQuery
+      ? `<button class="copy-btn game-copy-btn" type="button" title="Найти в VK: ${escapeHtml(vkQuery)}" data-vk-query="${escapeHtml(vkQuery)}" onclick="event.preventDefault();event.stopPropagation();searchVkVideo(this.dataset.vkQuery,this);return false;">📹</button>`
+      : "";
    const judgeHtml = game.tableJudge
       ? `<div class="game-judge-centered">👨‍⚖️ Судья: ${escapeHtml(game.tableJudge)}</div>`
       : "";
@@ -5482,7 +5546,7 @@ function renderGameCard(game, tournament) {
 return `<div class="game-card ${watched ? "watched" : ""}" data-game-key="${escapeHtml(gameKey)}">
 <div class="game-meta">
   <span style="display:inline-flex;align-items:center;gap:.35rem;flex-wrap:nowrap;white-space:nowrap;">${gameInfoLeft}${tableEloBadge}</span>
-  <span style="display:inline-flex;align-items:center;gap:.35rem;flex-wrap:nowrap;white-space:nowrap;">${copyBtn}${searchBtn}${linkBtn}</span>
+  <span style="display:inline-flex;align-items:center;gap:.35rem;flex-wrap:nowrap;white-space:nowrap;">${copyBtn}${searchBtn}${vkBtn}${linkBtn}</span>
 </div>
 ${judgeHtml}
 <div style="display:flex;gap:.35rem;margin-bottom:.5rem;flex-wrap:wrap;align-items:center;"><span class="badge ${getRoleBadgeClass(myRole)}">${myRole || "?"}</span>${resultBadge}</div>
@@ -8568,6 +8632,18 @@ const tableEloBadge = g.averageElo
                   const linkBtn = g.tournamentUrl
                      ? `<button class="copy-btn game-copy-btn" type="button" title="Открыть турнир" data-tourn-url="${escapeHtml(g.tournamentUrl)}" data-game-num="${escapeHtml(String(g.gameNumber || ""))}" onclick="event.preventDefault();event.stopPropagation();openGameInTournament(this.dataset.tournUrl, this.dataset.gameNum);return false;">🔗</button>`
                      : "";
+                  const vkQuery = buildVkSearchQuery(
+                     g.tournamentName,
+                     g.tableNumber,
+                     g.gameNumber,
+                     g.dateStart,
+                     g.dateEnd,
+                     g.totalGames,
+                     g.hasFinalStage,
+                  );
+                  const vkBtn = vkQuery
+                     ? `<button class="copy-btn game-copy-btn" type="button" title="Найти в VK: ${escapeHtml(vkQuery)}" data-vk-query="${escapeHtml(vkQuery)}" onclick="event.preventDefault();event.stopPropagation();searchVkVideo(this.dataset.vkQuery,this);return false;">📹</button>`
+                     : "";
                   const judgeHtml = g.tableJudge
                      ? `<div class="game-judge-centered">👨‍⚖️ Судья: ${escapeHtml(g.tableJudge)}</div>`
                      : "";
@@ -8584,7 +8660,7 @@ return `<div class="modal-game-card ${watched ? "watched" : ""}" data-game-key="
       ${dateStr}
       <span style="font-weight:600;color:var(--text-secondary);font-size:.8rem;display:inline-flex;align-items:center;gap:.35rem;">${gameInfoLeft}</span>
       ${tableEloBadge}
-      ${copyBtn}${searchBtn}${linkBtn}
+      ${copyBtn}${searchBtn}${vkBtn}${linkBtn}
     </div>
     <div class="modal-result-badges">${myRoleBadge}${winnerBadge}</div>
   </div>
