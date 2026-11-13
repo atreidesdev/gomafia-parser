@@ -11776,5 +11776,3888 @@
         ]
       }
     ]
+  },
+  {
+    "id": 3269,
+    "tournament": "Битва Чемпионов 2026",
+    "url": "https://gomafia.pro/tournament/3269",
+    "dateStart": "2026-11-14",
+    "dateEnd": "2026-11-16",
+    "type": "individual",
+    "typeTranslate": "Личный",
+    "star": 5,
+    "elo_average": 2862,
+    "country": "RU",
+    "city": "Москва",
+    "hasFinalStage": true,
+    "scheme": {
+      "qualifying": 7,
+      "semi": 8,
+      "final": 10
+    },
+    "standings": {
+      "withFinal": [],
+      "withoutFinal": []
+    },
+    "teams": [],
+    "games": [
+      {
+        "gameNumber": 1,
+        "round": "Отбор",
+        "tables": [
+          {
+            "tableNumber": 1,
+            "judge": "Адвокат",
+            "winner": null,
+            "played": false,
+            "averageElo": 2894,
+            "players": [
+              {
+                "login": "МARS",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2545.94
+              },
+              {
+                "login": "Растишка",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 3246.54
+              },
+              {
+                "login": "Никто.",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2806.87
+              },
+              {
+                "login": "Dying Devil",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 3149.27
+              },
+              {
+                "login": "MUR",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2645.84
+              },
+              {
+                "login": "Телепат",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2841.83
+              },
+              {
+                "login": "BWDMoscow",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 3123.92
+              },
+              {
+                "login": "Unicef",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 3161.84
+              },
+              {
+                "login": "День",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2420.07
+              },
+              {
+                "login": "meT",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2999.26
+              }
+            ]
+          },
+          {
+            "tableNumber": 2,
+            "judge": "Славяночка",
+            "winner": null,
+            "played": false,
+            "averageElo": 2730,
+            "players": [
+              {
+                "login": "Зажигалочка",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2848.27
+              },
+              {
+                "login": "Леди",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2932.58
+              },
+              {
+                "login": "Варик",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 3141.86
+              },
+              {
+                "login": "Флай",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 3118.62
+              },
+              {
+                "login": "EZY BLACK",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 3146.68
+              },
+              {
+                "login": "Провокация.",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2239.79
+              },
+              {
+                "login": "Lemona",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 3008.16
+              },
+              {
+                "login": "smd",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2260.91
+              },
+              {
+                "login": "Икигай",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2284.24
+              },
+              {
+                "login": "Дипси",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2320.12
+              }
+            ]
+          },
+          {
+            "tableNumber": 3,
+            "judge": "Мол4ун",
+            "winner": null,
+            "played": false,
+            "averageElo": 2836,
+            "players": [
+              {
+                "login": "Стоников",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 3237.79
+              },
+              {
+                "login": "Смайлик",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2835.54
+              },
+              {
+                "login": "007",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 3276.68
+              },
+              {
+                "login": "Новенькая",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2497.99
+              },
+              {
+                "login": "Гаечка",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2859.62
+              },
+              {
+                "login": "Монарх",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2972.46
+              },
+              {
+                "login": "Тихий Закат",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 3124.6
+              },
+              {
+                "login": "_Крокодильчик_",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2417.93
+              },
+              {
+                "login": "Просто Толя",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2983.42
+              },
+              {
+                "login": "Аделаида",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2151.01
+              }
+            ]
+          },
+          {
+            "tableNumber": 4,
+            "judge": "Лис",
+            "winner": null,
+            "played": false,
+            "averageElo": 2774,
+            "players": [
+              {
+                "login": "Кукурузник",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2397.97
+              },
+              {
+                "login": "Еления Холовна",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2477.48
+              },
+              {
+                "login": "Incognitо",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2599.51
+              },
+              {
+                "login": "ДаФомин",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 3069.61
+              },
+              {
+                "login": "Chicago",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 1000
+              },
+              {
+                "login": "Градиент",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 3510.91
+              },
+              {
+                "login": "Воробушек",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 3229.47
+              },
+              {
+                "login": "РФ",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 3531.41
+              },
+              {
+                "login": "Йогурт",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2918.92
+              },
+              {
+                "login": "NFRМL",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 3003.88
+              }
+            ]
+          },
+          {
+            "tableNumber": 5,
+            "judge": "Дари",
+            "winner": null,
+            "played": false,
+            "averageElo": 2786,
+            "players": [
+              {
+                "login": "Оксюморон",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2963.08
+              },
+              {
+                "login": "_Leo_",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2383.23
+              },
+              {
+                "login": "Игрок 9",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2659.02
+              },
+              {
+                "login": "Destro",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2701.96
+              },
+              {
+                "login": "Берлускони",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 3016.31
+              },
+              {
+                "login": "Неон",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 3244.87
+              },
+              {
+                "login": "Dante",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2605.95
+              },
+              {
+                "login": "Шико",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2493.87
+              },
+              {
+                "login": "ZHIREKTOR",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 3126.22
+              },
+              {
+                "login": "crsms",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2668.95
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "gameNumber": 2,
+        "round": "Отбор",
+        "tables": [
+          {
+            "tableNumber": 1,
+            "judge": "Адвокат",
+            "winner": null,
+            "played": false,
+            "averageElo": 2853,
+            "players": [
+              {
+                "login": "Просто Толя",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2983.42
+              },
+              {
+                "login": "Дипси",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2320.12
+              },
+              {
+                "login": "ДаФомин",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 3069.61
+              },
+              {
+                "login": "Стоников",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 3237.79
+              },
+              {
+                "login": "Флай",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 3118.62
+              },
+              {
+                "login": "ZHIREKTOR",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 3126.22
+              },
+              {
+                "login": "День",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2420.07
+              },
+              {
+                "login": "Кукурузник",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2397.97
+              },
+              {
+                "login": "Destro",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2701.96
+              },
+              {
+                "login": "Dying Devil",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 3149.27
+              }
+            ]
+          },
+          {
+            "tableNumber": 2,
+            "judge": "Славяночка",
+            "winner": null,
+            "played": false,
+            "averageElo": 2877,
+            "players": [
+              {
+                "login": "Неон",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 3244.87
+              },
+              {
+                "login": "Новенькая",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2497.99
+              },
+              {
+                "login": "МARS",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2545.94
+              },
+              {
+                "login": "Игрок 9",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2659.02
+              },
+              {
+                "login": "Провокация.",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2239.79
+              },
+              {
+                "login": "Зажигалочка",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2848.27
+              },
+              {
+                "login": "РФ",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 3531.41
+              },
+              {
+                "login": "meT",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2999.26
+              },
+              {
+                "login": "Воробушек",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 3229.47
+              },
+              {
+                "login": "Монарх",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2972.46
+              }
+            ]
+          },
+          {
+            "tableNumber": 3,
+            "judge": "Мол4ун",
+            "winner": null,
+            "played": false,
+            "averageElo": 2818,
+            "players": [
+              {
+                "login": "NFRМL",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 3003.88
+              },
+              {
+                "login": "Йогурт",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2918.92
+              },
+              {
+                "login": "Растишка",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 3246.54
+              },
+              {
+                "login": "Варик",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 3141.86
+              },
+              {
+                "login": "Dante",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2605.95
+              },
+              {
+                "login": "crsms",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2668.95
+              },
+              {
+                "login": "Леди",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2932.58
+              },
+              {
+                "login": "Аделаида",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2151.01
+              },
+              {
+                "login": "Гаечка",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2859.62
+              },
+              {
+                "login": "MUR",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2645.84
+              }
+            ]
+          },
+          {
+            "tableNumber": 4,
+            "judge": "Лис",
+            "winner": null,
+            "played": false,
+            "averageElo": 2705,
+            "players": [
+              {
+                "login": "Берлускони",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 3016.31
+              },
+              {
+                "login": "Оксюморон",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2963.08
+              },
+              {
+                "login": "EZY BLACK",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 3146.68
+              },
+              {
+                "login": "BWDMoscow",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 3123.92
+              },
+              {
+                "login": "Никто.",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2806.87
+              },
+              {
+                "login": "Смайлик",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2835.54
+              },
+              {
+                "login": "007",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 3276.68
+              },
+              {
+                "login": "Икигай",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2284.24
+              },
+              {
+                "login": "Chicago",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 1000
+              },
+              {
+                "login": "Incognitо",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2599.51
+              }
+            ]
+          },
+          {
+            "tableNumber": 5,
+            "judge": "Дари",
+            "winner": null,
+            "played": false,
+            "averageElo": 2768,
+            "players": [
+              {
+                "login": "Lemona",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 3008.16
+              },
+              {
+                "login": "Unicef",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 3161.84
+              },
+              {
+                "login": "Градиент",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 3510.91
+              },
+              {
+                "login": "Шико",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2493.87
+              },
+              {
+                "login": "Тихий Закат",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 3124.6
+              },
+              {
+                "login": "smd",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2260.91
+              },
+              {
+                "login": "Еления Холовна",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2477.48
+              },
+              {
+                "login": "Телепат",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2841.83
+              },
+              {
+                "login": "_Крокодильчик_",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2417.93
+              },
+              {
+                "login": "_Leo_",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2383.23
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "gameNumber": 3,
+        "round": "Отбор",
+        "tables": [
+          {
+            "tableNumber": 1,
+            "judge": "Адвокат",
+            "winner": null,
+            "played": false,
+            "averageElo": 2707,
+            "players": [
+              {
+                "login": "Провокация.",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2239.79
+              },
+              {
+                "login": "Монарх",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2972.46
+              },
+              {
+                "login": "Destro",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2701.96
+              },
+              {
+                "login": "NFRМL",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 3003.88
+              },
+              {
+                "login": "Incognitо",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2599.51
+              },
+              {
+                "login": "Берлускони",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 3016.31
+              },
+              {
+                "login": "MUR",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2645.84
+              },
+              {
+                "login": "Dying Devil",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 3149.27
+              },
+              {
+                "login": "Еления Холовна",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2477.48
+              },
+              {
+                "login": "smd",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2260.91
+              }
+            ]
+          },
+          {
+            "tableNumber": 2,
+            "judge": "Славяночка",
+            "winner": null,
+            "played": false,
+            "averageElo": 3077,
+            "players": [
+              {
+                "login": "crsms",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2668.95
+              },
+              {
+                "login": "Зажигалочка",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2848.27
+              },
+              {
+                "login": "Флай",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 3118.62
+              },
+              {
+                "login": "Гаечка",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2859.62
+              },
+              {
+                "login": "РФ",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 3531.41
+              },
+              {
+                "login": "Оксюморон",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2963.08
+              },
+              {
+                "login": "Просто Толя",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2983.42
+              },
+              {
+                "login": "BWDMoscow",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 3123.92
+              },
+              {
+                "login": "Unicef",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 3161.84
+              },
+              {
+                "login": "Градиент",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 3510.91
+              }
+            ]
+          },
+          {
+            "tableNumber": 3,
+            "judge": "Мол4ун",
+            "winner": null,
+            "played": false,
+            "averageElo": 2796,
+            "players": [
+              {
+                "login": "Dante",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2605.95
+              },
+              {
+                "login": "Воробушек",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 3229.47
+              },
+              {
+                "login": "_Крокодильчик_",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2417.93
+              },
+              {
+                "login": "Кукурузник",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2397.97
+              },
+              {
+                "login": "День",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2420.07
+              },
+              {
+                "login": "Варик",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 3141.86
+              },
+              {
+                "login": "Игрок 9",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2659.02
+              },
+              {
+                "login": "007",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 3276.68
+              },
+              {
+                "login": "Никто.",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2806.87
+              },
+              {
+                "login": "Lemona",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 3008.16
+              }
+            ]
+          },
+          {
+            "tableNumber": 4,
+            "judge": "Лис",
+            "winner": null,
+            "played": false,
+            "averageElo": 2862,
+            "players": [
+              {
+                "login": "Смайлик",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2835.54
+              },
+              {
+                "login": "Стоников",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 3237.79
+              },
+              {
+                "login": "Неон",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 3244.87
+              },
+              {
+                "login": "Телепат",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2841.83
+              },
+              {
+                "login": "Икигай",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2284.24
+              },
+              {
+                "login": "_Leo_",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2383.23
+              },
+              {
+                "login": "Растишка",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 3246.54
+              },
+              {
+                "login": "Леди",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2932.58
+              },
+              {
+                "login": "МARS",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2545.94
+              },
+              {
+                "login": "ДаФомин",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 3069.61
+              }
+            ]
+          },
+          {
+            "tableNumber": 5,
+            "judge": "Дари",
+            "winner": null,
+            "played": false,
+            "averageElo": 2578,
+            "players": [
+              {
+                "login": "Шико",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2493.87
+              },
+              {
+                "login": "Аделаида",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2151.01
+              },
+              {
+                "login": "Дипси",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2320.12
+              },
+              {
+                "login": "EZY BLACK",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 3146.68
+              },
+              {
+                "login": "Йогурт",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2918.92
+              },
+              {
+                "login": "Новенькая",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2497.99
+              },
+              {
+                "login": "meT",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2999.26
+              },
+              {
+                "login": "Chicago",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 1000
+              },
+              {
+                "login": "Тихий Закат",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 3124.6
+              },
+              {
+                "login": "ZHIREKTOR",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 3126.22
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "gameNumber": 4,
+        "round": "Отбор",
+        "tables": [
+          {
+            "tableNumber": 1,
+            "judge": "Адвокат",
+            "winner": null,
+            "played": false,
+            "averageElo": 2855,
+            "players": [
+              {
+                "login": "Градиент",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 3510.91
+              },
+              {
+                "login": "Incognitо",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2599.51
+              },
+              {
+                "login": "День",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2420.07
+              },
+              {
+                "login": "crsms",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2668.95
+              },
+              {
+                "login": "_Крокодильчик_",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2417.93
+              },
+              {
+                "login": "EZY BLACK",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 3146.68
+              },
+              {
+                "login": "Монарх",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2972.46
+              },
+              {
+                "login": "ZHIREKTOR",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 3126.22
+              },
+              {
+                "login": "Варик",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 3141.86
+              },
+              {
+                "login": "МARS",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2545.94
+              }
+            ]
+          },
+          {
+            "tableNumber": 2,
+            "judge": "Славяночка",
+            "winner": null,
+            "played": false,
+            "averageElo": 2758,
+            "players": [
+              {
+                "login": "Игрок 9",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2659.02
+              },
+              {
+                "login": "MUR",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2645.84
+              },
+              {
+                "login": "Стоников",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 3237.79
+              },
+              {
+                "login": "РФ",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 3531.41
+              },
+              {
+                "login": "Дипси",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2320.12
+              },
+              {
+                "login": "Еления Холовна",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2477.48
+              },
+              {
+                "login": "Икигай",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2284.24
+              },
+              {
+                "login": "Йогурт",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2918.92
+              },
+              {
+                "login": "_Leo_",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2383.23
+              },
+              {
+                "login": "BWDMoscow",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 3123.92
+              }
+            ]
+          },
+          {
+            "tableNumber": 3,
+            "judge": "Мол4ун",
+            "winner": null,
+            "played": false,
+            "averageElo": 2826,
+            "players": [
+              {
+                "login": "Destro",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2701.96
+              },
+              {
+                "login": "meT",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2999.26
+              },
+              {
+                "login": "Смайлик",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2835.54
+              },
+              {
+                "login": "Тихий Закат",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 3124.6
+              },
+              {
+                "login": "smd",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2260.91
+              },
+              {
+                "login": "ДаФомин",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 3069.61
+              },
+              {
+                "login": "Никто.",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2806.87
+              },
+              {
+                "login": "NFRМL",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 3003.88
+              },
+              {
+                "login": "Dante",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2605.95
+              },
+              {
+                "login": "Зажигалочка",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2848.27
+              }
+            ]
+          },
+          {
+            "tableNumber": 4,
+            "judge": "Лис",
+            "winner": null,
+            "played": false,
+            "averageElo": 2704,
+            "players": [
+              {
+                "login": "Растишка",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 3246.54
+              },
+              {
+                "login": "Шико",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2493.87
+              },
+              {
+                "login": "Кукурузник",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2397.97
+              },
+              {
+                "login": "Chicago",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 1000
+              },
+              {
+                "login": "Новенькая",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2497.99
+              },
+              {
+                "login": "Unicef",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 3161.84
+              },
+              {
+                "login": "Флай",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 3118.62
+              },
+              {
+                "login": "Неон",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 3244.87
+              },
+              {
+                "login": "Берлускони",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 3016.31
+              },
+              {
+                "login": "Гаечка",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2859.62
+              }
+            ]
+          },
+          {
+            "tableNumber": 5,
+            "judge": "Дари",
+            "winner": null,
+            "played": false,
+            "averageElo": 2878,
+            "players": [
+              {
+                "login": "Леди",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2932.58
+              },
+              {
+                "login": "Lemona",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 3008.16
+              },
+              {
+                "login": "Оксюморон",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2963.08
+              },
+              {
+                "login": "Воробушек",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 3229.47
+              },
+              {
+                "login": "007",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 3276.68
+              },
+              {
+                "login": "Dying Devil",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 3149.27
+              },
+              {
+                "login": "Аделаида",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2151.01
+              },
+              {
+                "login": "Просто Толя",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2983.42
+              },
+              {
+                "login": "Провокация.",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2239.79
+              },
+              {
+                "login": "Телепат",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2841.83
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "gameNumber": 5,
+        "round": "Отбор",
+        "tables": [
+          {
+            "tableNumber": 1,
+            "judge": "Адвокат",
+            "winner": null,
+            "played": false,
+            "averageElo": 2916,
+            "players": [
+              {
+                "login": "Тихий Закат",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 3124.6
+              },
+              {
+                "login": "BWDMoscow",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 3123.92
+              },
+              {
+                "login": "Леди",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2932.58
+              },
+              {
+                "login": "Зажигалочка",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2848.27
+              },
+              {
+                "login": "Кукурузник",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2397.97
+              },
+              {
+                "login": "007",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 3276.68
+              },
+              {
+                "login": "ZHIREKTOR",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 3126.22
+              },
+              {
+                "login": "Еления Холовна",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2477.48
+              },
+              {
+                "login": "Неон",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 3244.87
+              },
+              {
+                "login": "Dante",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2605.95
+              }
+            ]
+          },
+          {
+            "tableNumber": 2,
+            "judge": "Славяночка",
+            "winner": null,
+            "played": false,
+            "averageElo": 2452,
+            "players": [
+              {
+                "login": "Аделаида",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2151.01
+              },
+              {
+                "login": "МARS",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2545.94
+              },
+              {
+                "login": "MUR",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2645.84
+              },
+              {
+                "login": "Провокация.",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2239.79
+              },
+              {
+                "login": "Unicef",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 3161.84
+              },
+              {
+                "login": "Chicago",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 1000
+              },
+              {
+                "login": "ДаФомин",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 3069.61
+              },
+              {
+                "login": "Оксюморон",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2963.08
+              },
+              {
+                "login": "Дипси",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2320.12
+              },
+              {
+                "login": "_Крокодильчик_",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2417.93
+              }
+            ]
+          },
+          {
+            "tableNumber": 3,
+            "judge": "Мол4ун",
+            "winner": null,
+            "played": false,
+            "averageElo": 2851,
+            "players": [
+              {
+                "login": "Воробушек",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 3229.47
+              },
+              {
+                "login": "Икигай",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2284.24
+              },
+              {
+                "login": "Монарх",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2972.46
+              },
+              {
+                "login": "Йогурт",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2918.92
+              },
+              {
+                "login": "Шико",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2493.87
+              },
+              {
+                "login": "Destro",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2701.96
+              },
+              {
+                "login": "Телепат",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2841.83
+              },
+              {
+                "login": "Никто.",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2806.87
+              },
+              {
+                "login": "Флай",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 3118.62
+              },
+              {
+                "login": "Варик",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 3141.86
+              }
+            ]
+          },
+          {
+            "tableNumber": 4,
+            "judge": "Лис",
+            "winner": null,
+            "played": false,
+            "averageElo": 2743,
+            "players": [
+              {
+                "login": "_Leo_",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2383.23
+              },
+              {
+                "login": "crsms",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2668.95
+              },
+              {
+                "login": "Просто Толя",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2983.42
+              },
+              {
+                "login": "День",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2420.07
+              },
+              {
+                "login": "Растишка",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 3246.54
+              },
+              {
+                "login": "Incognitо",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2599.51
+              },
+              {
+                "login": "smd",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2260.91
+              },
+              {
+                "login": "Новенькая",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2497.99
+              },
+              {
+                "login": "РФ",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 3531.41
+              },
+              {
+                "login": "Смайлик",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2835.54
+              }
+            ]
+          },
+          {
+            "tableNumber": 5,
+            "judge": "Дари",
+            "winner": null,
+            "played": false,
+            "averageElo": 3059,
+            "players": [
+              {
+                "login": "Dying Devil",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 3149.27
+              },
+              {
+                "login": "Игрок 9",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2659.02
+              },
+              {
+                "login": "Lemona",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 3008.16
+              },
+              {
+                "login": "Берлускони",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 3016.31
+              },
+              {
+                "login": "Стоников",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 3237.79
+              },
+              {
+                "login": "NFRМL",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 3003.88
+              },
+              {
+                "login": "Градиент",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 3510.91
+              },
+              {
+                "login": "Гаечка",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2859.62
+              },
+              {
+                "login": "meT",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2999.26
+              },
+              {
+                "login": "EZY BLACK",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 3146.68
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "gameNumber": 6,
+        "round": "Отбор",
+        "tables": [
+          {
+            "tableNumber": 1,
+            "judge": "Адвокат",
+            "winner": null,
+            "played": false,
+            "averageElo": 2722,
+            "players": [
+              {
+                "login": "Chicago",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 1000
+              },
+              {
+                "login": "007",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 3276.68
+              },
+              {
+                "login": "crsms",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2668.95
+              },
+              {
+                "login": "MUR",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2645.84
+              },
+              {
+                "login": "Lemona",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 3008.16
+              },
+              {
+                "login": "Шико",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2493.87
+              },
+              {
+                "login": "Зажигалочка",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2848.27
+              },
+              {
+                "login": "Монарх",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2972.46
+              },
+              {
+                "login": "ДаФомин",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 3069.61
+              },
+              {
+                "login": "Стоников",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 3237.79
+              }
+            ]
+          },
+          {
+            "tableNumber": 2,
+            "judge": "Славяночка",
+            "winner": null,
+            "played": false,
+            "averageElo": 2853,
+            "players": [
+              {
+                "login": "EZY BLACK",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 3146.68
+              },
+              {
+                "login": "Флай",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 3118.62
+              },
+              {
+                "login": "Еления Холовна",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2477.48
+              },
+              {
+                "login": "Растишка",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 3246.54
+              },
+              {
+                "login": "Воробушек",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 3229.47
+              },
+              {
+                "login": "Игрок 9",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2659.02
+              },
+              {
+                "login": "Оксюморон",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2963.08
+              },
+              {
+                "login": "Смайлик",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2835.54
+              },
+              {
+                "login": "Аделаида",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2151.01
+              },
+              {
+                "login": "Destro",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2701.96
+              }
+            ]
+          },
+          {
+            "tableNumber": 3,
+            "judge": "Мол4ун",
+            "winner": null,
+            "played": false,
+            "averageElo": 2850,
+            "players": [
+              {
+                "login": "РФ",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 3531.41
+              },
+              {
+                "login": "Никто.",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2806.87
+              },
+              {
+                "login": "ZHIREKTOR",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 3126.22
+              },
+              {
+                "login": "_Крокодильчик_",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2417.93
+              },
+              {
+                "login": "Телепат",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2841.83
+              },
+              {
+                "login": "Дипси",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2320.12
+              },
+              {
+                "login": "Новенькая",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2497.99
+              },
+              {
+                "login": "Берлускони",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 3016.31
+              },
+              {
+                "login": "NFRМL",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 3003.88
+              },
+              {
+                "login": "Леди",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2932.58
+              }
+            ]
+          },
+          {
+            "tableNumber": 4,
+            "judge": "Лис",
+            "winner": null,
+            "played": false,
+            "averageElo": 2654,
+            "players": [
+              {
+                "login": "Гаечка",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2859.62
+              },
+              {
+                "login": "Просто Толя",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2983.42
+              },
+              {
+                "login": "_Leo_",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2383.23
+              },
+              {
+                "login": "Dante",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2605.95
+              },
+              {
+                "login": "meT",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2999.26
+              },
+              {
+                "login": "Икигай",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2284.24
+              },
+              {
+                "login": "Unicef",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 3161.84
+              },
+              {
+                "login": "День",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2420.07
+              },
+              {
+                "login": "Incognitо",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2599.51
+              },
+              {
+                "login": "Провокация.",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2239.79
+              }
+            ]
+          },
+          {
+            "tableNumber": 5,
+            "judge": "Дари",
+            "winner": null,
+            "played": false,
+            "averageElo": 2942,
+            "players": [
+              {
+                "login": "Йогурт",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2918.92
+              },
+              {
+                "login": "Dying Devil",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 3149.27
+              },
+              {
+                "login": "BWDMoscow",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 3123.92
+              },
+              {
+                "login": "МARS",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2545.94
+              },
+              {
+                "login": "Градиент",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 3510.91
+              },
+              {
+                "login": "Кукурузник",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2397.97
+              },
+              {
+                "login": "Варик",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 3141.86
+              },
+              {
+                "login": "Тихий Закат",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 3124.6
+              },
+              {
+                "login": "smd",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2260.91
+              },
+              {
+                "login": "Неон",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 3244.87
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "gameNumber": 7,
+        "round": "Отбор",
+        "tables": [
+          {
+            "tableNumber": 1,
+            "judge": "Адвокат",
+            "winner": null,
+            "played": false,
+            "averageElo": 2961,
+            "players": [
+              {
+                "login": "Икигай",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2284.24
+              },
+              {
+                "login": "EZY BLACK",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 3146.68
+              },
+              {
+                "login": "smd",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2260.91
+              },
+              {
+                "login": "Неон",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 3244.87
+              },
+              {
+                "login": "ZHIREKTOR",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 3126.22
+              },
+              {
+                "login": "Воробушек",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 3229.47
+              },
+              {
+                "login": "Гаечка",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2859.62
+              },
+              {
+                "login": "MUR",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2645.84
+              },
+              {
+                "login": "007",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 3276.68
+              },
+              {
+                "login": "РФ",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 3531.41
+              }
+            ]
+          },
+          {
+            "tableNumber": 2,
+            "judge": "Славяночка",
+            "winner": null,
+            "played": false,
+            "averageElo": 2802,
+            "players": [
+              {
+                "login": "Никто.",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2806.87
+              },
+              {
+                "login": "Dante",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2605.95
+              },
+              {
+                "login": "Тихий Закат",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 3124.6
+              },
+              {
+                "login": "Градиент",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 3510.91
+              },
+              {
+                "login": "Аделаида",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2151.01
+              },
+              {
+                "login": "Стоников",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 3237.79
+              },
+              {
+                "login": "Провокация.",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2239.79
+              },
+              {
+                "login": "Incognitо",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2599.51
+              },
+              {
+                "login": "Шико",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2493.87
+              },
+              {
+                "login": "Растишка",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 3246.54
+              }
+            ]
+          },
+          {
+            "tableNumber": 3,
+            "judge": "Мол4ун",
+            "winner": null,
+            "played": false,
+            "averageElo": 2739,
+            "players": [
+              {
+                "login": "Варик",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 3141.86
+              },
+              {
+                "login": "Берлускони",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 3016.31
+              },
+              {
+                "login": "Телепат",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2841.83
+              },
+              {
+                "login": "Дипси",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2320.12
+              },
+              {
+                "login": "Еления Холовна",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2477.48
+              },
+              {
+                "login": "meT",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2999.26
+              },
+              {
+                "login": "crsms",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2668.95
+              },
+              {
+                "login": "МARS",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2545.94
+              },
+              {
+                "login": "Кукурузник",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2397.97
+              },
+              {
+                "login": "Просто Толя",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2983.42
+              }
+            ]
+          },
+          {
+            "tableNumber": 4,
+            "judge": "Лис",
+            "winner": null,
+            "played": false,
+            "averageElo": 2608,
+            "players": [
+              {
+                "login": "_Крокодильчик_",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2417.93
+              },
+              {
+                "login": "Chicago",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 1000
+              },
+              {
+                "login": "Dying Devil",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 3149.27
+              },
+              {
+                "login": "_Leo_",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2383.23
+              },
+              {
+                "login": "Смайлик",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2835.54
+              },
+              {
+                "login": "Йогурт",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2918.92
+              },
+              {
+                "login": "Destro",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2701.96
+              },
+              {
+                "login": "Игрок 9",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2659.02
+              },
+              {
+                "login": "Зажигалочка",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2848.27
+              },
+              {
+                "login": "Unicef",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 3161.84
+              }
+            ]
+          },
+          {
+            "tableNumber": 5,
+            "judge": "Дари",
+            "winner": null,
+            "played": false,
+            "averageElo": 2911,
+            "players": [
+              {
+                "login": "BWDMoscow",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 3123.92
+              },
+              {
+                "login": "ДаФомин",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 3069.61
+              },
+              {
+                "login": "Новенькая",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2497.99
+              },
+              {
+                "login": "Оксюморон",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2963.08
+              },
+              {
+                "login": "Леди",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2932.58
+              },
+              {
+                "login": "Lemona",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 3008.16
+              },
+              {
+                "login": "NFRМL",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 3003.88
+              },
+              {
+                "login": "Флай",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 3118.62
+              },
+              {
+                "login": "Монарх",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2972.46
+              },
+              {
+                "login": "День",
+                "userId": null,
+                "role": null,
+                "roleName": null,
+                "playType": "n",
+                "points": null,
+                "lhStatus": null,
+                "elo": 2420.07
+              }
+            ]
+          }
+        ]
+      }
+    ]
   }
 ]
