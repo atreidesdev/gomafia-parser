@@ -13,6 +13,13 @@
 //   node tournament-parser.js --remove 2659   — удалить турнир(ы) из базы по ID
 //   node tournament-parser.js --remove=2659,2760
 //
+// Авторизация (если турнир за редиректом на /login):
+//   node tournament-parser.js --login=МОЙ_НИК --password=МОЙ_ПАРОЛЬ 2659
+//   GOMAFIA_LOGIN=... GOMAFIA_PASSWORD=... node tournament-parser.js 2659
+//   либо .env рядом со скриптом:  GOMAFIA_LOGIN=... / GOMAFIA_PASSWORD=...
+//   без кредов — спросит интерактивно при первом редиректе на /login
+//   --headed — открыть браузер видимым (отладка логина)
+//
 // ELO игроков берётся из elo-cache.json (рядом с парсером). Для наполнения кэша:
 //   node buildEloCache.js --from-results ./results
 //   node buildEloCache.js --ids 1-100000
@@ -20,6 +27,7 @@ const { chromium } = require('playwright');
 const fs = require('fs');
 const path = require('path');
 const readline = require('readline');
+const auth = require('./auth');
 
 const USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36';
 const DB_FILE = process.env.TOURNAMENTS_DB || path.join(__dirname, 'tournaments-db.json');
@@ -48,19 +56,6 @@ function loadGlobalEloCache() {
     }
 }
 
-/**
- * Обогащает игроков ELO из кэша и возвращает среднее ELO стола.
- *
- * Среднее = сумма ELO тех игроков, у кого ELO есть в кэше,
- * поделённая на количество таких игроков. Игроки без ELO
- * не учитываются вообще (ни в числителе, ни в знаменателе).
- *
- * Возвращает null, только если ELO нет ни у одного игрока стола
- * (или кэш не загружен).
- *
- * Считается как для сыгранных, так и для запланированных столов —
- * среднее по известному составу полезно и до игры.
- */
 function enrichPlayersWithElo(players) {
     if (!GLOBAL_ELO_CACHE || !eloCacheModule) return null;
     if (!Array.isArray(players) || players.length === 0) return null;
@@ -142,15 +137,6 @@ function mapStandingRow(r) {
     };
 }
 
-/**
- * Стол считается сыгранным ТОЛЬКО если в нём определён победитель (city/mafia).
- * В мафии ничьих нет → win == null ⇔ стол не игран.
- *
- * ВАЖНО: нельзя использовать role или points как признак сыгранности.
- * gomafia отдаёт "role": "red" и "points": 0 как ЗАГЛУШКИ для несыгранных
- * столов, поэтому старая fallback-проверка по role/points всегда возвращала true
- * и все игроки несыгранных столов записывались как «Мирный».
- */
 function isTablePlayed(table) {
     if (!table) return false;
     return table.win === 'city' || table.win === 'mafia';
@@ -215,14 +201,46 @@ async function extractHtmlSnapshot(page) {
     });
 }
 
+/**
+ * Открывает url; если сайт редиректнул на /login — логинится
+ * (при необходимости спрашивает креды) и пробует ещё раз.
+ */
+async function gotoWithAuth(context, page, url) {
+    await page.goto(url, { waitUntil: 'networkidle', timeout: 45000 });
+    await page.waitForTimeout(800);
+
+    if (!auth.isLoginUrl(page.url())) return true;
+
+    console.log('  🔐 Редирект на /login — требуется авторизация');
+    if (!auth.hasCredentials()) await auth.promptCredentials();
+    try {
+        await auth.login(page);
+    } catch (e) {
+        console.error(`  ❌ Не удалось авторизоваться: ${e.message}`);
+        return false;
+    }
+
+    await page.goto(url, { waitUntil: 'networkidle', timeout: 45000 });
+    await page.waitForTimeout(800);
+    if (auth.isLoginUrl(page.url())) {
+        console.error('  ❌ После авторизации всё ещё /login');
+        return false;
+    }
+    return true;
+}
+
 // ============ SCRAPE ONE TOURNAMENT ============
 async function scrapeTournament(context, rawUrl) {
     const url = normalizeUrl(rawUrl);
     const page = await context.newPage();
     try {
         console.log(`\n🌐 ${url}`);
-        await page.goto(url, { waitUntil: 'networkidle', timeout: 45000 });
-        await page.waitForTimeout(800);
+
+        const ok = await gotoWithAuth(context, page, url);
+        if (!ok) {
+            console.error('  ❌ Страница недоступна без авторизации');
+            return null;
+        }
 
         const content = await page.content();
         const scriptMatch = content.match(/<script[^>]*id="__NEXT_DATA__"[^>]*>([\s\S]*?)<\/script>/);
@@ -301,9 +319,6 @@ async function scrapeTournament(context, rawUrl) {
                 const judge = judgeJson || judgeHtml || null;
                 const lhMap = snapshot.lhMap[lhKey] || {};
 
-                // Сайт отдаёт "role": "red" и "points": 0 даже для несыгранных
-                // столов (заглушки). Поэтому роли/очки/ЛХ пишем только если
-                // у стола реально определён победитель.
                 const played = isTablePlayed(table);
 
                 const players = (table.table || []).map(p => {
@@ -328,9 +343,6 @@ async function scrapeTournament(context, rawUrl) {
                     };
                 });
 
-                // Среднее ELO считаем ВСЕГДА (и для сыгранных, и для
-                // запланированных столов) — по известному составу.
-                // Игроки без ELO не учитываются.
                 const averageElo = enrichPlayersWithElo(players);
                 if (averageElo != null) tablesWithElo++;
                 if (played) playedTables++; else unplayedTables++;
@@ -338,9 +350,9 @@ async function scrapeTournament(context, rawUrl) {
                 tables.push({
                     tableNumber: tableNum,
                     judge,
-                    winner: table.win || null,   // 'city' | 'mafia' | null
-                    played,                       // флаг «стол реально сыгран»
-                    averageElo,                   // среднее по известным ELO состава
+                    winner: table.win || null,
+                    played,
+                    averageElo,
                     players
                 });
                 totalTables++;
@@ -402,8 +414,20 @@ async function runScrape(urls, { force }) {
     const existingIds = new Set(db.map(t => t.id).filter(v => v != null));
     const saveDb = () => fs.writeFileSync(DB_FILE, JSON.stringify(db, null, 2), 'utf-8');
 
-    const browser = await chromium.launch({ headless: true });
+    const headed = process.argv.includes('--headed');
+    const browser = await chromium.launch({ headless: !headed });
     const context = await browser.newContext({ userAgent: USER_AGENT });
+
+    // ── Пре-логин, если креды уже известны ────────────────────────
+    if (auth.hasCredentials()) {
+        const c = auth.getCredentials();
+        console.log(`🔐 Пре-логин: ${c.login}`);
+        try {
+            await auth.ensureLoggedIn(context);
+        } catch (e) {
+            console.warn(`⚠️ Пре-логин не удался (авторизуемся по требованию): ${e.message}`);
+        }
+    }
 
     let added = 0, skipped = 0, failed = 0;
 
@@ -504,10 +528,8 @@ function enrichExistingDatabase() {
         (t.games || []).forEach(g => {
             (g.tables || []).forEach(tbl => {
                 const players = Array.isArray(tbl.players) ? tbl.players : [];
-                // Истину о сыгранности берём из winner, а не из tbl.played.
                 const played = tbl.winner === 'city' || tbl.winner === 'mafia';
                 tbl.played = played;
-                // Среднее ELO считаем для ВСЕХ столов (и сыгранных, и запланированных).
                 const avg = enrichPlayersWithElo(players);
                 tbl.averageElo = avg;
                 if (avg != null) tablesWithElo++;
@@ -543,13 +565,10 @@ function fixUnplayedTables() {
     db.forEach(t => {
         (t.games || []).forEach(g => {
             (g.tables || []).forEach(tbl => {
-                // Безусловно пересчитываем из winner — не доверяем сохранённому played.
                 const played = tbl.winner === 'city' || tbl.winner === 'mafia';
                 tbl.played = played;
 
                 if (!played) {
-                    // ВАЖНО: averageElo у несыгранных столов НЕ обнуляем —
-                    // среднее ELO по известному составу валидно и до игры.
                     (tbl.players || []).forEach(p => {
                         if (p.role != null) clearedFields++;
                         if (p.roleName != null) clearedFields++;
@@ -805,7 +824,6 @@ async function main() {
 
     loadGlobalEloCache();
 
-    // 1) Одиночные CLI-действия без меню
     if (process.argv.includes('--list')) {
         listTournaments();
         return;
@@ -831,9 +849,8 @@ async function main() {
         return;
     }
 
-    // 2) Если есть явные входные данные (позиционные / --file / --auto) — прямой скрейп
     const args = process.argv.slice(2);
-    const positional = args.filter(a => !a.startsWith('--'));
+    const positional = args.filter(a => !a.startsWith('--') && !a.startsWith('-'));
     const hasFile = args.includes('--file') || args.some(a => a.startsWith('--file='));
     const hasAuto = args.includes('--auto');
 
@@ -844,7 +861,6 @@ async function main() {
         return;
     }
 
-    // 3) Иначе — интерактивное меню
     await interactiveMenu();
 }
 

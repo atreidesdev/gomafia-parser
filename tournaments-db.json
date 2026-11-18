@@ -20,172 +20,172 @@
     "standings": {
       "withFinal": [
         {
-          "login": "Стоников",
+          "login": "Воробушек",
           "place": 1,
-          "sum": 17.26,
-          "sum_extra": 5.8,
-          "plus": 5.6,
-          "minus": 0.7,
-          "first_kill_point": 0.9,
-          "compensation_point": 1.46,
-          "wins": 10,
-          "wins_as_don": 0,
+          "sum": 25.28,
+          "sum_extra": 9.4,
+          "plus": 10,
+          "minus": 1.4,
+          "first_kill_point": 0.8,
+          "compensation_point": 0.88,
+          "wins": 15,
+          "wins_as_don": 3,
           "wins_as_sheriff": 1,
           "first_kill": 5,
-          "gg": 0,
-          "elo_delta": null,
-          "is_paid": false
-        },
-        {
-          "login": "РФ",
-          "place": 2,
-          "sum": 16.95,
-          "sum_extra": 6.7,
-          "plus": 6.5,
-          "minus": 0.4,
-          "first_kill_point": 0.6,
-          "compensation_point": 0.25,
-          "wins": 10,
-          "wins_as_don": 1,
-          "wins_as_sheriff": 1,
-          "first_kill": 2,
-          "gg": 0,
+          "gg": 41,
           "elo_delta": null,
           "is_paid": true
         },
         {
           "login": "Градиент",
-          "place": 3,
-          "sum": 16.4,
-          "sum_extra": 6.4,
-          "plus": 7.4,
-          "minus": 1.4,
-          "first_kill_point": 0.4,
-          "compensation_point": 1,
-          "wins": 9,
+          "place": 2,
+          "sum": 24.6,
+          "sum_extra": 11.1,
+          "plus": 12.4,
+          "minus": 1.9,
+          "first_kill_point": 0.6,
+          "compensation_point": 1.5,
+          "wins": 12,
           "wins_as_don": 1,
           "wins_as_sheriff": 0,
-          "first_kill": 4,
-          "gg": 0,
+          "first_kill": 6,
+          "gg": 37,
           "elo_delta": null,
           "is_paid": true
         },
         {
           "login": "MUR",
-          "place": 4,
-          "sum": 16.28,
-          "sum_extra": 6.2,
-          "plus": 6.1,
-          "minus": 0,
+          "place": 3,
+          "sum": 24.28,
+          "sum_extra": 8.2,
+          "plus": 9.1,
+          "minus": 1,
           "first_kill_point": 0.1,
           "compensation_point": 0.08,
-          "wins": 10,
-          "wins_as_don": 1,
-          "wins_as_sheriff": 0,
-          "first_kill": 1,
-          "gg": 0,
-          "elo_delta": null,
-          "is_paid": true
-        },
-        {
-          "login": "Тихий Закат",
-          "place": 5,
-          "sum": 15.87,
-          "sum_extra": 5.7,
-          "plus": 5.8,
-          "minus": 0.4,
-          "first_kill_point": 0.3,
-          "compensation_point": 0.17,
-          "wins": 10,
-          "wins_as_don": 2,
-          "wins_as_sheriff": 0,
-          "first_kill": 2,
-          "gg": 0,
-          "elo_delta": null,
-          "is_paid": false
-        },
-        {
-          "login": "BWDMoscow",
-          "place": 6,
-          "sum": 15.74,
-          "sum_extra": 5.7,
-          "plus": 6.6,
-          "minus": 1,
-          "first_kill_point": 0.1,
-          "compensation_point": 0.04,
-          "wins": 10,
-          "wins_as_don": 2,
-          "wins_as_sheriff": 0,
-          "first_kill": 1,
-          "gg": 0,
-          "elo_delta": null,
-          "is_paid": true
-        },
-        {
-          "login": "Воробушек",
-          "place": 7,
-          "sum": 15.63,
-          "sum_extra": 5,
-          "plus": 5.5,
-          "minus": 1,
-          "first_kill_point": 0.5,
-          "compensation_point": 0.63,
-          "wins": 10,
-          "wins_as_don": 1,
-          "wins_as_sheriff": 1,
-          "first_kill": 3,
-          "gg": 0,
-          "elo_delta": null,
-          "is_paid": true
-        },
-        {
-          "login": "Флай",
-          "place": 8,
-          "sum": 15.2,
-          "sum_extra": 5.7,
-          "plus": 5.8,
-          "minus": 0.4,
-          "first_kill_point": 0.3,
-          "compensation_point": 0.5,
-          "wins": 9,
-          "wins_as_don": 2,
-          "wins_as_sheriff": 0,
-          "first_kill": 3,
-          "gg": 0,
-          "elo_delta": null,
-          "is_paid": true
-        },
-        {
-          "login": "Dying Devil",
-          "place": 9,
-          "sum": 13.7,
-          "sum_extra": 4.7,
-          "plus": 4.9,
-          "minus": 0.2,
-          "first_kill_point": 0,
-          "compensation_point": 0,
-          "wins": 9,
+          "wins": 16,
           "wins_as_don": 3,
+          "wins_as_sheriff": 0,
+          "first_kill": 1,
+          "gg": 34,
+          "elo_delta": null,
+          "is_paid": true
+        },
+        {
+          "login": "Стоников",
+          "place": 4,
+          "sum": 22.58,
+          "sum_extra": 8,
+          "plus": 8.2,
+          "minus": 1.4,
+          "first_kill_point": 1.2,
+          "compensation_point": 1.58,
+          "wins": 13,
+          "wins_as_don": 0,
           "wins_as_sheriff": 1,
-          "first_kill": 0,
-          "gg": 0,
+          "first_kill": 6,
+          "gg": 30,
           "elo_delta": null,
           "is_paid": false
         },
         {
           "login": "Шико",
-          "place": 10,
-          "sum": 13.6,
-          "sum_extra": 5.6,
-          "plus": 6.5,
+          "place": 5,
+          "sum": 22.33,
+          "sum_extra": 9.2,
+          "plus": 10,
           "minus": 0.9,
-          "first_kill_point": 0,
-          "compensation_point": 0,
-          "wins": 8,
+          "first_kill_point": 0.1,
+          "compensation_point": 0.13,
+          "wins": 13,
           "wins_as_don": 2,
           "wins_as_sheriff": 0,
-          "first_kill": 0,
-          "gg": 0,
+          "first_kill": 1,
+          "gg": 28,
+          "elo_delta": null,
+          "is_paid": false
+        },
+        {
+          "login": "РФ",
+          "place": 6,
+          "sum": 21.85,
+          "sum_extra": 7.6,
+          "plus": 8.4,
+          "minus": 1.4,
+          "first_kill_point": 0.6,
+          "compensation_point": 0.25,
+          "wins": 14,
+          "wins_as_don": 1,
+          "wins_as_sheriff": 1,
+          "first_kill": 3,
+          "gg": 26,
+          "elo_delta": null,
+          "is_paid": true
+        },
+        {
+          "login": "Флай",
+          "place": 7,
+          "sum": 21.06,
+          "sum_extra": 8.5,
+          "plus": 9.1,
+          "minus": 1,
+          "first_kill_point": 0.4,
+          "compensation_point": 0.56,
+          "wins": 12,
+          "wins_as_don": 3,
+          "wins_as_sheriff": 0,
+          "first_kill": 4,
+          "gg": 24,
+          "elo_delta": null,
+          "is_paid": true
+        },
+        {
+          "login": "Тихий Закат",
+          "place": 8,
+          "sum": 20.47,
+          "sum_extra": 5.3,
+          "plus": 7.1,
+          "minus": 2.1,
+          "first_kill_point": 0.3,
+          "compensation_point": 0.17,
+          "wins": 15,
+          "wins_as_don": 4,
+          "wins_as_sheriff": 0,
+          "first_kill": 2,
+          "gg": 22,
+          "elo_delta": null,
+          "is_paid": false
+        },
+        {
+          "login": "BWDMoscow",
+          "place": 9,
+          "sum": 17.17,
+          "sum_extra": 5,
+          "plus": 8.1,
+          "minus": 3.3,
+          "first_kill_point": 0.2,
+          "compensation_point": 0.17,
+          "wins": 12,
+          "wins_as_don": 2,
+          "wins_as_sheriff": 2,
+          "first_kill": 2,
+          "gg": 20,
+          "elo_delta": null,
+          "is_paid": true
+        },
+        {
+          "login": "Dying Devil",
+          "place": 10,
+          "sum": 16.43,
+          "sum_extra": 5.3,
+          "plus": 6.8,
+          "minus": 1.6,
+          "first_kill_point": 0.1,
+          "compensation_point": 0.13,
+          "wins": 11,
+          "wins_as_don": 4,
+          "wins_as_sheriff": 1,
+          "first_kill": 1,
+          "gg": 18,
           "elo_delta": null,
           "is_paid": false
         }
@@ -204,7 +204,7 @@
           "wins_as_don": 0,
           "wins_as_sheriff": 1,
           "first_kill": 5,
-          "gg": 0,
+          "gg": 41,
           "elo_delta": null,
           "is_paid": false
         },
@@ -221,7 +221,7 @@
           "wins_as_don": 1,
           "wins_as_sheriff": 1,
           "first_kill": 2,
-          "gg": 0,
+          "gg": 37,
           "elo_delta": null,
           "is_paid": true
         },
@@ -238,7 +238,7 @@
           "wins_as_don": 1,
           "wins_as_sheriff": 0,
           "first_kill": 4,
-          "gg": 0,
+          "gg": 34,
           "elo_delta": null,
           "is_paid": true
         },
@@ -255,7 +255,7 @@
           "wins_as_don": 1,
           "wins_as_sheriff": 0,
           "first_kill": 1,
-          "gg": 0,
+          "gg": 30,
           "elo_delta": null,
           "is_paid": true
         },
@@ -272,7 +272,7 @@
           "wins_as_don": 2,
           "wins_as_sheriff": 0,
           "first_kill": 2,
-          "gg": 0,
+          "gg": 28,
           "elo_delta": null,
           "is_paid": false
         },
@@ -289,7 +289,7 @@
           "wins_as_don": 2,
           "wins_as_sheriff": 0,
           "first_kill": 1,
-          "gg": 0,
+          "gg": 26,
           "elo_delta": null,
           "is_paid": true
         },
@@ -306,7 +306,7 @@
           "wins_as_don": 1,
           "wins_as_sheriff": 1,
           "first_kill": 3,
-          "gg": 0,
+          "gg": 24,
           "elo_delta": null,
           "is_paid": true
         },
@@ -323,7 +323,7 @@
           "wins_as_don": 2,
           "wins_as_sheriff": 0,
           "first_kill": 3,
-          "gg": 0,
+          "gg": 22,
           "elo_delta": null,
           "is_paid": true
         },
@@ -340,7 +340,7 @@
           "wins_as_don": 3,
           "wins_as_sheriff": 1,
           "first_kill": 0,
-          "gg": 0,
+          "gg": 20,
           "elo_delta": null,
           "is_paid": false
         },
@@ -357,7 +357,7 @@
           "wins_as_don": 2,
           "wins_as_sheriff": 0,
           "first_kill": 0,
-          "gg": 0,
+          "gg": 18,
           "elo_delta": null,
           "is_paid": false
         },
@@ -374,7 +374,7 @@
           "wins_as_don": 1,
           "wins_as_sheriff": 0,
           "first_kill": 3,
-          "gg": 0,
+          "gg": 16,
           "elo_delta": null,
           "is_paid": true
         },
@@ -391,7 +391,7 @@
           "wins_as_don": 2,
           "wins_as_sheriff": 3,
           "first_kill": 1,
-          "gg": 0,
+          "gg": 14,
           "elo_delta": null,
           "is_paid": true
         },
@@ -408,7 +408,7 @@
           "wins_as_don": 1,
           "wins_as_sheriff": 0,
           "first_kill": 0,
-          "gg": 0,
+          "gg": 12,
           "elo_delta": null,
           "is_paid": true
         },
@@ -425,7 +425,7 @@
           "wins_as_don": 1,
           "wins_as_sheriff": 3,
           "first_kill": 1,
-          "gg": 0,
+          "gg": 10,
           "elo_delta": null,
           "is_paid": false
         },
@@ -442,7 +442,7 @@
           "wins_as_don": 1,
           "wins_as_sheriff": 1,
           "first_kill": 2,
-          "gg": 0,
+          "gg": 8,
           "elo_delta": null,
           "is_paid": true
         },
@@ -459,7 +459,7 @@
           "wins_as_don": 1,
           "wins_as_sheriff": 0,
           "first_kill": 1,
-          "gg": 0,
+          "gg": 6,
           "elo_delta": null,
           "is_paid": true
         },
@@ -476,7 +476,7 @@
           "wins_as_don": 0,
           "wins_as_sheriff": 0,
           "first_kill": 2,
-          "gg": 0,
+          "gg": 4,
           "elo_delta": null,
           "is_paid": true
         },
@@ -9305,6 +9305,1156 @@
                 "points": 1.5,
                 "lhStatus": null,
                 "elo": 2859.62
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "gameNumber": 16,
+        "round": "Финал",
+        "tables": [
+          {
+            "tableNumber": 1,
+            "judge": "Лис",
+            "winner": "mafia",
+            "played": true,
+            "averageElo": 3117,
+            "players": [
+              {
+                "login": "Флай",
+                "userId": null,
+                "role": "red",
+                "roleName": "Мирный",
+                "playType": "r",
+                "points": -0.3,
+                "lhStatus": null,
+                "elo": 3118.62
+              },
+              {
+                "login": "MUR",
+                "userId": null,
+                "role": "mafia",
+                "roleName": "Маф",
+                "playType": "y",
+                "points": 1.6,
+                "lhStatus": null,
+                "elo": 2645.84
+              },
+              {
+                "login": "Градиент",
+                "userId": null,
+                "role": "red",
+                "roleName": "Мирный",
+                "playType": "lg",
+                "points": 1.15,
+                "lhStatus": "частичный",
+                "elo": 3510.91
+              },
+              {
+                "login": "Тихий Закат",
+                "userId": null,
+                "role": "mafia",
+                "roleName": "Маф",
+                "playType": "y",
+                "points": 1.4,
+                "lhStatus": null,
+                "elo": 3124.6
+              },
+              {
+                "login": "РФ",
+                "userId": null,
+                "role": "red",
+                "roleName": "Мирный",
+                "playType": "r",
+                "points": -0.2,
+                "lhStatus": null,
+                "elo": 3531.41
+              },
+              {
+                "login": "Шико",
+                "userId": null,
+                "role": "red",
+                "roleName": "Мирный",
+                "playType": "y",
+                "points": 0.2,
+                "lhStatus": null,
+                "elo": 2493.87
+              },
+              {
+                "login": "Dying Devil",
+                "userId": null,
+                "role": "red",
+                "roleName": "Мирный",
+                "playType": "r",
+                "points": -0.4,
+                "lhStatus": null,
+                "elo": 3149.27
+              },
+              {
+                "login": "Воробушек",
+                "userId": null,
+                "role": "don",
+                "roleName": "Дон",
+                "playType": "y",
+                "points": 1.7,
+                "lhStatus": null,
+                "elo": 3229.47
+              },
+              {
+                "login": "BWDMoscow",
+                "userId": null,
+                "role": "sheriff",
+                "roleName": "Шериф",
+                "playType": "n",
+                "points": 0,
+                "lhStatus": null,
+                "elo": 3123.92
+              },
+              {
+                "login": "Стоников",
+                "userId": null,
+                "role": "red",
+                "roleName": "Мирный",
+                "playType": "n",
+                "points": 0,
+                "lhStatus": null,
+                "elo": 3237.79
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "gameNumber": 17,
+        "round": "Финал",
+        "tables": [
+          {
+            "tableNumber": 1,
+            "judge": "Лис",
+            "winner": "mafia",
+            "played": true,
+            "averageElo": 3117,
+            "players": [
+              {
+                "login": "Стоников",
+                "userId": null,
+                "role": "mafia",
+                "roleName": "Маф",
+                "playType": "y",
+                "points": 1.7,
+                "lhStatus": null,
+                "elo": 3237.79
+              },
+              {
+                "login": "Шико",
+                "userId": null,
+                "role": "red",
+                "roleName": "Мирный",
+                "playType": "y",
+                "points": 0.4,
+                "lhStatus": null,
+                "elo": 2493.87
+              },
+              {
+                "login": "Флай",
+                "userId": null,
+                "role": "red",
+                "roleName": "Мирный",
+                "playType": "y",
+                "points": 0.2,
+                "lhStatus": null,
+                "elo": 3118.62
+              },
+              {
+                "login": "Тихий Закат",
+                "userId": null,
+                "role": "red",
+                "roleName": "Мирный",
+                "playType": "r",
+                "points": -0.5,
+                "lhStatus": null,
+                "elo": 3124.6
+              },
+              {
+                "login": "Градиент",
+                "userId": null,
+                "role": "red",
+                "roleName": "Мирный",
+                "playType": "y",
+                "points": 0.7,
+                "lhStatus": null,
+                "elo": 3510.91
+              },
+              {
+                "login": "BWDMoscow",
+                "userId": null,
+                "role": "sheriff",
+                "roleName": "Шериф",
+                "playType": "y",
+                "points": 0.4,
+                "lhStatus": null,
+                "elo": 3123.92
+              },
+              {
+                "login": "РФ",
+                "userId": null,
+                "role": "mafia",
+                "roleName": "Маф",
+                "playType": "n",
+                "points": 1,
+                "lhStatus": null,
+                "elo": 3531.41
+              },
+              {
+                "login": "Dying Devil",
+                "userId": null,
+                "role": "red",
+                "roleName": "Мирный",
+                "playType": "y",
+                "points": 0.5,
+                "lhStatus": null,
+                "elo": 3149.27
+              },
+              {
+                "login": "MUR",
+                "userId": null,
+                "role": "don",
+                "roleName": "Дон",
+                "playType": "y",
+                "points": 1.6,
+                "lhStatus": null,
+                "elo": 2645.84
+              },
+              {
+                "login": "Воробушек",
+                "userId": null,
+                "role": "red",
+                "roleName": "Мирный",
+                "playType": "b",
+                "points": -0.4,
+                "lhStatus": "нулевой",
+                "elo": 3229.47
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "gameNumber": 18,
+        "round": "Финал",
+        "tables": [
+          {
+            "tableNumber": 1,
+            "judge": "Лис",
+            "winner": "city",
+            "played": true,
+            "averageElo": 3117,
+            "players": [
+              {
+                "login": "Воробушек",
+                "userId": null,
+                "role": "mafia",
+                "roleName": "Маф",
+                "playType": "n",
+                "points": 0,
+                "lhStatus": null,
+                "elo": 3229.47
+              },
+              {
+                "login": "BWDMoscow",
+                "userId": null,
+                "role": "sheriff",
+                "roleName": "Шериф",
+                "playType": "y",
+                "points": 1.6,
+                "lhStatus": null,
+                "elo": 3123.92
+              },
+              {
+                "login": "Шико",
+                "userId": null,
+                "role": "red",
+                "roleName": "Мирный",
+                "playType": "n",
+                "points": 1,
+                "lhStatus": null,
+                "elo": 2493.87
+              },
+              {
+                "login": "Dying Devil",
+                "userId": null,
+                "role": "red",
+                "roleName": "Мирный",
+                "playType": "y",
+                "points": 1.5,
+                "lhStatus": null,
+                "elo": 3149.27
+              },
+              {
+                "login": "Флай",
+                "userId": null,
+                "role": "red",
+                "roleName": "Мирный",
+                "playType": "lg",
+                "points": 1.86,
+                "lhStatus": "частичный",
+                "elo": 3118.62
+              },
+              {
+                "login": "Стоников",
+                "userId": null,
+                "role": "mafia",
+                "roleName": "Маф",
+                "playType": "n",
+                "points": 0,
+                "lhStatus": null,
+                "elo": 3237.79
+              },
+              {
+                "login": "Тихий Закат",
+                "userId": null,
+                "role": "red",
+                "roleName": "Мирный",
+                "playType": "y",
+                "points": 1.5,
+                "lhStatus": null,
+                "elo": 3124.6
+              },
+              {
+                "login": "MUR",
+                "userId": null,
+                "role": "red",
+                "roleName": "Мирный",
+                "playType": "n",
+                "points": 1,
+                "lhStatus": null,
+                "elo": 2645.84
+              },
+              {
+                "login": "Градиент",
+                "userId": null,
+                "role": "red",
+                "roleName": "Мирный",
+                "playType": "y",
+                "points": 1.8,
+                "lhStatus": null,
+                "elo": 3510.91
+              },
+              {
+                "login": "РФ",
+                "userId": null,
+                "role": "don",
+                "roleName": "Дон",
+                "playType": "n",
+                "points": 0,
+                "lhStatus": null,
+                "elo": 3531.41
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "gameNumber": 19,
+        "round": "Финал",
+        "tables": [
+          {
+            "tableNumber": 1,
+            "judge": "Лис",
+            "winner": "mafia",
+            "played": true,
+            "averageElo": 3117,
+            "players": [
+              {
+                "login": "РФ",
+                "userId": null,
+                "role": "mafia",
+                "roleName": "Маф",
+                "playType": "y",
+                "points": 1.6,
+                "lhStatus": null,
+                "elo": 3531.41
+              },
+              {
+                "login": "Тихий Закат",
+                "userId": null,
+                "role": "red",
+                "roleName": "Мирный",
+                "playType": "r",
+                "points": -0.4,
+                "lhStatus": null,
+                "elo": 3124.6
+              },
+              {
+                "login": "Градиент",
+                "userId": null,
+                "role": "mafia",
+                "roleName": "Маф",
+                "playType": "y",
+                "points": 1.5,
+                "lhStatus": null,
+                "elo": 3510.91
+              },
+              {
+                "login": "Шико",
+                "userId": null,
+                "role": "red",
+                "roleName": "Мирный",
+                "playType": "y",
+                "points": 0.4,
+                "lhStatus": null,
+                "elo": 2493.87
+              },
+              {
+                "login": "BWDMoscow",
+                "userId": null,
+                "role": "red",
+                "roleName": "Мирный",
+                "playType": "r",
+                "points": -0.4,
+                "lhStatus": null,
+                "elo": 3123.92
+              },
+              {
+                "login": "MUR",
+                "userId": null,
+                "role": "don",
+                "roleName": "Дон",
+                "playType": "y",
+                "points": 1.7,
+                "lhStatus": null,
+                "elo": 2645.84
+              },
+              {
+                "login": "Воробушек",
+                "userId": null,
+                "role": "red",
+                "roleName": "Мирный",
+                "playType": "y",
+                "points": 0.4,
+                "lhStatus": null,
+                "elo": 3229.47
+              },
+              {
+                "login": "Флай",
+                "userId": null,
+                "role": "sheriff",
+                "roleName": "Шериф",
+                "playType": "n",
+                "points": 0,
+                "lhStatus": null,
+                "elo": 3118.62
+              },
+              {
+                "login": "Стоников",
+                "userId": null,
+                "role": "red",
+                "roleName": "Мирный",
+                "playType": "n",
+                "points": 0,
+                "lhStatus": null,
+                "elo": 3237.79
+              },
+              {
+                "login": "Dying Devil",
+                "userId": null,
+                "role": "red",
+                "roleName": "Мирный",
+                "playType": "lg",
+                "points": -0.07,
+                "lhStatus": "частичный",
+                "elo": 3149.27
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "gameNumber": 20,
+        "round": "Финал",
+        "tables": [
+          {
+            "tableNumber": 1,
+            "judge": "Лис",
+            "winner": "mafia",
+            "played": true,
+            "averageElo": 3117,
+            "players": [
+              {
+                "login": "BWDMoscow",
+                "userId": null,
+                "role": "sheriff",
+                "roleName": "Шериф",
+                "playType": "r",
+                "points": -0.3,
+                "lhStatus": null,
+                "elo": 3123.92
+              },
+              {
+                "login": "Шико",
+                "userId": null,
+                "role": "mafia",
+                "roleName": "Маф",
+                "playType": "y",
+                "points": 1.2,
+                "lhStatus": null,
+                "elo": 2493.87
+              },
+              {
+                "login": "Dying Devil",
+                "userId": null,
+                "role": "red",
+                "roleName": "Мирный",
+                "playType": "r",
+                "points": -0.2,
+                "lhStatus": null,
+                "elo": 3149.27
+              },
+              {
+                "login": "Градиент",
+                "userId": null,
+                "role": "red",
+                "roleName": "Мирный",
+                "playType": "lg",
+                "points": 0.15,
+                "lhStatus": "частичный",
+                "elo": 3510.91
+              },
+              {
+                "login": "РФ",
+                "userId": null,
+                "role": "red",
+                "roleName": "Мирный",
+                "playType": "r",
+                "points": -0.4,
+                "lhStatus": null,
+                "elo": 3531.41
+              },
+              {
+                "login": "Тихий Закат",
+                "userId": null,
+                "role": "don",
+                "roleName": "Дон",
+                "playType": "y",
+                "points": 1.4,
+                "lhStatus": null,
+                "elo": 3124.6
+              },
+              {
+                "login": "Стоников",
+                "userId": null,
+                "role": "mafia",
+                "roleName": "Маф",
+                "playType": "y",
+                "points": 1.9,
+                "lhStatus": null,
+                "elo": 3237.79
+              },
+              {
+                "login": "Флай",
+                "userId": null,
+                "role": "red",
+                "roleName": "Мирный",
+                "playType": "y",
+                "points": 0.6,
+                "lhStatus": null,
+                "elo": 3118.62
+              },
+              {
+                "login": "Воробушек",
+                "userId": null,
+                "role": "red",
+                "roleName": "Мирный",
+                "playType": "y",
+                "points": 0.3,
+                "lhStatus": null,
+                "elo": 3229.47
+              },
+              {
+                "login": "MUR",
+                "userId": null,
+                "role": "red",
+                "roleName": "Мирный",
+                "playType": "y",
+                "points": 0.4,
+                "lhStatus": null,
+                "elo": 2645.84
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "gameNumber": 21,
+        "round": "Финал",
+        "tables": [
+          {
+            "tableNumber": 1,
+            "judge": "Лис",
+            "winner": "mafia",
+            "played": true,
+            "averageElo": 3117,
+            "players": [
+              {
+                "login": "Градиент",
+                "userId": null,
+                "role": "red",
+                "roleName": "Мирный",
+                "playType": "r",
+                "points": -0.3,
+                "lhStatus": null,
+                "elo": 3510.91
+              },
+              {
+                "login": "MUR",
+                "userId": null,
+                "role": "red",
+                "roleName": "Мирный",
+                "playType": "r",
+                "points": -0.2,
+                "lhStatus": null,
+                "elo": 2645.84
+              },
+              {
+                "login": "BWDMoscow",
+                "userId": null,
+                "role": "red",
+                "roleName": "Мирный",
+                "playType": "r",
+                "points": -0.4,
+                "lhStatus": null,
+                "elo": 3123.92
+              },
+              {
+                "login": "РФ",
+                "userId": null,
+                "role": "red",
+                "roleName": "Мирный",
+                "playType": "r",
+                "points": -0.2,
+                "lhStatus": null,
+                "elo": 3531.41
+              },
+              {
+                "login": "Стоников",
+                "userId": null,
+                "role": "sheriff",
+                "roleName": "Шериф",
+                "playType": "lg",
+                "points": 0.73,
+                "lhStatus": "частичный",
+                "elo": 3237.79
+              },
+              {
+                "login": "Dying Devil",
+                "userId": null,
+                "role": "red",
+                "roleName": "Мирный",
+                "playType": "r",
+                "points": -0.2,
+                "lhStatus": null,
+                "elo": 3149.27
+              },
+              {
+                "login": "Флай",
+                "userId": null,
+                "role": "don",
+                "roleName": "Дон",
+                "playType": "y",
+                "points": 1.8,
+                "lhStatus": null,
+                "elo": 3118.62
+              },
+              {
+                "login": "Воробушек",
+                "userId": null,
+                "role": "mafia",
+                "roleName": "Маф",
+                "playType": "y",
+                "points": 1.6,
+                "lhStatus": null,
+                "elo": 3229.47
+              },
+              {
+                "login": "Шико",
+                "userId": null,
+                "role": "mafia",
+                "roleName": "Маф",
+                "playType": "n",
+                "points": 1,
+                "lhStatus": null,
+                "elo": 2493.87
+              },
+              {
+                "login": "Тихий Закат",
+                "userId": null,
+                "role": "red",
+                "roleName": "Мирный",
+                "playType": "r",
+                "points": -0.2,
+                "lhStatus": null,
+                "elo": 3124.6
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "gameNumber": 22,
+        "round": "Финал",
+        "tables": [
+          {
+            "tableNumber": 1,
+            "judge": "Лис",
+            "winner": "mafia",
+            "played": true,
+            "averageElo": 3117,
+            "players": [
+              {
+                "login": "Шико",
+                "userId": null,
+                "role": "mafia",
+                "roleName": "Маф",
+                "playType": "y",
+                "points": 1.7,
+                "lhStatus": null,
+                "elo": 2493.87
+              },
+              {
+                "login": "Стоников",
+                "userId": null,
+                "role": "red",
+                "roleName": "Мирный",
+                "playType": "n",
+                "points": 0,
+                "lhStatus": null,
+                "elo": 3237.79
+              },
+              {
+                "login": "Тихий Закат",
+                "userId": null,
+                "role": "don",
+                "roleName": "Дон",
+                "playType": "n",
+                "points": 1,
+                "lhStatus": null,
+                "elo": 3124.6
+              },
+              {
+                "login": "Флай",
+                "userId": null,
+                "role": "red",
+                "roleName": "Мирный",
+                "playType": "r",
+                "points": -0.3,
+                "lhStatus": null,
+                "elo": 3118.62
+              },
+              {
+                "login": "Воробушек",
+                "userId": null,
+                "role": "sheriff",
+                "roleName": "Шериф",
+                "playType": "lg",
+                "points": 1.25,
+                "lhStatus": "частичный",
+                "elo": 3229.47
+              },
+              {
+                "login": "Градиент",
+                "userId": null,
+                "role": "red",
+                "roleName": "Мирный",
+                "playType": "y",
+                "points": 0.6,
+                "lhStatus": null,
+                "elo": 3510.91
+              },
+              {
+                "login": "Dying Devil",
+                "userId": null,
+                "role": "red",
+                "roleName": "Мирный",
+                "playType": "n",
+                "points": 0,
+                "lhStatus": null,
+                "elo": 3149.27
+              },
+              {
+                "login": "MUR",
+                "userId": null,
+                "role": "mafia",
+                "roleName": "Маф",
+                "playType": "y",
+                "points": 1.4,
+                "lhStatus": null,
+                "elo": 2645.84
+              },
+              {
+                "login": "РФ",
+                "userId": null,
+                "role": "red",
+                "roleName": "Мирный",
+                "playType": "y",
+                "points": 0.6,
+                "lhStatus": null,
+                "elo": 3531.41
+              },
+              {
+                "login": "BWDMoscow",
+                "userId": null,
+                "role": "red",
+                "roleName": "Мирный",
+                "playType": "r",
+                "points": -0.2,
+                "lhStatus": null,
+                "elo": 3123.92
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "gameNumber": 23,
+        "round": "Финал",
+        "tables": [
+          {
+            "tableNumber": 1,
+            "judge": "Лис",
+            "winner": "city",
+            "played": true,
+            "averageElo": 3117,
+            "players": [
+              {
+                "login": "Тихий Закат",
+                "userId": null,
+                "role": "red",
+                "roleName": "Мирный",
+                "playType": "n",
+                "points": 1,
+                "lhStatus": null,
+                "elo": 3124.6
+              },
+              {
+                "login": "Градиент",
+                "userId": null,
+                "role": "mafia",
+                "roleName": "Маф",
+                "playType": "n",
+                "points": 0,
+                "lhStatus": null,
+                "elo": 3510.91
+              },
+              {
+                "login": "MUR",
+                "userId": null,
+                "role": "red",
+                "roleName": "Мирный",
+                "playType": "r",
+                "points": 0.6,
+                "lhStatus": null,
+                "elo": 2645.84
+              },
+              {
+                "login": "Шико",
+                "userId": null,
+                "role": "red",
+                "roleName": "Мирный",
+                "playType": "y",
+                "points": 1.6,
+                "lhStatus": null,
+                "elo": 2493.87
+              },
+              {
+                "login": "BWDMoscow",
+                "userId": null,
+                "role": "sheriff",
+                "roleName": "Шериф",
+                "playType": "y",
+                "points": 1.5,
+                "lhStatus": null,
+                "elo": 3123.92
+              },
+              {
+                "login": "РФ",
+                "userId": null,
+                "role": "red",
+                "roleName": "Мирный",
+                "playType": "b",
+                "points": 0.9,
+                "lhStatus": "нулевой",
+                "elo": 3531.41
+              },
+              {
+                "login": "Воробушек",
+                "userId": null,
+                "role": "red",
+                "roleName": "Мирный",
+                "playType": "y",
+                "points": 1.6,
+                "lhStatus": null,
+                "elo": 3229.47
+              },
+              {
+                "login": "Стоников",
+                "userId": null,
+                "role": "mafia",
+                "roleName": "Маф",
+                "playType": "n",
+                "points": 0,
+                "lhStatus": null,
+                "elo": 3237.79
+              },
+              {
+                "login": "Dying Devil",
+                "userId": null,
+                "role": "don",
+                "roleName": "Дон",
+                "playType": "n",
+                "points": 0,
+                "lhStatus": null,
+                "elo": 3149.27
+              },
+              {
+                "login": "Флай",
+                "userId": null,
+                "role": "red",
+                "roleName": "Мирный",
+                "playType": "y",
+                "points": 1.7,
+                "lhStatus": null,
+                "elo": 3118.62
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "gameNumber": 24,
+        "round": "Финал",
+        "tables": [
+          {
+            "tableNumber": 1,
+            "judge": "Лис",
+            "winner": "mafia",
+            "played": true,
+            "averageElo": 3117,
+            "players": [
+              {
+                "login": "MUR",
+                "userId": null,
+                "role": "red",
+                "roleName": "Мирный",
+                "playType": "r",
+                "points": -0.4,
+                "lhStatus": null,
+                "elo": 2645.84
+              },
+              {
+                "login": "Флай",
+                "userId": null,
+                "role": "sheriff",
+                "roleName": "Шериф",
+                "playType": "n",
+                "points": 0,
+                "lhStatus": null,
+                "elo": 3118.62
+              },
+              {
+                "login": "Стоников",
+                "userId": null,
+                "role": "red",
+                "roleName": "Мирный",
+                "playType": "r",
+                "points": -0.4,
+                "lhStatus": null,
+                "elo": 3237.79
+              },
+              {
+                "login": "Воробушек",
+                "userId": null,
+                "role": "don",
+                "roleName": "Дон",
+                "playType": "y",
+                "points": 1.6,
+                "lhStatus": null,
+                "elo": 3229.47
+              },
+              {
+                "login": "Градиент",
+                "userId": null,
+                "role": "mafia",
+                "roleName": "Маф",
+                "playType": "y",
+                "points": 1.7,
+                "lhStatus": null,
+                "elo": 3510.91
+              },
+              {
+                "login": "Шико",
+                "userId": null,
+                "role": "red",
+                "roleName": "Мирный",
+                "playType": "y",
+                "points": 0.7,
+                "lhStatus": null,
+                "elo": 2493.87
+              },
+              {
+                "login": "BWDMoscow",
+                "userId": null,
+                "role": "red",
+                "roleName": "Мирный",
+                "playType": "lg",
+                "points": -0.17,
+                "lhStatus": "частичный",
+                "elo": 3123.92
+              },
+              {
+                "login": "Dying Devil",
+                "userId": null,
+                "role": "red",
+                "roleName": "Мирный",
+                "playType": "r",
+                "points": -0.2,
+                "lhStatus": null,
+                "elo": 3149.27
+              },
+              {
+                "login": "Тихий Закат",
+                "userId": null,
+                "role": "red",
+                "roleName": "Мирный",
+                "playType": "n",
+                "points": 0,
+                "lhStatus": null,
+                "elo": 3124.6
+              },
+              {
+                "login": "РФ",
+                "userId": null,
+                "role": "mafia",
+                "roleName": "Маф",
+                "playType": "y",
+                "points": 1.6,
+                "lhStatus": null,
+                "elo": 3531.41
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "gameNumber": 25,
+        "round": "Финал",
+        "tables": [
+          {
+            "tableNumber": 1,
+            "judge": "Лис",
+            "winner": "mafia",
+            "played": true,
+            "averageElo": 3117,
+            "players": [
+              {
+                "login": "Воробушек",
+                "userId": null,
+                "role": "mafia",
+                "roleName": "Маф",
+                "playType": "y",
+                "points": 1.6,
+                "lhStatus": null,
+                "elo": 3229.47
+              },
+              {
+                "login": "РФ",
+                "userId": null,
+                "role": "red",
+                "roleName": "Мирный",
+                "playType": "n",
+                "points": 0,
+                "lhStatus": null,
+                "elo": 3531.41
+              },
+              {
+                "login": "Шико",
+                "userId": null,
+                "role": "red",
+                "roleName": "Мирный",
+                "playType": "lg",
+                "points": 0.53,
+                "lhStatus": "частичный",
+                "elo": 2493.87
+              },
+              {
+                "login": "MUR",
+                "userId": null,
+                "role": "red",
+                "roleName": "Мирный",
+                "playType": "y",
+                "points": 0.3,
+                "lhStatus": null,
+                "elo": 2645.84
+              },
+              {
+                "login": "Тихий Закат",
+                "userId": null,
+                "role": "red",
+                "roleName": "Мирный",
+                "playType": "r",
+                "points": -0.6,
+                "lhStatus": null,
+                "elo": 3124.6
+              },
+              {
+                "login": "Флай",
+                "userId": null,
+                "role": "sheriff",
+                "roleName": "Шериф",
+                "playType": "y",
+                "points": 0.3,
+                "lhStatus": null,
+                "elo": 3118.62
+              },
+              {
+                "login": "Стоников",
+                "userId": null,
+                "role": "mafia",
+                "roleName": "Маф",
+                "playType": "r",
+                "points": 1.4,
+                "lhStatus": null,
+                "elo": 3237.79
+              },
+              {
+                "login": "Градиент",
+                "userId": null,
+                "role": "red",
+                "roleName": "Мирный",
+                "playType": "y",
+                "points": 0.9,
+                "lhStatus": null,
+                "elo": 3510.91
+              },
+              {
+                "login": "Dying Devil",
+                "userId": null,
+                "role": "don",
+                "roleName": "Дон",
+                "playType": "y",
+                "points": 1.8,
+                "lhStatus": null,
+                "elo": 3149.27
+              },
+              {
+                "login": "BWDMoscow",
+                "userId": null,
+                "role": "red",
+                "roleName": "Мирный",
+                "playType": "r",
+                "points": -0.6,
+                "lhStatus": null,
+                "elo": 3123.92
               }
             ]
           }

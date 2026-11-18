@@ -1,17 +1,5 @@
 #!/usr/bin/env node
 // run.js — универсальный консольный лаунчер для всех сценариев проекта.
-//
-// Запуск:
-//   node run.js
-//   npm run launcher         (если добавить в package.json)
-//
-// Позволяет выбрать любой сценарий без запоминания флагов:
-//   • парсинг турниров, список, удаление, обогащение, очистка несыгранных
-//   • скрейп профилей игроков (одиночно и батчем из players.txt)
-//   • сбор ELO в elo-cache.json (по id / url / из results)
-//   • обогащение results/*.json
-//   • сборка единой базы для tournament-viewer.html
-//   • готовые «пайплайны» из нескольких шагов
 'use strict';
 
 const { spawn } = require('child_process');
@@ -38,7 +26,6 @@ function closeRl() {
   if (rl) {
     try { rl.close(); } catch {}
     rl = null;
-    // подстрахуемся: не оставляем stdin в «странном» состоянии
     try { process.stdin.pause(); } catch {}
   }
 }
@@ -72,22 +59,16 @@ function scriptExists(name) {
   return true;
 }
 
-/**
- * Запускает дочерний скрипт с наследованием stdin/stdout/stderr.
- * Перед запуском закрывает внешний readline, чтобы не было
- * «двойного чтения» с одного TTY. После выхода ребёнка readline
- * будет пересоздан при следующем ask().
- */
 function spawnChild(script, args = []) {
   if (!scriptExists(script)) return Promise.resolve(1);
   closeRl();
   return new Promise(resolve => {
     const child = spawn(process.execPath, [script, ...args], {
       stdio: 'inherit',
-      cwd: ROOT
+      cwd: ROOT,
+      env: process.env
     });
     child.on('close', code => {
-      // небольшая пауза, чтобы TTY-буферы ребёнка «отпустили» stdin
       setTimeout(() => resolve(code || 0), 120);
     });
     child.on('error', err => {
@@ -134,6 +115,7 @@ function printMenu() {
   ── ПРОЧЕЕ ───────────────────────────────────────────────────
   13. 📁 Показать содержимое ./results
   14. ℹ️  Справка по сценариям
+  15. 🔐 Настройки авторизации gomafia.pro
    0. 🚪 Выход
 `);
 }
@@ -379,6 +361,7 @@ function hHelp() {
    • … --remove 2659 2760 / --remove=2659,2760 — удалить из базы
    • … --enrich-only                           — только обогатить ELO
    • … --fix-unplayed                          — очистить несыгранные столы
+   • … --headed                                — открыть браузер видимым
 
 🌐 buildEloCache.js
    • --from-results ./results                  — собрать ELO всех игроков из results
@@ -399,12 +382,46 @@ function hHelp() {
 🕵️  scraper.js
    • Интерактивно: режимы 1–12 (одиночно), 13/14 (батч из players.txt)
 
+🔐 АВТОРИЗАЦИЯ (если турниры за /login)
+   • node run.js --login=МОЙ_НИК --password=МОЙ_ПАРОЛЬ
+   • GOMAFIA_LOGIN=... GOMAFIA_PASSWORD=... node run.js
+   • .env рядом с run.js:  GOMAFIA_LOGIN=...  /  GOMAFIA_PASSWORD=...
+   • без кредов — спросит при первом редиректе на /login
+   • флаг --headed в аргументах для tournament-parser — видимый браузер
+
 ⚙️  Переменные окружения
    • ELO_CACHE=/path/elo-cache.json
    • TOURNAMENTS_DB=/path/tournaments-db.json
    • PLAYERS_FILE=/path/players.txt
+   • GOMAFIA_LOGIN / GOMAFIA_PASSWORD
    • DEBUG_LH=1  (подробный отладочный вывод ЛХ в scraper.js)
 `);
+}
+
+async function hAuthSettings() {
+  const auth = require('./auth');
+  const cur = auth.getCredentials();
+  console.log('\n🔐 Авторизация gomafia.pro');
+  console.log(`   Логин:  ${cur.login || '(не задан)'}`);
+  console.log(`   Пароль: ${cur.password ? '***' : '(не задан)'}`);
+  console.log('\nИсточники кредов (по приоритету):');
+  console.log('   1) --login=X --password=Y');
+  console.log('   2) .env рядом с run.js (GOMAFIA_LOGIN / GOMAFIA_PASSWORD)');
+  console.log('   3) env GOMAFIA_LOGIN / GOMAFIA_PASSWORD');
+  console.log('   4) интерактивный ввод при первом редиректе на /login\n');
+
+  if (await askYesNo('Задать креды сейчас (на эту сессию)?', false)) {
+    const login = (await ask('   Логин: ')).trim();
+    const password = (await ask('   Пароль: ')).trim();
+    if (login && password) {
+      auth.setCredentials(login, password);
+      process.env.GOMAFIA_LOGIN = login;
+      process.env.GOMAFIA_PASSWORD = password;
+      console.log('✅ Креды установлены на текущую сессию запуска');
+    } else {
+      console.log('⚠️ Пустые логин/пароль — отмена');
+    }
+  }
 }
 
 // ─────────────────────────────────────────────────────────────────────
@@ -428,13 +445,20 @@ async function dispatch(choice) {
     case '12': await hPipelineEloOnly(); break;
     case '13': await hShowResults(); break;
     case '14': hHelp(); break;
+    case '15': await hAuthSettings(); break;
     default:   console.log(`❓ Неизвестный пункт: ${choice}`);
   }
 }
 
 async function main() {
-  // Быстрые CLI-флаги (можно использовать в скриптах/CI)
   const argv = process.argv.slice(2);
+
+  // Проброс кредов в дочерние процессы через env
+  for (const a of argv) {
+    if (a.startsWith('--login=')) process.env.GOMAFIA_LOGIN = a.slice('--login='.length);
+    else if (a.startsWith('--password=')) process.env.GOMAFIA_PASSWORD = a.slice('--password='.length);
+  }
+
   if (argv.includes('--help') || argv.includes('-h')) {
     hHelp();
     return;
@@ -457,7 +481,6 @@ async function main() {
     try {
       const handled = await dispatch(choice);
       if (handled === 'exit') break;
-      // после любого сценария — пауза, чтобы успеть прочитать вывод
       await pause();
     } catch (e) {
       console.error(`❌ ${e.message}`);

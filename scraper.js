@@ -3,6 +3,7 @@ const fs = require('fs');
 const path = require('path');
 const readline = require('readline');
 const enricher = require('./enricher');
+const auth = require('./auth');
 
 const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
 const question = (query) => new Promise((resolve) => rl.question(query, resolve));
@@ -295,9 +296,29 @@ async function scrapeSingleTournament(context, tournamentHref, tournamentName, p
     const tournamentUrl = `https://gomafia.pro${tournamentHref}`;
     const tournamentPage = await context.newPage();
     try {
+await tournamentPage.goto(tournamentUrl, { waitUntil: 'networkidle', timeout: 30000 });
+    await tournamentPage.waitForTimeout(600);
+
+    // ── Авторизация по требованию ────────────────────────────
+    if (auth.isLoginUrl(tournamentPage.url())) {
+        console.log('  🔐 Требуется авторизация...');
+        if (!auth.hasCredentials()) await auth.promptCredentials();
+        try {
+            await auth.login(tournamentPage);
+        } catch (e) {
+            console.warn(`  ⚠️ Логин не удался: ${e.message}`);
+            return null;
+        }
         await tournamentPage.goto(tournamentUrl, { waitUntil: 'networkidle', timeout: 30000 });
         await tournamentPage.waitForTimeout(600);
-        const content = await tournamentPage.content();
+        if (auth.isLoginUrl(tournamentPage.url())) {
+            console.warn('  ❌ Турнир недоступен после логина');
+            return null;
+        }
+    }
+    // ─────────────────────────────────────────────────────────
+
+    const content = await tournamentPage.content();
         const scriptMatch = content.match(/<script id="__NEXT_DATA__" type="application\/json">(.*?)<\/script>/);
         if (!scriptMatch) { console.warn('  ⚠️ Не удалось найти JSON турнира.'); return null; }
 
@@ -529,6 +550,13 @@ async function fetchTournamentListFromProfile(page, playerUrl, opts = {}) {
 async function parsePlayerHistory(playerUrl, targetRoles, matchMode, startIdx, endIdx) {
     const browser = await chromium.launch({ headless: true });
     const context = await browser.newContext({ userAgent: USER_AGENT });
+if (auth.hasCredentials()) {
+    try {
+        await auth.ensureLoggedIn(context);
+    } catch (e) {
+        console.warn(`⚠️ Пре-логин не удался: ${e.message}`);
+    }
+}
     const page = await context.newPage();
     const results = [];
     let playerName = 'UnknownPlayer';
